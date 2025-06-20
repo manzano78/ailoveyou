@@ -7,7 +7,7 @@ export default {
   ssr: true,
   future: {
     unstable_optimizeDeps: true,
-    // unstable_middleware: true,
+    unstable_middleware: true,
     unstable_splitRouteModules: true,
   },
   presets: [vercelPreset()],
