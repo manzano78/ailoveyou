@@ -13,7 +13,7 @@ export const sessionStorage = createCookieSessionStorage<
     sameSite: 'lax',
     secure: true,
     httpOnly: true,
-    maxAge: 60,
+    maxAge: 3_600,
     secrets: SESSION_COOKIE_SECRET ? [SESSION_COOKIE_SECRET] : undefined,
   },
 });
