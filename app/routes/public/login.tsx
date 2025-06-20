@@ -1,4 +1,4 @@
-import { data, Form, href, Link, redirect } from 'react-router';
+import { data, Form, href, Link, redirect, useNavigation } from 'react-router';
 import type { Route } from './+types/login';
 import bcrypt from 'bcryptjs';
 import { supabaseClient } from '~/infra/supabase';
@@ -43,10 +43,13 @@ export async function action({ request }: Route.LoaderArgs) {
 }
 
 export default function LoginPage({ actionData }: Route.ComponentProps) {
+  const navigation = useNavigation();
+  const isPending = navigation.state !== 'idle';
+
   return (
     <Form method="post" className="p-4">
       <title>Sign in</title>
-      <div className="font-bold">Please, sign in!</div>
+      <div className="font-bold text-2xl">Please, sign in!</div>
       <div className="mt-4">
         <div className="mb-3">
           <input
@@ -70,12 +73,13 @@ export default function LoginPage({ actionData }: Route.ComponentProps) {
         <div className="mt-6 flex gap-2 items-center">
           <button
             type="submit"
-            className="py-2 px-4 rounded-md bg-blue-500 cursor-pointer"
+            disabled={isPending}
+            className="py-2 px-4 rounded-md bg-blue-500 cursor-pointer disabled:cursor-progress disabled"
           >
-            Login
+            {isPending ? 'Signing in...' : 'Sign in'}
           </button>
           {actionData && (
-            <div className="color-red-600">{actionData.errorMessage}</div>
+            <div className="text-red-600">{actionData.errorMessage}</div>
           )}
         </div>
         <div className="mt-2">
