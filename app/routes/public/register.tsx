@@ -75,6 +75,7 @@ export default function RegisterRoute({ actionData }: Route.ComponentProps) {
             name="username"
             placeholder="Username"
             required
+            autoFocus
           />
         </div>
         <div className="mb-3">

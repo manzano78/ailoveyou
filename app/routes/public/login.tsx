@@ -53,6 +53,7 @@ export default function LoginPage({ actionData }: Route.ComponentProps) {
             type="text"
             name="username"
             placeholder="Username"
+            autoFocus
             required
           />
         </div>
