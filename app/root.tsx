@@ -10,6 +10,11 @@ import type { ReactNode } from 'react';
 
 import type { Route } from './+types/root';
 import './app.css';
+import { sessionMiddleware } from '~/infra/session';
+
+export const unstable_middleware: Route.unstable_MiddlewareFunction[] = [
+  sessionMiddleware,
+];
 
 export const links: Route.LinksFunction = () => [
   { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
