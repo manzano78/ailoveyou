@@ -66,7 +66,7 @@ export async function action({ request }: Route.LoaderArgs) {
 export default function RegisterRoute({ actionData }: Route.ComponentProps) {
   return (
     <Form method="post" className="p-4">
-      <div>New account</div>
+      <div className="font-bold">New account</div>
       <div className="mt-4">
         <div className="mb-3">
           <input
