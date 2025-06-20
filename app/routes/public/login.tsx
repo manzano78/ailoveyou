@@ -45,6 +45,7 @@ export async function action({ request }: Route.LoaderArgs) {
 export default function LoginPage({ actionData }: Route.ComponentProps) {
   return (
     <Form method="post" className="p-4">
+      <title>Sign in</title>
       <div className="font-bold">Please, sign in!</div>
       <div className="mt-4">
         <div className="mb-3">
