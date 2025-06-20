@@ -66,7 +66,10 @@ export default function LoginPage({ actionData }: Route.ComponentProps) {
           />
         </div>
         <div className="mt-6 flex gap-2 items-center">
-          <button type="submit" className="py-2 px-4 rounded-md bg-blue-500">
+          <button
+            type="submit"
+            className="py-2 px-4 rounded-md bg-blue-500 cursor-pointer"
+          >
             Login
           </button>
           {actionData && (
