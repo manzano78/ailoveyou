@@ -1,4 +1,4 @@
-import { data, Form, href, redirect } from 'react-router';
+import { data, Form, href, Link, redirect } from 'react-router';
 import type { Route } from './+types/login';
 import bcrypt from 'bcryptjs';
 import { supabaseClient } from '~/infra/supabase';
@@ -45,7 +45,7 @@ export async function action({ request }: Route.LoaderArgs) {
 export default function LoginPage({ actionData }: Route.ComponentProps) {
   return (
     <Form method="post" className="p-4">
-      <div>Welcome!</div>
+      <div>Please, sign in!</div>
       <div className="mt-4">
         <div className="mb-3">
           <input
@@ -72,6 +72,11 @@ export default function LoginPage({ actionData }: Route.ComponentProps) {
           {actionData && (
             <div className="color-red-600">{actionData.errorMessage}</div>
           )}
+        </div>
+        <div className="mt-2">
+          <Link className="underline" to={href('/register')}>
+            No account yet? Please sign up!
+          </Link>
         </div>
       </div>
     </Form>

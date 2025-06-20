@@ -8,6 +8,7 @@ import {
 export default [
   layout('routes/public-layout.tsx', [
     route('login', 'routes/public/login.tsx'),
+    route('register', 'routes/public/register.tsx'),
   ]),
   layout('routes/private-layout.tsx', [
     index('routes/private/home.tsx'),

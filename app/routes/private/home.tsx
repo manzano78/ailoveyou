@@ -1,5 +1,6 @@
-import type { Route } from '../../../.react-router/types/app/routes/+types';
-import { Welcome } from '../../welcome/welcome';
+import { Welcome } from '~/welcome/welcome';
+import { getSession } from '~/infra/session';
+import type { Route } from './+types/home';
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -8,6 +9,12 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 
-export default function Home() {
-  return <Welcome />;
+export function loader() {
+  const { nickname } = getSession().get('user')!;
+
+  return { nickname };
+}
+
+export default function Home({ loaderData }: Route.ComponentProps) {
+  return <Welcome nickname={loaderData.nickname} />;
 }
