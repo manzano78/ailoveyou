@@ -10,23 +10,60 @@
       }
     },
     "routeIdToServerBundleId": {
-      "routes/home": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0"
+      "root": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/public/login": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/public/register": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/private/home": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/private/logout": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0"
     },
     "routes": {
       "root": {
         "path": "",
         "id": "root",
         "file": "app/root.tsx",
-        "config": {}
-      },
-      "routes/home": {
-        "id": "routes/home",
-        "parentId": "root",
-        "file": "app/routes/home.tsx",
-        "index": true,
         "config": {
           "runtime": "nodejs"
         }
+      },
+      "routes/public-layout": {
+        "id": "routes/public-layout",
+        "parentId": "root",
+        "file": "app/routes/public-layout.tsx",
+        "config": {}
+      },
+      "routes/public/login": {
+        "id": "routes/public/login",
+        "parentId": "routes/public-layout",
+        "file": "app/routes/public/login.tsx",
+        "path": "login",
+        "config": {}
+      },
+      "routes/public/register": {
+        "id": "routes/public/register",
+        "parentId": "routes/public-layout",
+        "file": "app/routes/public/register.tsx",
+        "path": "register",
+        "config": {}
+      },
+      "routes/private-layout": {
+        "id": "routes/private-layout",
+        "parentId": "root",
+        "file": "app/routes/private-layout.tsx",
+        "config": {}
+      },
+      "routes/private/home": {
+        "id": "routes/private/home",
+        "parentId": "routes/private-layout",
+        "file": "app/routes/private/home.tsx",
+        "index": true,
+        "config": {}
+      },
+      "routes/private/logout": {
+        "id": "routes/private/logout",
+        "parentId": "routes/private-layout",
+        "file": "app/routes/private/logout.tsx",
+        "path": "logout",
+        "config": {}
       }
     }
   },
@@ -35,7 +72,7 @@
     "basename": "/",
     "buildDirectory": "/Users/m.anzano/Workspace/ailoveyou/build",
     "future": {
-      "unstable_middleware": false,
+      "unstable_middleware": true,
       "unstable_optimizeDeps": true,
       "unstable_splitRouteModules": true,
       "unstable_subResourceIntegrity": false,
@@ -47,11 +84,39 @@
         "id": "root",
         "file": "root.tsx"
       },
-      "routes/home": {
-        "id": "routes/home",
+      "routes/public-layout": {
+        "id": "routes/public-layout",
         "parentId": "root",
-        "file": "routes/home.tsx",
+        "file": "routes/public-layout.tsx"
+      },
+      "routes/public/login": {
+        "id": "routes/public/login",
+        "parentId": "routes/public-layout",
+        "file": "routes/public/login.tsx",
+        "path": "login"
+      },
+      "routes/public/register": {
+        "id": "routes/public/register",
+        "parentId": "routes/public-layout",
+        "file": "routes/public/register.tsx",
+        "path": "register"
+      },
+      "routes/private-layout": {
+        "id": "routes/private-layout",
+        "parentId": "root",
+        "file": "routes/private-layout.tsx"
+      },
+      "routes/private/home": {
+        "id": "routes/private/home",
+        "parentId": "routes/private-layout",
+        "file": "routes/private/home.tsx",
         "index": true
+      },
+      "routes/private/logout": {
+        "id": "routes/private/logout",
+        "parentId": "routes/private-layout",
+        "file": "routes/private/logout.tsx",
+        "path": "logout"
       }
     },
     "routeDiscovery": {

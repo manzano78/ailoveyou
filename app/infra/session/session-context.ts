@@ -1,7 +1,11 @@
 import type { Session } from 'react-router';
 import { AsyncLocalStorage } from 'node:async_hooks';
 import invariant from 'tiny-invariant';
-import type { FlashSessionData, SessionData } from '~/infra/session/types';
+import type {
+  FlashSessionData,
+  SessionData,
+  SessionUser,
+} from '~/infra/session/types';
 
 export interface SessionContext {
   destroy(): void;
@@ -29,6 +33,14 @@ export function getSession(): SessionContext['session'] {
 
 export function destroySession(): void {
   getSessionContext().destroy();
+}
+
+export function getSessionUser(): SessionUser {
+  const sessionUser = getSession().get('user');
+
+  invariant(sessionUser, 'No user found in session');
+
+  return sessionUser;
 }
 
 export function createSessionContext(session: Session): SessionContext {
