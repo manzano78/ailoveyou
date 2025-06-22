@@ -74,7 +74,7 @@ export default function RegisterRoute({ actionData }: Route.ComponentProps) {
       <div className="mt-4">
         <div className="mb-3">
           <input
-            className="p-1 border-b border-black dark:border-white"
+            className="p-1 border-b border-gray-400 focus:border-black dark:focus:border-white focus:outline-none"
             type="text"
             name="username"
             placeholder="Username"
@@ -84,7 +84,7 @@ export default function RegisterRoute({ actionData }: Route.ComponentProps) {
         </div>
         <div className="mb-3">
           <input
-            className="p-1 border-b border-black dark:border-white"
+            className="p-1 border-b border-gray-400 focus:border-black dark:focus:border-white focus:outline-none"
             type="password"
             name="password"
             placeholder="Password"
@@ -93,7 +93,7 @@ export default function RegisterRoute({ actionData }: Route.ComponentProps) {
         </div>
         <div className="mb-6">
           <input
-            className="p-1 border-b border-black dark:border-white"
+            className="p-1 border-b border-gray-400 focus:border-black dark:focus:border-white focus:outline-none"
             type="password"
             name="passwordConfirm"
             placeholder="Confirm password"
@@ -102,7 +102,7 @@ export default function RegisterRoute({ actionData }: Route.ComponentProps) {
         </div>
         <div className="mb-3">
           <input
-            className="p-1 border-b border-black dark:border-white"
+            className="p-1 border-b border-gray-400 focus:border-black dark:focus:border-white focus:outline-none"
             type="text"
             name="nickname"
             placeholder="Display name"
