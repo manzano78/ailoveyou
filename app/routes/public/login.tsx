@@ -3,6 +3,7 @@ import type { Route } from './+types/login';
 import bcrypt from 'bcryptjs';
 import { supabaseClient } from '~/infra/supabase';
 import { getSession } from '~/infra/session';
+import { useEffect } from 'react';
 
 export async function action({ request }: Route.LoaderArgs) {
   const formData = await request.formData();
@@ -44,7 +45,11 @@ export async function action({ request }: Route.LoaderArgs) {
 
 export default function LoginPage({ actionData }: Route.ComponentProps) {
   const navigation = useNavigation();
-  const isPending = navigation.state !== 'idle';
+  const isPending = navigation.formAction === '/login';
+
+  useEffect(() => {
+    console.log(navigation);
+  }, [navigation]);
 
   return (
     <Form method="post" className="p-4">

@@ -65,7 +65,7 @@ export async function action({ request }: Route.LoaderArgs) {
 
 export default function RegisterRoute({ actionData }: Route.ComponentProps) {
   const navigation = useNavigation();
-  const isPending = navigation.state !== 'idle';
+  const isPending = navigation.formAction === '/register';
 
   return (
     <Form method="post" className="p-4">
