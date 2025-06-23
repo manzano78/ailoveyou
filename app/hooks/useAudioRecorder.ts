@@ -28,9 +28,11 @@ export function useAudioRecorder(
             audioChunks.push(event.data);
           };
           mediaRecorderRef.current.onstop = () => {
-            const blob = new Blob(audioChunks, { type: 'audio/webm' });
+            const file = new File(audioChunks, 'audio.webm', {
+              type: 'audio/webm',
+            });
 
-            handleEndRef.current?.(blob);
+            handleEndRef.current?.(file);
           };
           mediaRecorderRef.current.start();
         } catch (error) {

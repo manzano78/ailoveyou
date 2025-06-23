@@ -53,7 +53,7 @@ export type Database = {
           bot_question: string;
           created_at: string;
           id: string;
-          user_answer_audio: string;
+          user_answer_audio: string | null;
           user_answer_text: string;
           user_id: string;
         };
@@ -61,7 +61,7 @@ export type Database = {
           bot_question: string;
           created_at?: string;
           id?: string;
-          user_answer_audio: string;
+          user_answer_audio?: string | null;
           user_answer_text: string;
           user_id?: string;
         };
@@ -69,7 +69,7 @@ export type Database = {
           bot_question?: string;
           created_at?: string;
           id?: string;
-          user_answer_audio?: string;
+          user_answer_audio?: string | null;
           user_answer_text?: string;
           user_id?: string;
         };

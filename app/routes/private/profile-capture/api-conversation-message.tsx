@@ -1,7 +1,7 @@
 import type { Route } from './+types/api-conversation-message';
 import { supabaseClient } from '~/infra/supabase';
 import { getSessionUser } from '~/infra/session';
-import { textPrompt } from '~/infra/openai';
+import { speechToText, textPrompt } from '~/infra/openai';
 
 async function getConversation(): Promise<
   Array<{ role: 'assistant' | 'user'; content: string }>
@@ -49,11 +49,23 @@ export async function loader({ request }: Route.LoaderArgs) {
 
 // Post openAI question along with the user response
 export async function action({ request }: Route.ActionArgs) {
-  // const formData = await parseFormData(request, async (fileUpload) => {
-  //   if (fileUpload.fieldName === 'audio-prompt') {
-  //     const { data, error } = await supabaseClient
-  //       .from('USER_PC_QUESTION_ANSWER')
-  //       .insert([{}]);
-  //   }
-  // });
+  const formData = await request.formData();
+  const botQuestion = formData.get('bot-question') as string;
+  const audioPrompt = formData.get('audio-prompt') as File;
+  // const audioPromptArrayBuffer = await audioPrompt.arrayBuffer();
+  const userAnswerText = await speechToText(audioPrompt);
+  // const userAnswerAudio = btoa(
+  //   String.fromCharCode(...new Uint8Array(audioPromptArrayBuffer)),
+  // );
+
+  await supabaseClient.from('USER_PC_QUESTION_ANSWER').insert([
+    {
+      bot_question: botQuestion,
+      // user_answer_audio: userAnswerAudio,
+      user_answer_text: userAnswerText,
+      user_id: getSessionUser().id,
+    },
+  ]);
+
+  return null;
 }
