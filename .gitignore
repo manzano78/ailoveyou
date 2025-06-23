@@ -2,6 +2,7 @@
 /node_modules/
 .idea
 .env
+yarn.lock
 
 # React Router
 /.react-router/

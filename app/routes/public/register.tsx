@@ -3,6 +3,9 @@ import type { Route } from './+types/login';
 import bcrypt from 'bcryptjs';
 import { supabaseClient } from '~/infra/supabase';
 import { getSession } from '~/infra/session';
+import { Container } from '~/components/container';
+import { Button } from '~/components/button/button';
+import { Header } from '~/components/header';
 
 export async function action({ request }: Route.LoaderArgs) {
   const formData = await request.formData();
@@ -69,65 +72,63 @@ export default function RegisterRoute({ actionData }: Route.ComponentProps) {
   const isPending = navigation.formAction === '/register';
 
   return (
-    <Form method="post" className="p-4">
-      <title>Sign up</title>
-      <div className="font-bold text-2xl">Please, sign up!</div>
-      <div className="mt-4">
-        <div className="mb-3">
-          <input
-            className="p-1 border-b border-gray-400 focus:border-black dark:focus:border-white focus:outline-none"
-            type="text"
-            name="username"
-            placeholder="Username"
-            required
-            autoFocus
-          />
+    <Container>
+      <Form method="post" className="p-4">
+        <Header>Sign up</Header>
+        <Header type="h2">Please, sign up!</Header>
+        <div className="mt-4">
+          <div className="mb-3">
+            <input
+              className="p-1 border-b border-gray-400 focus:border-black dark:focus:border-white focus:outline-none w-full"
+              type="text"
+              name="username"
+              placeholder="Username"
+              required
+              autoFocus
+            />
+          </div>
+          <div className="mb-3">
+            <input
+              className="p-1 border-b border-gray-400 focus:border-black dark:focus:border-white focus:outline-none w-full"
+              type="password"
+              name="password"
+              placeholder="Password"
+              required
+            />
+          </div>
+          <div className="mb-3">
+            <input
+              className="p-1 border-b border-gray-400 focus:border-black dark:focus:border-white focus:outline-none w-full"
+              type="password"
+              name="passwordConfirm"
+              placeholder="Confirm password"
+              required
+            />
+          </div>
+          <div className="mb-3">
+            <input
+              className="p-1 border-b border-gray-400 focus:border-black dark:focus:border-white focus:outline-none w-full"
+              type="text"
+              name="nickname"
+              placeholder="Display name"
+              required
+            />
+          </div>
+          <div className="mt-6 flex gap-2 items-center">
+            <Button type="submit" disabled={isPending} className="w-full">
+              {isPending ? 'Signing up...' : 'Sign up'}
+            </Button>
+            {actionData && (
+              <div className="text-red-600">{actionData.errorMessage}</div>
+            )}
+          </div>
+          <div className="mt-2 pt-2">
+            <Link className="underline" to={href('/login')}>
+              Already have an account? Please sign in!
+            </Link>
+          </div>
         </div>
-        <div className="mb-3">
-          <input
-            className="p-1 border-b border-gray-400 focus:border-black dark:focus:border-white focus:outline-none"
-            type="password"
-            name="password"
-            placeholder="Password"
-            required
-          />
-        </div>
-        <div className="mb-6">
-          <input
-            className="p-1 border-b border-gray-400 focus:border-black dark:focus:border-white focus:outline-none"
-            type="password"
-            name="passwordConfirm"
-            placeholder="Confirm password"
-            required
-          />
-        </div>
-        <div className="mb-3">
-          <input
-            className="p-1 border-b border-gray-400 focus:border-black dark:focus:border-white focus:outline-none"
-            type="text"
-            name="nickname"
-            placeholder="Display name"
-            required
-          />
-        </div>
-        <div className="mt-6 flex gap-2 items-center">
-          <button
-            type="submit"
-            disabled={isPending}
-            className="py-2 px-4 rounded-md bg-blue-500 cursor-pointer disabled:cursor-progress disabled"
-          >
-            {isPending ? 'Signing up...' : 'Sign up'}
-          </button>
-          {actionData && (
-            <div className="text-red-600">{actionData.errorMessage}</div>
-          )}
-        </div>
-        <div className="mt-2">
-          <Link className="underline" to={href('/login')}>
-            Already have an account? Please sign in!
-          </Link>
-        </div>
-      </div>
-    </Form>
+      </Form>
+    </Container>
   );
 }

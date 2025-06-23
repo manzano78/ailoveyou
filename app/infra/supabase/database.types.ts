@@ -11,30 +11,77 @@ export type Database = {
     Tables: {
       USER: {
         Row: {
+          age: number | null;
           created_at: string;
+          gender: string | null;
+          gender_search: string | null;
           id: string;
           is_complete: boolean;
+          location: string | null;
           nickname: string;
           password: string;
           username: string;
         };
         Insert: {
+          age?: number | null;
           created_at?: string;
+          gender?: string | null;
+          gender_search?: string | null;
           id?: string;
           is_complete?: boolean;
+          location?: string | null;
           nickname: string;
           password: string;
           username: string;
         };
         Update: {
+          age?: number | null;
           created_at?: string;
+          gender?: string | null;
+          gender_search?: string | null;
           id?: string;
           is_complete?: boolean;
+          location?: string | null;
           nickname?: string;
           password?: string;
           username?: string;
         };
         Relationships: [];
+      };
+      USER_PC_QUESTION_ANSWER: {
+        Row: {
+          bot_question: string;
+          created_at: string;
+          id: string;
+          user_answer_audio: string | null;
+          user_answer_text: string;
+          user_id: string;
+        };
+        Insert: {
+          bot_question: string;
+          created_at?: string;
+          id?: string;
+          user_answer_audio?: string | null;
+          user_answer_text: string;
+          user_id?: string;
+        };
+        Update: {
+          bot_question?: string;
+          created_at?: string;
+          id?: string;
+          user_answer_audio?: string | null;
+          user_answer_text?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'USER_PC_QUESTION_ANSWER_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'USER';
+            referencedColumns: ['id'];
+          },
+        ];
       };
     };
     Views: {

@@ -1,0 +1,199 @@
+/* Floating Dots Animation */
+.floating-dot {
+  position: absolute;
+  border-radius: 50%;
+  animation: float-drift 8s ease-in-out infinite;
+}
+
+.floating-dot-orange {
+  width: 12px;
+  height: 12px;
+  background: linear-gradient(135deg, #f97316, #ea580c);
+  box-shadow: 0 0 20px rgba(249, 115, 22, 0.3);
+}
+
+.floating-dot-gray {
+  width: 8px;
+  height: 8px;
+  background: linear-gradient(135deg, #6b7280, #4b5563);
+  box-shadow: 0 0 15px rgba(107, 114, 128, 0.2);
+}
+
+@keyframes float-drift {
+  0%,
+  100% {
+    transform: translateY(0px) translateX(0px) rotate(0deg);
+    opacity: 0.7;
+  }
+  25% {
+    transform: translateY(-30px) translateX(20px) rotate(90deg);
+    opacity: 1;
+  }
+  50% {
+    transform: translateY(-10px) translateX(-15px) rotate(180deg);
+    opacity: 0.8;
+  }
+  75% {
+    transform: translateY(-40px) translateX(10px) rotate(270deg);
+    opacity: 0.9;
+  }
+}
+
+/* Connection Lines Animation */
+.connection-lines {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.connection-path {
+  stroke-dasharray: 5, 10;
+  stroke-dashoffset: 0;
+  animation: connection-flow 4s linear infinite;
+  opacity: 0.6;
+}
+
+@keyframes connection-flow {
+  0% {
+    stroke-dashoffset: 0;
+    opacity: 0.3;
+  }
+  50% {
+    stroke-dashoffset: -100;
+    opacity: 0.8;
+  }
+  100% {
+    stroke-dashoffset: -200;
+    opacity: 0.3;
+  }
+}
+
+/* Central Swirl Animation */
+.swirl-container {
+  position: relative;
+  width: 200px;
+  height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.swirl-element {
+  position: absolute;
+  border-radius: 50%;
+  border: 2px solid;
+  animation: swirl-rotate 3s linear infinite;
+}
+
+.swirl-1 {
+  width: 100px;
+  height: 100px;
+  border-color: #8b5cf6;
+  opacity: 0.8;
+  animation-duration: 3s;
+}
+
+.swirl-2 {
+  width: 140px;
+  height: 140px;
+  border-color: #a855f7;
+  opacity: 0.6;
+  animation-duration: 4s;
+  animation-direction: reverse;
+}
+
+.swirl-3 {
+  width: 180px;
+  height: 180px;
+  border-color: #c084fc;
+  opacity: 0.4;
+  animation-duration: 5s;
+}
+
+@keyframes swirl-rotate {
+  0% {
+    transform: rotate(0deg) scale(1);
+    border-width: 2px;
+  }
+  50% {
+    transform: rotate(180deg) scale(1.1);
+    border-width: 1px;
+  }
+  100% {
+    transform: rotate(360deg) scale(1);
+    border-width: 2px;
+  }
+}
+
+/* Additional swirl effects with different patterns */
+.swirl-1::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: 50%;
+  width: 4px;
+  height: 4px;
+  background: #8b5cf6;
+  border-radius: 50%;
+  transform: translateX(-50%);
+  box-shadow: 0 0 10px #8b5cf6;
+}
+
+.swirl-2::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  right: -2px;
+  width: 3px;
+  height: 3px;
+  background: #a855f7;
+  border-radius: 50%;
+  transform: translateY(-50%);
+  box-shadow: 0 0 8px #a855f7;
+}
+
+.swirl-3::before {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 25%;
+  width: 2px;
+  height: 2px;
+  background: #c084fc;
+  border-radius: 50%;
+  box-shadow: 0 0 6px #c084fc;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .swirl-container {
+    width: 150px;
+    height: 150px;
+  }
+
+  .swirl-1 {
+    width: 75px;
+    height: 75px;
+  }
+
+  .swirl-2 {
+    width: 105px;
+    height: 105px;
+  }
+
+  .swirl-3 {
+    width: 135px;
+    height: 135px;
+  }
+
+  .floating-dot-orange {
+    width: 10px;
+    height: 10px;
+  }
+
+  .floating-dot-gray {
+    width: 6px;
+    height: 6px;
+  }
+}
