@@ -1,22 +1,21 @@
 import { openAI } from '~/infra/openai/client';
 import { eventStream } from 'remix-utils/sse/server';
 
+export type Messages = Parameters<
+  typeof openAI.chat.completions.create
+>[0]['messages'];
+
 export async function textPrompt({
-  input,
-  instructions,
+  messages,
   abortSignal,
 }: {
-  instructions: string;
-  input: string;
+  messages: Messages;
   abortSignal: AbortSignal;
 }): Promise<Response> {
   const stream = await openAI.chat.completions.create({
     model: 'gpt-4o',
     stream: true,
-    messages: [
-      { role: 'developer', content: instructions },
-      { role: 'user', content: input },
-    ],
+    messages,
   });
 
   return eventStream(abortSignal, (send) => {
@@ -29,7 +28,7 @@ export async function textPrompt({
         }
       }
 
-      send({ event: 'complete', data: '' });
+      send({ data: '[DONE]' });
     })();
 
     return () => {};

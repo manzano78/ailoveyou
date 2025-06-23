@@ -17,7 +17,10 @@ export default [
     ...prefix('profile-capture', [
       route('base-info', 'routes/private/profile-capture/base-info.tsx'),
       route('conversation', 'routes/private/profile-capture/conversation.tsx'),
-      route('add-message', 'routes/private/profile-capture/add-message.tsx'),
+      route(
+        'api/conversation-message',
+        'routes/private/profile-capture/api-conversation-message.tsx',
+      ),
     ]),
   ]),
 ] satisfies RouteConfig;

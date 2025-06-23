@@ -9,64 +9,6 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      PC_CONVERSATION: {
-        Row: {
-          id: string;
-          user_id: string;
-        };
-        Insert: {
-          id?: string;
-          user_id?: string;
-        };
-        Update: {
-          id?: string;
-          user_id?: string;
-        };
-        Relationships: [
-          {
-            foreignKeyName: 'PC_CONVERSATION_user_id_fkey';
-            columns: ['user_id'];
-            isOneToOne: true;
-            referencedRelation: 'USER';
-            referencedColumns: ['id'];
-          },
-        ];
-      };
-      PC_CONVERSATION_MESSAGE: {
-        Row: {
-          audio: string | null;
-          created_at: string;
-          id: string;
-          is_author_bot: boolean;
-          pc_conversation_id: string;
-          text: string;
-        };
-        Insert: {
-          audio?: string | null;
-          created_at?: string;
-          id?: string;
-          is_author_bot: boolean;
-          pc_conversation_id: string;
-          text: string;
-        };
-        Update: {
-          audio?: string | null;
-          created_at?: string;
-          id?: string;
-          is_author_bot?: boolean;
-          pc_conversation_id?: string;
-          text?: string;
-        };
-        Relationships: [
-          {
-            foreignKeyName: 'PC_CONVERSATION_MESSAGE_pc_conversation_id_fkey';
-            columns: ['pc_conversation_id'];
-            isOneToOne: false;
-            referencedRelation: 'PC_CONVERSATION';
-            referencedColumns: ['id'];
-          },
-        ];
-      };
       USER: {
         Row: {
           created_at: string;
@@ -93,6 +35,41 @@ export type Database = {
           username?: string;
         };
         Relationships: [];
+      };
+      USER_PC_QUESTION_ANSWER: {
+        Row: {
+          bot_question: string;
+          created_at: string;
+          id: string;
+          user_answer_audio: string;
+          user_answer_text: string;
+          user_id: string;
+        };
+        Insert: {
+          bot_question: string;
+          created_at?: string;
+          id?: string;
+          user_answer_audio: string;
+          user_answer_text: string;
+          user_id?: string;
+        };
+        Update: {
+          bot_question?: string;
+          created_at?: string;
+          id?: string;
+          user_answer_audio?: string;
+          user_answer_text?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'USER_PC_QUESTION_ANSWER_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'USER';
+            referencedColumns: ['id'];
+          },
+        ];
       };
     };
     Views: {

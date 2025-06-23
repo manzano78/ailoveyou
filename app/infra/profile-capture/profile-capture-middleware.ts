@@ -4,6 +4,7 @@ import { getSessionUser } from '~/infra/session';
 const excludedPathNames: string[] = [
   href('/profile-capture/base-info'),
   href('/profile-capture/conversation'),
+  href('/profile-capture/api/conversation-message'),
   href('/logout'),
 ];
 
