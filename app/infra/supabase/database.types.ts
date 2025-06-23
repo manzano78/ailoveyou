@@ -11,25 +11,37 @@ export type Database = {
     Tables: {
       USER: {
         Row: {
+          age: number | null;
           created_at: string;
+          gender: string | null;
+          gender_search: string | null;
           id: string;
           is_complete: boolean;
+          location: string | null;
           nickname: string;
           password: string;
           username: string;
         };
         Insert: {
+          age?: number | null;
           created_at?: string;
+          gender?: string | null;
+          gender_search?: string | null;
           id?: string;
           is_complete?: boolean;
+          location?: string | null;
           nickname: string;
           password: string;
           username: string;
         };
         Update: {
+          age?: number | null;
           created_at?: string;
+          gender?: string | null;
+          gender_search?: string | null;
           id?: string;
           is_complete?: boolean;
+          location?: string | null;
           nickname?: string;
           password?: string;
           username?: string;
