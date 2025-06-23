@@ -1,12 +1,25 @@
 import React from 'react';
+import './wave-form.css';
 
-export const Waveform = () => (
-  <div className="waveform">
+interface WaveformProps {
+  isPlaying?: boolean;
+}
+
+export const Waveform = ({ isPlaying = true }: WaveformProps) => (
+  <div
+    className="waveform"
+    style={{
+      animationPlayState: isPlaying ? 'running' : 'paused',
+    }}
+  >
     {[...Array(12)].map((_, i) => (
       <div
         key={i}
         className="wave-bar"
-        style={{ animationDelay: `${i * 0.1}s` }}
+        style={{
+          animationDelay: `${i * 0.1}s`,
+          animationPlayState: isPlaying ? 'running' : 'paused',
+        }}
       ></div>
     ))}
   </div>

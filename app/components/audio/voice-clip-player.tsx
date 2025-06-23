@@ -1,6 +1,7 @@
 import { useRef, useEffect, useState } from 'react';
 import clsx from 'clsx';
 import { Spinner } from '~/components/spinner/spinner';
+import { Waveform } from '~/modules/profile-capture/components/conversation/wave-form';
 
 interface VoiceClipPlayerProps {
   audioUrl: string;
@@ -9,6 +10,8 @@ interface VoiceClipPlayerProps {
   onPause: () => void;
   progress: number; // 0-100
   size?: 'small' | 'medium' | 'large';
+  simulatePlayback?: boolean; // New prop to enable simulation
+  simulationDuration?: number; // Duration in milliseconds (default 5000ms)
 }
 
 export function VoiceClipPlayer({
@@ -18,10 +21,14 @@ export function VoiceClipPlayer({
   onPause,
   progress,
   size = 'medium',
+  simulatePlayback = true, // Default to true for testing
+  simulationDuration = 5000, // 5 seconds default
 }: VoiceClipPlayerProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
+  const [simulatedProgress, setSimulatedProgress] = useState(0);
   const audioRef = useRef<HTMLAudioElement>(null);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const sizeClasses = {
     small: 'w-16 h-16',
@@ -35,7 +42,23 @@ export function VoiceClipPlayer({
     large: 'w-10 h-10',
   };
 
+  // Simulate loading for testing
   useEffect(() => {
+    if (simulatePlayback) {
+      setIsLoading(true);
+      const loadTimeout = setTimeout(() => {
+        setIsLoading(false);
+        setIsLoaded(true);
+      }, 1000); // Simulate 1 second loading time
+
+      return () => clearTimeout(loadTimeout);
+    }
+  }, [simulatePlayback]);
+
+  // Real audio loading (when not simulating)
+  useEffect(() => {
+    if (simulatePlayback) return;
+
     const audio = audioRef.current;
     if (!audio) return;
 
@@ -58,7 +81,53 @@ export function VoiceClipPlayer({
       audio.removeEventListener('canplay', handleCanPlay);
       audio.removeEventListener('error', handleError);
     };
-  }, [audioUrl]);
+  }, [audioUrl, simulatePlayback]);
+
+  // Simulate playback progress
+  useEffect(() => {
+    if (!simulatePlayback || !isPlaying) {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+      return;
+    }
+
+    // Start progress simulation
+    const startTime = Date.now();
+    intervalRef.current = setInterval(() => {
+      const elapsed = Date.now() - startTime;
+      const progressPercent = Math.min(
+        (elapsed / simulationDuration) * 100,
+        100,
+      );
+
+      setSimulatedProgress(progressPercent);
+
+      // Auto-pause when complete
+      if (progressPercent >= 100) {
+        onPause();
+        setTimeout(() => setSimulatedProgress(0), 500); // Reset after short delay
+      }
+    }, 50); // Update every 50ms for smooth animation
+
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+    };
+  }, [isPlaying, simulatePlayback, simulationDuration, onPause]);
+
+  // Reset simulated progress when not playing
+  useEffect(() => {
+    if (!isPlaying && simulatePlayback) {
+      const resetTimeout = setTimeout(() => {
+        setSimulatedProgress(0);
+      }, 300);
+      return () => clearTimeout(resetTimeout);
+    }
+  }, [isPlaying, simulatePlayback]);
 
   const handleClick = () => {
     if (isLoading || !isLoaded) return;
@@ -70,12 +139,16 @@ export function VoiceClipPlayer({
     }
   };
 
+  // Use simulated progress when simulating, otherwise use prop
+  const currentProgress = simulatePlayback ? simulatedProgress : progress;
   const circumference = 2 * Math.PI * 45; // radius of 45 for the progress circle
-  const strokeDasharray = `${(progress / 100) * circumference} ${circumference}`;
+  const strokeDasharray = `${(currentProgress / 100) * circumference} ${circumference}`;
 
   return (
     <div className="relative">
-      <audio ref={audioRef} src={audioUrl} preload="metadata" />
+      {!simulatePlayback && (
+        <audio ref={audioRef} src={audioUrl} preload="metadata" />
+      )}
 
       {/* Progress Ring */}
       <svg
@@ -105,7 +178,7 @@ export function VoiceClipPlayer({
         />
       </svg>
 
-      {/* Play/Pause Button */}
+      {/* Play/Pause Button with Waveform */}
       <button
         onClick={handleClick}
         disabled={isLoading}
@@ -118,23 +191,35 @@ export function VoiceClipPlayer({
           <Spinner size="small" />
         ) : (
           <>
-            {isPlaying ? (
-              // Pause icon
-              <div className={clsx('flex gap-1', iconSizeClasses[size])}>
-                <div
-                  className="w-1 bg-white rounded-full"
-                  style={{ height: '60%' }}
-                />
-                <div
-                  className="w-1 bg-white rounded-full"
-                  style={{ height: '60%' }}
-                />
+            {/* Waveform - always visible */}
+            <div
+              className={clsx(
+                'absolute inset-0 flex items-center justify-center transition-opacity duration-300 pointer-events-none',
+                isPlaying ? 'opacity-100' : 'opacity-30',
+              )}
+            >
+              <div
+                className="waveform-override"
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '2px',
+                  height: 'auto',
+                  margin: '0',
+                  opacity: '1',
+                  animation: 'none',
+                }}
+              >
+                <Waveform isPlaying={isPlaying} />
               </div>
-            ) : (
-              // Play icon
+            </div>
+
+            {/* Play Icon - only visible when not playing */}
+            {!isPlaying && (
               <div
                 className={clsx(
-                  'border-l-8 border-l-white border-t-4 border-t-transparent border-b-4 border-b-transparent ml-1',
+                  'relative z-10 border-l-8 border-l-white border-t-4 border-t-transparent border-b-4 border-b-transparent ml-1',
                   {
                     'border-l-[6px] border-t-[3px] border-b-[3px]':
                       size === 'small',

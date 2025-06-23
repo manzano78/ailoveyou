@@ -79,35 +79,37 @@ export default function MatchPage() {
 
   return (
     <div className="min-h-screen bg-gray-900 text-white">
-      <div className="container mx-auto px-4 py-8 max-w-4xl">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 max-w-4xl">
         {/* Header */}
-        <div className="text-center mb-12">
-          <h1 className="text-2xl font-light mb-2 text-gray-300">Match</h1>
-          <h2 className="text-4xl font-medium">{matchUser.username}</h2>
+        <div className="text-center mb-8 sm:mb-12">
+          <h2 className="text-2xl sm:text-4xl font-medium">
+            {matchUser.username}
+          </h2>
         </div>
 
         {/* Voice Clips Row */}
-        <div className="flex justify-center gap-8 mb-16">
+        <div className="flex flex-row flex-wrap justify-center items-center content-end gap-4 sm:gap-8 mb-12 sm:mb-16 rotate-180 max-w-[300px] mx-auto">
           {voiceClips.slice(0, 3).map((clip: AudioClip, index: number) => (
-            <VoiceClipPlayer
-              key={clip.id}
-              audioUrl={clip.url}
-              isPlaying={playingClip === clip.id}
-              onPlay={() => handlePlay(clip.id)}
-              onPause={handlePause}
-              progress={getProgress(clip.id)}
-              size="large"
-            />
+            <div key={clip.id} className="-rotate-180">
+              <VoiceClipPlayer
+                audioUrl={clip.url}
+                isPlaying={playingClip === clip.id}
+                onPlay={() => handlePlay(clip.id)}
+                onPause={handlePause}
+                progress={getProgress(clip.id)}
+                size="medium"
+              />
+            </div>
           ))}
         </div>
 
         {/* Personality Traits */}
-        <div className="mb-16">
+        <div className="mb-12 sm:mb-16">
           <PersonalityTraits traits={personalityTraits} />
         </div>
 
         {/* Ice Breaker Section */}
-        <div className="mb-8">
+        <div className="mb-6 sm:mb-8">
           <IceBreaker
             question={iceBreaker.question}
             answers={iceBreaker.answers}
