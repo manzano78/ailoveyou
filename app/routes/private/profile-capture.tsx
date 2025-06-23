@@ -1,6 +1,6 @@
 import React from 'react';
-import { ProfileCapture } from '~/modules/profile-capture/components/profile-capture';
+import { Conversation } from '~/modules/profile-capture/components/conversation/conversation';
 
 export default function ProfileCaptureRoute() {
-  return <ProfileCapture />;
+  return <Conversation />;
 }

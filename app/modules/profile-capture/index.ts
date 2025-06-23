@@ -1,1 +1,1 @@
-export { ProfileCapture } from './components/profile-capture';
+export { Conversation } from './components/conversation/conversation';

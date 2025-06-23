@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { MicIcon } from '~/modules/profile-capture/components/mic-icon';
+import { MicIcon } from '~/modules/profile-capture/components/conversation/mic-icon';
 
 export const VoiceVisualizer = () => (
   <div className="voice-visualizer">

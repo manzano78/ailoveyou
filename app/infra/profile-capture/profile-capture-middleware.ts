@@ -1,7 +1,11 @@
 import { href, redirect, type unstable_MiddlewareFunction } from 'react-router';
 import { getSessionUser } from '~/infra/session';
 
-const excludedPathNames: string[] = [href('/profile-capture'), href('/logout')];
+const excludedPathNames: string[] = [
+  href('/profile-capture/base-info'),
+  href('/profile-capture/conversation'),
+  href('/logout'),
+];
 
 export const profileCaptureMiddleware: unstable_MiddlewareFunction = ({
   request,
@@ -12,6 +16,6 @@ export const profileCaptureMiddleware: unstable_MiddlewareFunction = ({
   );
 
   if (!getSessionUser().isProfileCaptureComplete && !isExcludedPathName) {
-    throw redirect(href('/profile-capture'));
+    throw redirect(href('/profile-capture/base-info'));
   }
 };
