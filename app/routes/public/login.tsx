@@ -4,6 +4,11 @@ import bcrypt from 'bcryptjs';
 import { supabaseClient } from '~/infra/supabase';
 import { getSession } from '~/infra/session';
 import { useEffect } from 'react';
+import { Container } from '~/components/container';
+import { Header } from '~/components/header';
+import { Button } from '~/components/button/button';
+
+import './login.css';
 
 export async function action({ request }: Route.LoaderArgs) {
   const formData = await request.formData();
@@ -59,47 +64,45 @@ export default function LoginPage({ actionData }: Route.ComponentProps) {
   }, [navigation]);
 
   return (
-    <Form method="post" className="p-4">
-      <title>Sign in</title>
-      <div className="font-bold text-2xl">Please, sign in!</div>
-      <div className="mt-4">
-        <div className="mb-3">
-          <input
-            className="p-1 border-b border-gray-400 focus:border-black dark:focus:border-white focus:outline-none"
-            type="text"
-            name="username"
-            placeholder="Username"
-            autoFocus
-            required
-          />
+    <Container>
+      <Form method="post" className="p-4">
+        <Header>Sign in</Header>
+        <Header type="h2">Please, sign in!</Header>
+        <div className="mt-4">
+          <div className="mb-3">
+            <input
+              className="p-1 border-b border-gray-400 focus:border-black dark:focus:border-white focus:outline-none w-full"
+              type="text"
+              name="username"
+              placeholder="Username"
+              autoFocus
+              required
+            />
+          </div>
+          <div className="mb-3">
+            <input
+              className="p-1 border-b border-gray-400 focus:border-black dark:focus:border-white focus:outline-none w-full"
+              type="password"
+              name="password"
+              placeholder="Password"
+              required
+            />
+          </div>
+          <div className="mt-6 flex gap-2 items-center">
+            <Button type="submit" disabled={isPending}>
+              {isPending ? 'Signing in...' : 'Sign in'}
+            </Button>
+            {actionData && (
+              <div className="text-red-600">{actionData.errorMessage}</div>
+            )}
+          </div>
+          <div className="mt-2 pt-2">
+            <Link className="underline" to={href('/register')}>
+              No account yet? Please sign up!
+            </Link>
+          </div>
         </div>
-        <div className="mb-3">
-          <input
-            className="p-1 border-b border-gray-400 focus:border-black dark:focus:border-white focus:outline-none"
-            type="password"
-            name="password"
-            placeholder="Password"
-            required
-          />
-        </div>
-        <div className="mt-6 flex gap-2 items-center">
-          <button
-            type="submit"
-            disabled={isPending}
-            className="py-2 px-4 rounded-md bg-blue-500 cursor-pointer disabled:cursor-progress disabled"
-          >
-            {isPending ? 'Signing in...' : 'Sign in'}
-          </button>
-          {actionData && (
-            <div className="text-red-600">{actionData.errorMessage}</div>
-          )}
-        </div>
-        <div className="mt-2">
-          <Link className="underline" to={href('/register')}>
-            No account yet? Please sign up!
-          </Link>
-        </div>
-      </div>
-    </Form>
+      </Form>
+    </Container>
   );
 }

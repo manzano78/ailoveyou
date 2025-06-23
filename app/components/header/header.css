@@ -1,0 +1,14 @@
+.resonance-text {
+  font-size: 36px;
+  font-weight: 200;
+  background: linear-gradient(135deg, #667eea 0%, #ec4899 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.match-title {
+  font-size: 20px;
+  color: #888;
+  margin-bottom: 10px;
+  letter-spacing: 1px;
+}
