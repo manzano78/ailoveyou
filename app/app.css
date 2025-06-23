@@ -14,3 +14,16 @@ body {
     color-scheme: dark;
   }
 }
+
+/* Custom utilities for Resonance Match Interface */
+.bg-gradient-purple {
+  background: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%);
+}
+
+.text-gradient-purple {
+  @apply bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent;
+}
+
+.button-gradient {
+  @apply bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 transition-all duration-300;
+}

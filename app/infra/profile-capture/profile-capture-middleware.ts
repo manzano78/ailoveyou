@@ -16,6 +16,6 @@ export const profileCaptureMiddleware: unstable_MiddlewareFunction = ({
   );
 
   if (!getSessionUser().isProfileCaptureComplete && !isExcludedPathName) {
-    throw redirect(href('/profile-capture/base-info'));
+    // throw redirect(href('/profile-capture/base-info'));
   }
 };

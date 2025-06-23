@@ -13,6 +13,8 @@ export default [
   layout('routes/private-layout.tsx', [
     index('routes/private/home.tsx'),
     route('logout', 'routes/private/logout.tsx'),
+    route('match/:userId', 'routes/private/match.tsx'),
+    route('resonance/discovery', 'routes/private/resonance-discovery.tsx'),
     route(
       'profile-capture/base-info',
       'routes/private/profile-capture/base-info.tsx',
