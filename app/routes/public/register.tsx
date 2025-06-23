@@ -53,7 +53,7 @@ export async function action({ request }: Route.LoaderArgs) {
       isProfileCaptureComplete: false,
     });
 
-    return redirect(href('/'));
+    return redirect(href('/profile-capture'));
   }
 
   return data(
