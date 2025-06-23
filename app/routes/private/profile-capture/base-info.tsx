@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Form, useNavigation } from 'react-router';
+import { Form, href, redirect, useNavigation } from 'react-router';
 import { Button } from '~/components/button/button';
 import { Container } from '~/components/container';
 import { Header } from '~/components/header';
@@ -12,7 +12,7 @@ export async function action({ request }: Route.LoaderArgs) {
   const gender = formData.get('gender');
   const genderSearch = formData.get('genderSearch');
 
-  console.log(age, location, gender, genderSearch);
+  return redirect(href('/profile-capture/conversation'));
 }
 
 const UserRegistrationScreen = () => {
@@ -28,7 +28,7 @@ const UserRegistrationScreen = () => {
           Help us find the perfect matches by completing your profile.
         </Header>
 
-        <Form className="flex flex-col gap-5">
+        <Form className="flex flex-col gap-5" method="post">
           {/* Age Input */}
           <div>
             <input
