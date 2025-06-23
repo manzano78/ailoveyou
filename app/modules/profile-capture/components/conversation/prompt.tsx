@@ -1,11 +1,11 @@
-import { useConversation } from '~/modules/profile-capture/hooks/useConversation';
+interface PromptProps {
+  value: string;
+}
 
-export const Prompt = () => {
-  const { botQuestion } = useConversation();
-
+export const Prompt = ({ value }: PromptProps) => {
   return (
     <div className="prompt">
-      <p className="prompt-text">{botQuestion || '...'}</p>
+      <p className="prompt-text">{value || '...'}</p>
     </div>
   );
 };

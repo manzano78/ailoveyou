@@ -2,8 +2,10 @@ import { href, useFetcher } from 'react-router';
 import { useEffect, useRef, useState } from 'react';
 
 export function useConversation() {
-  const postUserResponseFetcher = useFetcher();
+  const { submit, state } = useFetcher();
   const [botQuestion, setBotQuestion] = useState('');
+  const [isUsersTurn, setIsUsersTurn] = useState(false);
+  const isPostingUsersAnswer = state === 'submitting';
 
   const getNextQuestionRef = useRef(() => {
     setBotQuestion('');
@@ -16,6 +18,7 @@ export function useConversation() {
 
       if (nextMessage === '[DONE]') {
         sse.close();
+        setIsUsersTurn(true);
       } else {
         setBotQuestion((prevBotMessage) => `${prevBotMessage}${nextMessage}`);
       }
@@ -31,7 +34,33 @@ export function useConversation() {
     getNextQuestionRef.current();
   }, []);
 
+  const postUsersAnswer = async (audioPrompt: Blob) => {
+    setBotQuestion('');
+    setIsUsersTurn(false);
+
+    const formData = new FormData();
+
+    formData.set('audio-prompt', audioPrompt);
+    formData.set('bot-question', botQuestion);
+
+    await submit(formData, {
+      method: 'post',
+      encType: 'multipart/form-data',
+      action: href('/profile-capture/api/conversation-message'),
+    });
+
+    getNextQuestionRef.current();
+  };
+
+  const stopRecording = () => {
+    setIsUsersTurn(false);
+  };
+
   return {
+    isUsersTurn,
     botQuestion,
+    postUsersAnswer,
+    isPostingUsersAnswer,
+    stopRecording,
   };
 }

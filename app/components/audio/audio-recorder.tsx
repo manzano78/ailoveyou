@@ -82,50 +82,6 @@ export function AudioRecorder({ onEnd, completeNode }: AudioRecorderProps) {
       const analyser = audioContextRef.current.createAnalyser();
       analyser.fftSize = 2048;
       source.connect(analyser);
-      const dataArray = new Uint8Array(analyser.frequencyBinCount);
-
-      // We now have access to the micro
-      const { current: canvas } = canvasElementRef;
-      const ctx = canvas?.getContext('2d');
-
-      if (!canvas || !ctx) {
-        return;
-      }
-
-      // ---- WAVE DRAWING ----
-      const drawWaveform = () => {
-        console.log(canvas.width);
-        analyser.getByteTimeDomainData(dataArray);
-
-        ctx.fillStyle = 'black';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-        ctx.lineWidth = 2;
-        ctx.strokeStyle = '#00ff00';
-        ctx.beginPath();
-
-        const bufferLength = dataArray.length;
-        const sliceWidth = canvas.width / bufferLength;
-
-        for (let i = 0; i < bufferLength; i++) {
-          const x = i * sliceWidth;
-          const v = dataArray[i] / 128.0;
-          const y = (v * canvas.height) / 2;
-
-          if (i === 0) {
-            ctx.moveTo(x, y);
-          } else {
-            ctx.lineTo(x, y);
-          }
-        }
-
-        ctx.lineTo(canvas.width, canvas.height / 2);
-        ctx.stroke();
-
-        animationIdRef.current = requestAnimationFrame(drawWaveform);
-      };
-
-      drawWaveform();
     } catch (error) {
       if (isUnmountedRef.current) {
         return;
@@ -152,10 +108,6 @@ export function AudioRecorder({ onEnd, completeNode }: AudioRecorderProps) {
 
   return (
     <div>
-      <canvas
-        ref={canvasElementRef}
-        className={clsx({ hidden: status !== 'recording' })}
-      />
       {status === 'idle' && (
         <button onClick={handleStartRecording}>Start</button>
       )}

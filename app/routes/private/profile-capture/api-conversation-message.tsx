@@ -1,5 +1,4 @@
 import type { Route } from './+types/api-conversation-message';
-import { parseFormData } from '@mjackson/form-data-parser';
 import { supabaseClient } from '~/infra/supabase';
 import { getSessionUser } from '~/infra/session';
 import { textPrompt } from '~/infra/openai';
