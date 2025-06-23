@@ -115,7 +115,7 @@ export default function RegisterRoute({ actionData }: Route.ComponentProps) {
             />
           </div>
           <div className="mt-6 flex gap-2 items-center">
-            <Button type="submit" disabled={isPending}>
+            <Button type="submit" disabled={isPending} className="w-full">
               {isPending ? 'Signing up...' : 'Sign up'}
             </Button>
             {actionData && (
