@@ -1,4 +1,4 @@
-import { href, redirect } from 'react-router';
+import { href, redirect, type unstable_MiddlewareFunction } from 'react-router';
 import { destroySession, getSession } from '~/infra/session';
 
 const areaConfigurations = {
@@ -12,7 +12,9 @@ const areaConfigurations = {
   },
 } as const;
 
-export function createAuthMiddleware(area: 'private' | 'public') {
+export function createAuthMiddleware(
+  area: 'private' | 'public',
+): unstable_MiddlewareFunction {
   const { shouldHaveAuthenticatedUser, unmetConditionRedirection } =
     areaConfigurations[area];
 

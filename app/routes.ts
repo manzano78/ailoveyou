@@ -13,5 +13,6 @@ export default [
   layout('routes/private-layout.tsx', [
     index('routes/private/home.tsx'),
     route('logout', 'routes/private/logout.tsx'),
+    route('profile-capture', 'routes/private/profile-capture.tsx'),
   ]),
 ] satisfies RouteConfig;

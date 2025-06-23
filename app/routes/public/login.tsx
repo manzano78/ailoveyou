@@ -21,14 +21,21 @@ export async function action({ request }: Route.LoaderArgs) {
     }
 
     if (data.length) {
-      const [{ password: passwordHash, nickname, id }] = data;
+      const [
+        {
+          password: passwordHash,
+          nickname,
+          id,
+          is_complete: isProfileCaptureComplete,
+        },
+      ] = data;
       const isPasswordValid = await bcrypt.compare(
         password as string,
         passwordHash,
       );
 
       if (isPasswordValid) {
-        getSession().set('user', { nickname, id });
+        getSession().set('user', { nickname, id, isProfileCaptureComplete });
 
         return redirect(href('/'));
       }

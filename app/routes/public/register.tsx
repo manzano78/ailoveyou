@@ -50,6 +50,7 @@ export async function action({ request }: Route.LoaderArgs) {
     getSession().set('user', {
       id: insertedData[0].id,
       nickname: nickname as string,
+      isProfileCaptureComplete: false,
     });
 
     return redirect(href('/'));

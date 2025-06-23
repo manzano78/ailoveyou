@@ -13,6 +13,7 @@ export type Database = {
         Row: {
           created_at: string;
           id: string;
+          is_complete: boolean;
           nickname: string;
           password: string;
           username: string;
@@ -20,6 +21,7 @@ export type Database = {
         Insert: {
           created_at?: string;
           id?: string;
+          is_complete?: boolean;
           nickname: string;
           password: string;
           username: string;
@@ -27,6 +29,7 @@ export type Database = {
         Update: {
           created_at?: string;
           id?: string;
+          is_complete?: boolean;
           nickname?: string;
           password?: string;
           username?: string;
