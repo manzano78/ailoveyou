@@ -3,6 +3,7 @@ import {
   index,
   route,
   layout,
+  prefix,
 } from '@react-router/dev/routes';
 
 export default [
@@ -13,13 +14,10 @@ export default [
   layout('routes/private-layout.tsx', [
     index('routes/private/home.tsx'),
     route('logout', 'routes/private/logout.tsx'),
-    route(
-      'profile-capture/base-info',
-      'routes/private/profile-capture/base-info.tsx',
-    ),
-    route(
-      'profile-capture/conversation',
-      'routes/private/profile-capture/conversation.tsx',
-    ),
+    ...prefix('profile-capture', [
+      route('base-info', 'routes/private/profile-capture/base-info.tsx'),
+      route('conversation', 'routes/private/profile-capture/conversation.tsx'),
+      route('add-message', 'routes/private/profile-capture/add-message.tsx'),
+    ]),
   ]),
 ] satisfies RouteConfig;
