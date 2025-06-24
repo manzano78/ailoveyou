@@ -26,5 +26,6 @@ export default [
     route('match/:userId', 'routes/private/match.tsx'),
     route('discovery', 'routes/private/resonance-discovery.tsx'),
     route('profile-summary', 'routes/private/profile-summary.tsx'),
+    route('profile-summary-stream', 'routes/private/profile-summary-stream.ts'),
   ]),
 ] satisfies RouteConfig;
