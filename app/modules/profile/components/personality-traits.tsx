@@ -6,14 +6,14 @@ interface PersonalityTraitsProps {
 
 export function PersonalityTraits({ traits }: PersonalityTraitsProps) {
   const TraitItem = ({ trait }: { trait: PersonalityTrait }) => (
-    <div className="flex items-center gap-2 py-2">
+    <div className="flex items-center gap-2">
       <span className="text-2xl">{trait.emoji}</span>
       <span className="text-white text-base font-medium">{trait.label}</span>
     </div>
   );
 
   return (
-    <div className="grid grid-cols-2 grid-rows-3 gap-x-8 gap-y-2 justify-items-center">
+    <div className="grid grid-cols-2 grid-rows-3 gap-x-2 gap-y-2 max-w-[300px] mx-auto">
       {traits.map((trait) => (
         <TraitItem key={trait.id} trait={trait} />
       ))}

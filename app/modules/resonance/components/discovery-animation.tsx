@@ -34,7 +34,7 @@ export function DiscoveryAnimation({
   }, [duration, onDiscoveryComplete]);
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white relative overflow-hidden">
+    <div className="text-white relative overflow-hidden h-full">
       {/* Floating Dots */}
       <div className="absolute inset-0">
         {/* Orange dots */}
@@ -103,17 +103,17 @@ export function DiscoveryAnimation({
       </div>
 
       {/* Main Content */}
-      <div className="relative z-10 flex flex-col items-center justify-center min-h-screen p-4">
+      <div className="relative z-10 flex flex-col items-center justify-center h-full p-4">
         {!showResonanceFound ? (
           <>
             {/* Header */}
-            <div className="text-center mb-8">
-              <h1 className="text-6xl font-thin mb-4">Resonance</h1>
+            <div className="text-center mb-6">
+              <h1 className="text-5xl font-thin mb-3">Resonance</h1>
               <p className="text-gray-400 text-lg">Your agent is mingling...</p>
             </div>
 
             {/* Central Swirl */}
-            <div className="mb-16">
+            <div className="mb-12">
               <div className="swirl-container">
                 <div className="swirl-element swirl-1" />
                 <div className="swirl-element swirl-2" />
@@ -122,7 +122,7 @@ export function DiscoveryAnimation({
             </div>
 
             {/* Stats */}
-            <div className="space-y-4 text-center">
+            <div className="space-y-3 text-center">
               <div className="flex justify-between items-center w-64">
                 <span className="text-gray-400">Agents Met</span>
                 <span className="text-blue-400 text-2xl font-light">447</span>

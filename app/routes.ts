@@ -23,6 +23,6 @@ export default [
       ),
     ]),
     route('match/:userId', 'routes/private/match.tsx'),
-    route('resonance/discovery', 'routes/private/resonance-discovery.tsx'),
+    route('discovery', 'routes/private/resonance-discovery.tsx'),
   ]),
 ] satisfies RouteConfig;

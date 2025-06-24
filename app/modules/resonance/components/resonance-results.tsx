@@ -20,9 +20,9 @@ export function ResonanceResults({
   },
 }: ResonanceResultsProps) {
   return (
-    <div className="min-h-screen bg-gray-900 text-white flex flex-col items-center justify-center p-4">
+    <div className="text-white flex flex-col items-center justify-center p-4 h-full">
       {/* Header */}
-      <div className="text-center mb-8">
+      <div className="text-center mb-6">
         <p className="text-gray-400 text-sm uppercase tracking-wider mb-2">
           YOUR AGENTS DISCOVERED
         </p>
@@ -32,7 +32,7 @@ export function ResonanceResults({
       </div>
 
       {/* Avatar Icons */}
-      <div className="flex items-center justify-center gap-8 mb-12">
+      <div className="flex items-center justify-center gap-8 mb-8">
         <div className="w-20 h-20 rounded-full bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center text-2xl">
           {avatarIcons.left}
         </div>
@@ -46,17 +46,17 @@ export function ResonanceResults({
       </div>
 
       {/* Chemistry Score */}
-      <div className="text-center mb-12">
-        <p className="text-gray-400 text-sm uppercase tracking-wider mb-4">
+      <div className="text-center mb-8">
+        <p className="text-gray-400 text-sm uppercase tracking-wider mb-3">
           CHEMISTRY SCORE
         </p>
-        <div className="text-8xl font-light text-purple-400 mb-2">
+        <div className="text-7xl font-light text-purple-400 mb-2">
           {chemistryScore}%
         </div>
       </div>
 
       {/* Insights */}
-      <div className="space-y-4 mb-12 max-w-md w-full">
+      <div className="space-y-3 mb-8 max-w-md w-full">
         {insights.map((insight, index) => (
           <div key={index} className="flex items-center gap-4">
             <div className="w-10 h-10 rounded-full bg-purple-900/30 flex items-center justify-center flex-shrink-0">
@@ -89,7 +89,7 @@ export function ResonanceResults({
         onClick={onCreateIntroduction}
         className="px-8 py-4 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-medium rounded-2xl transition-all duration-300 transform hover:scale-105"
       >
-        Create Introduction
+        See profiles
       </button>
     </div>
   );

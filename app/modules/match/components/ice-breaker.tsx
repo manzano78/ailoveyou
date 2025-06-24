@@ -23,7 +23,7 @@ export function IceBreaker({
       </div>
 
       {/* Answer Buttons */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+      <div className="flex flex-col gap-4">
         {answers.slice(0, 3).map((answer, index) => (
           <button
             key={index}
