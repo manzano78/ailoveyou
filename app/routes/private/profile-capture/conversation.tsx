@@ -1,6 +1,7 @@
 import { Conversation } from '~/modules/profile-capture';
 import { loadConversation } from '~/modules/profile-capture/db-service';
 import type { Route } from './+types/conversation';
+import { Container } from '~/components/container';
 
 export async function loader() {
   const conversation = await loadConversation();
@@ -13,5 +14,9 @@ export async function loader() {
 export default function ProfileCaptureConversationStep({
   loaderData,
 }: Route.ComponentProps) {
-  return <Conversation conversationLength={loaderData.conversationLength} />;
+  return (
+    <Container>
+      <Conversation conversationLength={loaderData.conversationLength} />
+    </Container>
+  );
 }

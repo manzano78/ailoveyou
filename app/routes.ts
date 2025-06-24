@@ -27,5 +27,6 @@ export default [
     route('discovery', 'routes/private/resonance-discovery.tsx'),
     route('profile-summary', 'routes/private/profile-summary.tsx'),
     route('profile-summary-stream', 'routes/private/profile-summary-stream.ts'),
+    route('onboarding', 'routes/private/onboarding.tsx'),
   ]),
 ] satisfies RouteConfig;

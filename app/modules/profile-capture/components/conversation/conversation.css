@@ -54,9 +54,10 @@
 }
 
 .voice-button {
+  zoom: 0.8;
   position: relative;
   height: 200px;
-  margin: 40px 0;
+  margin: -40px 0 40px 0;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -187,7 +188,7 @@
 }
 
 .prompt-text {
-  font-size: 18px;
+  font-size: 14px;
   line-height: 1.5;
   color: #e0e0e0;
 }

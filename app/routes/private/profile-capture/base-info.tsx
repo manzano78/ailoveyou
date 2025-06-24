@@ -11,7 +11,7 @@ export async function action({ request }: Route.LoaderArgs) {
   const gender = formData.get('gender');
   const genderSearch = formData.get('genderSearch');
 
-  return redirect(href('/profile-capture/conversation'));
+  return redirect(href('/onboarding'));
 }
 
 const UserRegistrationScreen = () => {

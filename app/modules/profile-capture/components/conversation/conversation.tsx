@@ -37,15 +37,18 @@ export function Conversation({ conversationLength }: ConversationProps) {
   };
 
   return (
-    <div className="container">
-      <StatusIndicator />
+    <div>
       <Header />
       <RecordingController
         isRecording={isRecording}
         onStartRecording={startRecording}
         onStopRecording={handleStopRecording}
       />
-      {isRecording && <Waveform />}
+      {isRecording && (
+        <div style={{ zoom: '0.8', marginTop: '-40px' }}>
+          <Waveform />
+        </div>
+      )}
       <Prompt value={botQuestion} isFinished={isFinished} />
       {isUsersTurn && botQuestion && !isFinished && (
         <>
