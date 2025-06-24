@@ -2,33 +2,33 @@ import { useRef, useEffect, useState } from 'react';
 import clsx from 'clsx';
 import { Spinner } from '~/components/spinner/spinner';
 import { Waveform } from '~/modules/profile-capture/components/conversation/wave-form';
+import type { ProfileAudio } from '~/routes/private/match';
 
 interface VoiceClipPlayerProps {
-  audioUrl: string;
+  audio: ProfileAudio;
   isPlaying: boolean;
   onPlay: () => void;
   onPause: () => void;
   progress: number; // 0-100
   size?: 'small' | 'medium' | 'large';
   simulatePlayback?: boolean; // New prop to enable simulation
-  simulationDuration?: number; // Duration in milliseconds (default 5000ms)
 }
 
 export function VoiceClipPlayer({
-  audioUrl,
+  audio,
   isPlaying,
   onPlay,
   onPause,
   progress,
   size = 'medium',
   simulatePlayback = true, // Default to true for testing
-  simulationDuration = 5000, // 5 seconds default
 }: VoiceClipPlayerProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
   const [simulatedProgress, setSimulatedProgress] = useState(0);
   const audioRef = useRef<HTMLAudioElement>(null);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const [audioDuration, setAudioDuration] = useState(10000);
 
   const sizeClasses = {
     small: 'w-16 h-16',
@@ -49,7 +49,7 @@ export function VoiceClipPlayer({
       const loadTimeout = setTimeout(() => {
         setIsLoading(false);
         setIsLoaded(true);
-      }, 1000); // Simulate 1 second loading time
+      }, 500); // Simulate 1 second loading time
 
       return () => clearTimeout(loadTimeout);
     }
@@ -58,7 +58,6 @@ export function VoiceClipPlayer({
   // Real audio loading (when not simulating)
   useEffect(() => {
     if (simulatePlayback) return;
-
     const audio = audioRef.current;
     if (!audio) return;
 
@@ -81,7 +80,7 @@ export function VoiceClipPlayer({
       audio.removeEventListener('canplay', handleCanPlay);
       audio.removeEventListener('error', handleError);
     };
-  }, [audioUrl, simulatePlayback]);
+  }, [audio, simulatePlayback]);
 
   // Simulate playback progress
   useEffect(() => {
@@ -97,10 +96,7 @@ export function VoiceClipPlayer({
     const startTime = Date.now();
     intervalRef.current = setInterval(() => {
       const elapsed = Date.now() - startTime;
-      const progressPercent = Math.min(
-        (elapsed / simulationDuration) * 100,
-        100,
-      );
+      const progressPercent = Math.min((elapsed / audioDuration) * 100, 100);
 
       setSimulatedProgress(progressPercent);
 
@@ -117,7 +113,7 @@ export function VoiceClipPlayer({
         intervalRef.current = null;
       }
     };
-  }, [isPlaying, simulatePlayback, simulationDuration, onPause]);
+  }, [isPlaying, simulatePlayback, onPause]);
 
   // Reset simulated progress when not playing
   useEffect(() => {
@@ -146,10 +142,16 @@ export function VoiceClipPlayer({
 
   return (
     <div className="relative">
-      {!simulatePlayback && (
-        <audio ref={audioRef} src={audioUrl} preload="metadata" />
+      {isPlaying && (
+        <>
+          <audio
+            ref={audioRef}
+            src={audio.audioUrl}
+            preload="metadata"
+            autoPlay
+          />
+        </>
       )}
-
       {/* Progress Ring */}
       <svg
         className={clsx('absolute inset-0 -rotate-90', sizeClasses[size])}
@@ -177,7 +179,6 @@ export function VoiceClipPlayer({
           className="transition-all duration-300"
         />
       </svg>
-
       {/* Play/Pause Button with Waveform */}
       <button
         onClick={handleClick}

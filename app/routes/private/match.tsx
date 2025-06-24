@@ -9,47 +9,119 @@ import {
   IceBreaker,
   createMockIceBreaker,
 } from '~/modules/match/components/ice-breaker';
-import { MatchService } from '~/infra/match/match-service';
-import type { MatchUser, AudioClip } from '~/infra/match/types';
 import { Header } from '~/components/header';
-import type { Route } from './+types/match';
+import { ProfileService, type Profile } from '~/infra/profile';
+import { useLoaderData } from 'react-router';
+import { getKeywords } from '~/infra/openai/keywords';
+
+interface LoaderData {
+  userId: string;
+  profile: Profile;
+  profileAudios: ProfileAudio[];
+  personalityTraits: { word: string; emoji: string }[];
+  iceBreaker: any;
+}
+
+export interface ProfileAudio {
+  id: number;
+  raw: string;
+  audioUrl: string;
+}
+
+/**
+ * Converts a hexadecimal string representation of audio data into a Data URL
+ * suitable for an HTML <audio> element's src attribute.
+ *
+ * @param hexString The hexadecimal string representing the audio data (e.g., "\\x010203...").
+ * @param mimeType The MIME type of the audio (e.g., 'audio/mpeg' for MP3, 'audio/wav', 'audio/ogg').
+ * This is crucial for the browser to correctly interpret the audio format.
+ * @returns A Promise that resolves with the Data URL string.
+ */
+async function getAudioDataURLFromHexString(
+  hexString: string,
+  mimeType: string,
+): Promise<string> {
+  // Remove the initial '\x' if it's present, as well as any other non-hex characters for safety.
+  const cleanedHexString = hexString.startsWith('\\x')
+    ? hexString.substring(2)
+    : hexString;
+
+  if (cleanedHexString.length % 2 !== 0) {
+    throw new Error('Hex string length is not even. Invalid format.');
+  }
+
+  // Convert hexadecimal string to Uint8Array
+  const byteArray = new Uint8Array(cleanedHexString.length / 2);
+  for (let i = 0; i < cleanedHexString.length; i += 2) {
+    byteArray[i / 2] = parseInt(cleanedHexString.substring(i, i + 2), 16);
+  }
+
+  // Convert the Uint8Array to a binary string, then to Base64.
+  // This is a common and efficient way to prepare binary data for Base64 encoding.
+  let binaryString = '';
+  byteArray.forEach((byte: number) => {
+    binaryString += String.fromCharCode(byte);
+  });
+  const base64String = btoa(binaryString);
+
+  // Construct the Data URL
+  return `data:${mimeType};base64,${base64String}`;
+}
 
 export async function loader({ params }: { params: { userId: string } }) {
   const { userId } = params;
 
-  // Load match data (currently mock data)
-  const matches = await MatchService.findMatches(userId);
-  const voiceClips = await MatchService.getClipsForUser(userId);
+  if (!userId) {
+    throw new Response('User ID is required', { status: 400 });
+  }
+
+  const profile = await ProfileService.findProfile(userId);
+
+  const profileAudios: ProfileAudio[] =
+    profile.answer?.map((a, index) => ({
+      raw: a.user_answer_audio ? a.user_answer_audio : '',
+      audioUrl: '',
+      audioDuration: 0,
+      id: index,
+    })) || [];
+
+  await Promise.all(
+    profileAudios.map(async (pa) => {
+      pa.audioUrl = await getAudioDataURLFromHexString(pa.raw, 'audio/mpeg');
+    }),
+  );
+
+  const personalityTraits = await getKeywords(profile.transcript);
 
   return {
     userId,
-    matches,
-    voiceClips,
-    personalityTraits: createMockPersonalityTraits(),
+    profile,
+    profileAudios,
+    personalityTraits,
     iceBreaker: createMockIceBreaker(),
   };
 }
 
-export default function MatchPage({ loaderData }: Route.ComponentProps) {
-  const { userId, matches, voiceClips, personalityTraits, iceBreaker } =
-    loaderData;
-  const [playingClip, setPlayingClip] = useState<string | null>(null);
+export default function MatchPage() {
+  const { userId, profile, profileAudios, personalityTraits, iceBreaker } =
+    useLoaderData<LoaderData>();
+  const [playingClip, setPlayingClip] = useState<number>(-1);
   const [clipProgress, setClipProgress] = useState<Record<string, number>>({});
   const [selectedAnswer, setSelectedAnswer] = useState<string>();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   // Audio management
-  const handlePlay = (clipId: string) => {
+  const handlePlay = (clipId: number) => {
     setPlayingClip(clipId);
     // TODO: Implement actual audio playback logic
   };
 
   const handlePause = () => {
-    setPlayingClip(null);
+    setPlayingClip(-1);
     // TODO: Implement actual audio pause logic
   };
 
-  const getProgress = (clipId: string) => {
+  const getProgress = (clipId: number) => {
     return clipProgress[clipId] || 0;
   };
 
@@ -65,35 +137,24 @@ export default function MatchPage({ loaderData }: Route.ComponentProps) {
     setIsDrawerOpen(false);
   };
 
-  // Mock match user for display
-  const matchUser: MatchUser = matches[0] || {
-    id: userId,
-    username: 'Username',
-    nickname: 'Display Name',
-    voiceClips: voiceClips,
-    personalityTraits: personalityTraits,
-    chemistryScore: 87,
-    discoveryInsights: [],
-  };
-
   return (
     <Container className="p-0">
       <div className="text-white flex flex-col h-full relative overflow-hidden">
         {/* Header */}
         <div className="mb-4 flex justify-center mt-10">
-          <Header>{matchUser.username}</Header>
+          <Header>{profile.username}</Header>
         </div>
 
         {/* Voice Clips Row */}
         <div className="flex flex-row flex-wrap justify-center items-center content-end gap-4 mb-8 rotate-180 max-w-[300px] mx-auto">
-          {voiceClips.slice(0, 3).map((clip: AudioClip, index: number) => (
-            <div key={clip.id} className="-rotate-180">
+          {profileAudios.slice(0, 3).map((audio) => (
+            <div key={audio.id} className="-rotate-180">
               <VoiceClipPlayer
-                audioUrl={clip.url}
-                isPlaying={playingClip === clip.id}
-                onPlay={() => handlePlay(clip.id)}
+                audio={audio}
+                isPlaying={playingClip === audio.id}
+                onPlay={() => handlePlay(audio.id)}
                 onPause={handlePause}
-                progress={getProgress(clip.id)}
+                progress={getProgress(audio.id)}
                 size="medium"
               />
             </div>
