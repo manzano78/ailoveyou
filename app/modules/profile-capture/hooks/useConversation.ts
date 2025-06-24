@@ -1,11 +1,17 @@
 import { href, useFetcher } from 'react-router';
 import { useEffect, useRef, useState } from 'react';
 
-export function useConversation() {
+const MAX_CONVERSATION_LENGTH = 6;
+
+export function useConversation(conversationLength: number) {
   const { submit, state } = useFetcher();
   const [botQuestion, setBotQuestion] = useState('');
   const [isUsersTurn, setIsUsersTurn] = useState(false);
   const isPostingUsersAnswer = state === 'submitting';
+  const initialConversationLengthRef = useRef(conversationLength);
+  const isFinished = conversationLength >= MAX_CONVERSATION_LENGTH;
+
+  console.log({ conversationLength });
 
   const getNextQuestionRef = useRef(() => {
     setBotQuestion('');
@@ -29,7 +35,9 @@ export function useConversation() {
   });
 
   useEffect(() => {
-    getNextQuestionRef.current();
+    if (initialConversationLengthRef.current < MAX_CONVERSATION_LENGTH) {
+      getNextQuestionRef.current();
+    }
   }, []);
 
   const postUsersAnswer = async (audioPrompt: Blob) => {
@@ -60,5 +68,6 @@ export function useConversation() {
     postUsersAnswer,
     isPostingUsersAnswer,
     stopRecording,
+    isFinished,
   };
 }

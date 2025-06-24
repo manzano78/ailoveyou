@@ -1,8 +1,9 @@
 interface PromptProps {
   value: string;
+  isFinished: boolean;
 }
 
-export const Prompt = ({ value }: PromptProps) => {
+export const Prompt = ({ value, isFinished }: PromptProps) => {
   const handleClick = () => {
     const voices = speechSynthesis.getVoices();
     const frenchVoice = voices.find((voice) => voice.lang.startsWith('fr'));
@@ -16,7 +17,9 @@ export const Prompt = ({ value }: PromptProps) => {
 
   return (
     <div className="prompt" onClick={handleClick}>
-      <p className="prompt-text">{value || '...'}</p>
+      <p className="prompt-text">
+        {isFinished ? "Ok we're good!" : value || '...'}
+      </p>
     </div>
   );
 };

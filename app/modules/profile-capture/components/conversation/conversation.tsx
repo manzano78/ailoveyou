@@ -6,13 +6,22 @@ import { Prompt } from '~/modules/profile-capture/components/conversation/prompt
 import { useConversation } from '~/modules/profile-capture/hooks/useConversation';
 import { useAudioRecorder } from '~/hooks/useAudioRecorder';
 import './conversation.css';
-import { href } from 'react-router';
+import { href, Link } from 'react-router';
 import { SpeakerIcon } from '~/modules/profile-capture/components/conversation/speaker-icon';
 import { useRef } from 'react';
 
-export function Conversation() {
-  const { isUsersTurn, postUsersAnswer, botQuestion, stopRecording } =
-    useConversation();
+interface ConversationProps {
+  conversationLength: number;
+}
+
+export function Conversation({ conversationLength }: ConversationProps) {
+  const {
+    isUsersTurn,
+    postUsersAnswer,
+    botQuestion,
+    stopRecording,
+    isFinished,
+  } = useConversation(conversationLength);
   const audioElRef = useRef<HTMLAudioElement>(null);
 
   const {
@@ -37,8 +46,8 @@ export function Conversation() {
         onStopRecording={handleStopRecording}
       />
       {isRecording && <Waveform />}
-      <Prompt value={botQuestion} />
-      {isUsersTurn && botQuestion && (
+      <Prompt value={botQuestion} isFinished={isFinished} />
+      {isUsersTurn && botQuestion && !isFinished && (
         <>
           <div
             className="flex justify-center"
@@ -53,6 +62,14 @@ export function Conversation() {
             })}
           />
         </>
+      )}
+      {isFinished && (
+        <Link
+          to={href('/profile-summary')}
+          className="flex justify-center underline"
+        >
+          Let's see your profile summary!
+        </Link>
       )}
     </div>
   );
