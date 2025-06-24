@@ -1,4 +1,3 @@
-import React, { useState } from 'react';
 import { Form, href, redirect, useNavigation } from 'react-router';
 import { Button } from '~/components/button/button';
 import { Container } from '~/components/container';
@@ -17,8 +16,8 @@ export async function action({ request }: Route.LoaderArgs) {
 
 const UserRegistrationScreen = () => {
   const navigation = useNavigation();
-  console.log(navigation.formAction);
-  const isPending = navigation.formAction === '/profile-capture/base-info';
+  const isPending =
+    navigation.formAction === href('/profile-capture/base-info');
 
   return (
     <Container>

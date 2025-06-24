@@ -3,7 +3,7 @@ import { supabaseClient } from '~/infra/supabase';
 import { getSessionUser } from '~/infra/session';
 import { speechToText, textPrompt } from '~/infra/openai';
 
-async function getConversation(): Promise<
+async function loadConversation(): Promise<
   Array<{ role: 'assistant' | 'user'; content: string }>
 > {
   const { data, error } = await supabaseClient
@@ -32,17 +32,17 @@ async function getConversation(): Promise<
 
 // Stream next openAI question
 export async function loader({ request }: Route.LoaderArgs) {
-  const conversation = await getConversation();
+  const conversation = await loadConversation();
 
   return textPrompt({
     abortSignal: request.signal,
     messages: [
       {
         role: 'developer',
-        content:
-          'Make a real human conversation. You start the conversation. You always continue with a new question when the user answers. Your goal is to collect everything meaningful you can about him, his personality, passions, hobbies. The goal is in the end to expose who he is in a dating app. No useless questions please',
+        content: conversation.length
+          ? 'Start a conversation. The goal is to collect the personality, the passions and the interests of the user that talks with you.'
+          : 'Continue the conversation. Do not hesitate to ask him about another interest, another passion, if you notice that the conversation gets repetitive or boring.',
       },
-      ...conversation,
     ],
   });
 }
