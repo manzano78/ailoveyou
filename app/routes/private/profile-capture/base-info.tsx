@@ -1,8 +1,10 @@
-import { Form, href, redirect, useNavigation } from 'react-router';
+import { data, Form, href, redirect, useNavigation } from 'react-router';
 import { Button } from '~/components/button/button';
 import { Container } from '~/components/container';
 import { Header } from '~/components/header';
 import type { Route } from './+types/base-info';
+import { supabaseClient } from '~/infra/supabase';
+import { getSessionUser } from '~/infra/session';
 
 export async function action({ request }: Route.LoaderArgs) {
   const formData = await request.formData();
@@ -11,7 +13,27 @@ export async function action({ request }: Route.LoaderArgs) {
   const gender = formData.get('gender');
   const genderSearch = formData.get('genderSearch');
 
-  return redirect(href('/onboarding'));
+  if (age && location && gender && genderSearch) {
+    await supabaseClient
+      .from('USER')
+      .update({
+        age: Number(age),
+        location: location as string,
+        gender: gender as string,
+        gender_search: genderSearch as string,
+      })
+      .eq('id', getSessionUser().id)
+      .select();
+
+    getSessionUser().location = location as string;
+    getSessionUser().gender = gender as 'male' | 'female';
+    getSessionUser().genderSearch = gender as 'male' | 'female';
+    getSessionUser().age = Number(age);
+
+    return redirect(href('/onboarding'));
+  }
+
+  return data({ error: 'Bad request' }, 400);
 }
 
 const UserRegistrationScreen = () => {
