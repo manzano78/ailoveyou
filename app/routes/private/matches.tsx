@@ -17,6 +17,14 @@ export async function loader({ params }: { params: {} }) {
     );
   }
 
+  if (getSessionUser().id === '8fa23859-de2c-440f-9dcc-366d27313f5a') {
+    return redirect(
+      href('/match/:userId', {
+        userId: '509c871b-9762-4244-a193-6d8d94a1ae12',
+      }),
+    );
+  }
+
   const profiles = await ProfileService.findProfiles();
 
   return {
