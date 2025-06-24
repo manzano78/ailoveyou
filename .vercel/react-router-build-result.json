@@ -13,7 +13,7 @@
       "root": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
       "routes/public/login": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
       "routes/public/register": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
-      "routes/private/home": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/private/matches": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
       "routes/private/logout": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
       "routes/private/profile-capture/base-info": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
       "routes/private/profile-capture/conversation": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
@@ -22,7 +22,8 @@
       "routes/private/match": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
       "routes/private/resonance-discovery": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
       "routes/private/profile-summary": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
-      "routes/private/profile-summary-stream": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0"
+      "routes/private/profile-summary-stream": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/private/onboarding": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0"
     },
     "routes": {
       "root": {
@@ -59,10 +60,10 @@
         "file": "app/routes/private-layout.tsx",
         "config": {}
       },
-      "routes/private/home": {
-        "id": "routes/private/home",
+      "routes/private/matches": {
+        "id": "routes/private/matches",
         "parentId": "routes/private-layout",
-        "file": "app/routes/private/home.tsx",
+        "file": "app/routes/private/matches.tsx",
         "index": true,
         "config": {}
       },
@@ -128,6 +129,13 @@
         "file": "app/routes/private/profile-summary-stream.ts",
         "path": "profile-summary-stream",
         "config": {}
+      },
+      "routes/private/onboarding": {
+        "id": "routes/private/onboarding",
+        "parentId": "routes/private-layout",
+        "file": "app/routes/private/onboarding.tsx",
+        "path": "onboarding",
+        "config": {}
       }
     }
   },
@@ -170,10 +178,10 @@
         "parentId": "root",
         "file": "routes/private-layout.tsx"
       },
-      "routes/private/home": {
-        "id": "routes/private/home",
+      "routes/private/matches": {
+        "id": "routes/private/matches",
         "parentId": "routes/private-layout",
-        "file": "routes/private/home.tsx",
+        "file": "routes/private/matches.tsx",
         "index": true
       },
       "routes/private/logout": {
@@ -229,6 +237,12 @@
         "parentId": "routes/private-layout",
         "file": "routes/private/profile-summary-stream.ts",
         "path": "profile-summary-stream"
+      },
+      "routes/private/onboarding": {
+        "id": "routes/private/onboarding",
+        "parentId": "routes/private-layout",
+        "file": "routes/private/onboarding.tsx",
+        "path": "onboarding"
       }
     },
     "routeDiscovery": {

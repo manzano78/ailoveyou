@@ -2,7 +2,7 @@ import { Container } from '~/components/container';
 import { ProfileService, type Profile } from '~/infra/profile';
 import { href, Link, redirect, useLoaderData } from 'react-router';
 import ThoughtButton from '~/components/tought-button/thought-button';
-import { getSession, getSessionUser } from '~/infra/session';
+import { getSessionUser } from '~/infra/session';
 
 interface LoaderData {
   profiles: Profile[];

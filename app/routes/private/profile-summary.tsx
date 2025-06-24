@@ -1,12 +1,9 @@
 import { useProfileSummary } from '~/hooks/useProfileSummary';
-import { ProfileAvatar } from '~/modules/profile/components/profile-avatar';
 import {
   ProfileSection,
   TagGrid,
 } from '~/modules/profile/components/profile-section';
-import { createMockProfileSummary } from '~/modules/profile/mock-data';
-import type { ProfileSummaryData } from '~/infra/profile/types';
-import { Link, useLoaderData } from 'react-router';
+import { Link } from 'react-router';
 import type { Route } from './+types/profile-summary';
 import { getSessionUser } from '~/infra/session';
 
