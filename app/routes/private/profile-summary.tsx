@@ -6,6 +6,7 @@ import {
 import { Link } from 'react-router';
 import type { Route } from './+types/profile-summary';
 import { getSessionUser } from '~/infra/session';
+import { Container } from '~/components/container';
 
 export function loader() {
   return {
@@ -23,19 +24,21 @@ export default function ProfileSummaryRoute({
 
   if (!profile) {
     return (
-      <div className="min-h-screen bg-gray-950 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500 mx-auto mb-4"></div>
-          <p className="text-gray-400">Loading your profile...</p>
+      <Container>
+        <div>
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500 mx-auto mb-4"></div>
+            <p className="text-gray-400">Loading your profile...</p>
+          </div>
         </div>
-      </div>
+      </Container>
     );
   }
 
   // Use actual profile data or fall back to mock data
   return (
-    <div className="min-h-screen bg-gray-950 text-white">
-      <div className="max-w-md mx-auto px-6 py-8">
+    <div className=" text-white">
+      <div className="max-w-md mx-auto">
         {/* Profile Header */}
         <div className="text-center mb-8 flex flex-row items-center justify-center gap-4">
           {/* Circular Avatar with Glow Effect */}

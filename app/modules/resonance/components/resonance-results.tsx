@@ -1,3 +1,5 @@
+import { href, Link } from 'react-router';
+
 interface ResonanceResultsProps {
   chemistryScore: number;
   insights: string[];
@@ -85,12 +87,13 @@ export function ResonanceResults({
       </div>
 
       {/* Create Introduction Button */}
-      <button
-        onClick={onCreateIntroduction}
+      <Link
+        to={href('/matches')}
+        reloadDocument
         className="px-8 py-4 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-medium rounded-2xl transition-all duration-300 transform hover:scale-105"
       >
-        See profiles
-      </button>
+        See profile
+      </Link>
     </div>
   );
 }

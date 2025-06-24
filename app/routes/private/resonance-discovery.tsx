@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router';
+import { href, useNavigate } from 'react-router';
 import { Container } from '~/components/container';
 import { DiscoveryAnimation } from '~/modules/resonance/components/discovery-animation';
 import { ResonanceResults } from '~/modules/resonance/components/resonance-results';
@@ -16,7 +16,7 @@ export default function ResonanceDiscoveryPage() {
 
   const handleCreateIntroduction = () => {
     // Navigate to introduction creation or match page
-    navigate('/'); // TODO: Use actual matched user ID
+    navigate(href('/matches'));
   };
 
   return (

@@ -12,7 +12,7 @@ export default [
     route('register', 'routes/public/register.tsx'),
   ]),
   layout('routes/private-layout.tsx', [
-    index('routes/private/matches.tsx'),
+    index('routes/private/profile-summary.tsx'),
     route('logout', 'routes/private/logout.tsx'),
     ...prefix('profile-capture', [
       route('base-info', 'routes/private/profile-capture/base-info.tsx'),
@@ -24,9 +24,9 @@ export default [
       route('get-audio/:text', 'routes/private/profile-capture/get-audio.tsx'),
     ]),
     route('match/:userId', 'routes/private/match.tsx'),
-    //route('matches', 'routes/private/matches.tsx'),
+    route('matches', 'routes/private/matches.tsx'),
     route('discovery', 'routes/private/resonance-discovery.tsx'),
-    route('profile-summary', 'routes/private/profile-summary.tsx'),
+    //route('profile-summary', 'routes/private/profile-summary.tsx'),
     route('profile-summary-stream', 'routes/private/profile-summary-stream.ts'),
     route('onboarding', 'routes/private/onboarding.tsx'),
   ]),
