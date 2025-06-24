@@ -1,13 +1,22 @@
 import { Container } from '~/components/container';
 import { ProfileService, type Profile } from '~/infra/profile';
-import { href, Link, useLoaderData } from 'react-router';
+import { href, Link, redirect, useLoaderData } from 'react-router';
 import ThoughtButton from '~/components/tought-button/thought-button';
+import { getSession, getSessionUser } from '~/infra/session';
 
 interface LoaderData {
   profiles: Profile[];
 }
 
 export async function loader({ params }: { params: {} }) {
+  if (getSessionUser().id === '509c871b-9762-4244-a193-6d8d94a1ae12') {
+    return redirect(
+      href('/match/:userId', {
+        userId: '8fa23859-de2c-440f-9dcc-366d27313f5a',
+      }),
+    );
+  }
+
   const profiles = await ProfileService.findProfiles();
 
   return {
