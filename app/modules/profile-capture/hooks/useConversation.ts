@@ -2,7 +2,7 @@ import { href, useFetcher } from 'react-router';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTextStream } from '~/hooks/useTextStream';
 
-const MAX_CONVERSATION_LENGTH = 6;
+const MAX_CONVERSATION_LENGTH = 2;
 
 export function useConversation(conversationLength: number) {
   const { submit, state } = useFetcher();
