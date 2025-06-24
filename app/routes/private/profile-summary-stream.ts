@@ -2,6 +2,7 @@ import { textPrompt } from '~/infra/openai';
 
 import { loadConversation } from '~/modules/profile-capture/db-service';
 import type { Route } from './+types/profile-summary';
+import { openAI } from '~/infra/openai/client';
 
 export async function loader({ request }: Route.LoaderArgs) {
   const conversation = await loadConversation();
@@ -21,29 +22,11 @@ export async function loader({ request }: Route.LoaderArgs) {
     messages: [
       {
         role: 'system',
-        content: `You are a senior expert in psychological profiling and natural language understanding. Your task is to create a personality and values summary from a person's answers to a series of self-exploration questions. This summary will be used in a dating profile system to help find compatible matches.
-
-You will receive:
-- A full sequence of questions and answers from the person
-- Optional emotional signals detected from their voice
-
-Your output should be structured, emotionally insightful, and human-readable. It should help someone understand who this person is, what they care about, and how they tend to connect with others.`,
+        content: `You are a senior expert in psychological profiling and natural language understanding. Your task is to create a personality and values summary from a person's answers to a series of self-exploration questions. This summary will be used in a dating profile system to help find compatible matches.`,
       },
       {
         role: 'user',
-        content: `Here is the conversation history:\n\n${formattedHistory}.
-
-Now, generate the following:
-
-1. **Core Values** (3–5 words that reflect their principles or priorities in life)
-2. **Top Interests** (3–5 words that reflect recurring passions or hobbies)
-3. **Energy & Personality Style** (e.g. introspective, humorous, adventurous)
-4. **Voice Style** (describe how their voice might sound to others: tone, tempo, energy)
-5. **Emotional Signature** (if available: summary of vocal emotion tendencies)
-6. **Representative Quotes** (1–3 short authentic phrases from their responses)
-7. **Profile Summary** (a short, fluent paragraph synthesizing their personality, vibe, and what makes them unique)
-
-Write fluently and clearly, as if presenting this to someone trying to understand and connect with the person. Respond using markdown-style bullet points and spacing.`,
+        content: `Here is the conversation history:\n\n${formattedHistory}.\n\nNow return a JSON object with the following keys:\n\n- core_values: string[] (3–5 words)\n- top_interests: string[] (3–5 words)\n- personality_style: string (freeform text)\n- voice_style: string (freeform description based on voice features)\n- emotional_signature: string (summary based on voice if available)\n- quotes: string[] (1–3 short authentic quotes)\n- summary: string (a short paragraph capturing personality and vibe)\n\nRespond only with the JSON. Do not include any commentary or extra explanation.`,
       },
     ],
   });
