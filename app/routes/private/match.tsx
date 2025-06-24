@@ -10,6 +10,7 @@ import { Header } from '~/components/header';
 import { ProfileService } from '~/infra/profile';
 import { getKeywords } from '~/infra/openai/keywords';
 import type { Route } from './+types/match';
+import { getSessionUser } from '~/infra/session';
 
 export interface ProfileAudio {
   id: number;
@@ -59,6 +60,8 @@ async function getAudioDataURLFromHexString(
 
 export async function loader({ params }: Route.LoaderArgs) {
   const { userId } = params;
+
+  console.log(getSessionUser());
 
   const profile = await ProfileService.findProfile(userId);
 

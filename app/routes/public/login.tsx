@@ -32,6 +32,10 @@ export async function action({ request }: Route.LoaderArgs) {
           nickname,
           id,
           is_complete: isProfileCaptureComplete,
+          age,
+          gender,
+          location,
+          gender_search,
         },
       ] = data;
       const isPasswordValid = await bcrypt.compare(
@@ -40,7 +44,16 @@ export async function action({ request }: Route.LoaderArgs) {
       );
 
       if (isPasswordValid) {
-        getSession().set('user', { nickname, id, isProfileCaptureComplete });
+        getSession().set('user', {
+          nickname,
+          id,
+          isProfileCaptureComplete,
+          age: age ?? undefined,
+          gender: (gender as 'male' | 'female' | null) ?? undefined,
+          genderSearch:
+            (gender_search as 'male' | 'female' | null) ?? undefined,
+          location: location ?? undefined,
+        });
 
         return redirect(href('/'));
       }
