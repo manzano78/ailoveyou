@@ -16,10 +16,10 @@ export async function loader({ request }: Route.LoaderArgs) {
   const conversation = await loadConversation();
 
   const themes = [
-    'past relationships and emotional baggage',
     'core values and life vision',
     'emotional availability and communication style',
     'daily life, interests and compatibility',
+    'past relationships and emotional baggage',
   ];
 
   return textPrompt({

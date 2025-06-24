@@ -2,12 +2,12 @@ import { href, redirect, type unstable_MiddlewareFunction } from 'react-router';
 import { getSessionUser } from '~/infra/session';
 
 const initialProfileCapturePageHref = href('/profile-capture/base-info');
-const homePageHref = href('/');
+const discoveryPageHref = href('/discovery');
 
 const profileCapturePathNames: string[] = [
   href('/profile-capture/base-info'),
   href('/profile-capture/conversation'),
-  href('/profile-capture/api/conversation-message'),
+  href('/profile-capture/conversation-message'),
 ];
 
 function isCapturingProfile(pathname: string): boolean {
@@ -33,6 +33,6 @@ export const profileCaptureMiddleware: unstable_MiddlewareFunction = ({
   }
 
   if (getSessionUser().isProfileCaptureComplete && isInProfileCapture) {
-    throw redirect(homePageHref);
+    throw redirect(discoveryPageHref);
   }
 };
