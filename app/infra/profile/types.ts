@@ -11,6 +11,7 @@ export interface Profile {
 
   answer: Answer[] | null;
   transcript: string;
+  profile_summary?: ProfileSummaryData;
 }
 
 export interface Answer {
@@ -20,4 +21,19 @@ export interface Answer {
   user_answer_audio: string | null;
   user_answer_text: string;
   user_id: string;
+}
+
+// Add new types for profile summary
+export interface ProfileSummaryData {
+  name: string;
+  age: number | null;
+  location: string | null;
+  core_values: string[];
+  top_interests: string[];
+  personality_style: string;
+  voice_style: string;
+  emotional_signature: string;
+  quotes: string[];
+  summary: string;
+  avatar_url?: string;
 }
