@@ -126,7 +126,7 @@ export default function MatchPage({ loaderData }: Route.ComponentProps) {
       <div className="text-white flex flex-col h-full relative overflow-hidden">
         {/* Header */}
         <div className="mb-4 flex justify-center mt-10">
-          <Header>{profile.username}</Header>
+          <Header>{profile.nickname}</Header>
         </div>
 
         {/* Voice Clips Row */}

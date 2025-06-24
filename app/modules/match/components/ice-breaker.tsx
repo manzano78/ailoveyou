@@ -63,7 +63,11 @@ export function createMockIceBreaker() {
   return {
     id: '1',
     question:
-      'Ice breaker Ice breaker Ice breaker Ice breaker Ice breaker Ice breaker Ice breaker Ice breaker Ice breaker',
-    answers: ['answer A', 'answer B', 'answer C'],
+      "Pour un voyage inoubliable, qu'est-ce qui est absolument essentiel pour vous ?",
+    answers: [
+      `L'aventure, l'imprévu et les lieux secrets.`,
+      `Un bon plan pour savourer culture et gastronomie.`,
+      `Zéro plan, juste le hasard et les rencontres.`,
+    ],
   };
 }

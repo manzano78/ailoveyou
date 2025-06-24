@@ -45,7 +45,7 @@ export class ProfileService {
     const { data: dataUser, error: errorUser } = await supabaseClient
       .from('USER')
       .select('*')
-      .order('created_at', { ascending: true });
+      .order('created_at', { ascending: false });
 
     return (
       dataUser?.map((d) => {

@@ -16,7 +16,7 @@ export default function ResonanceDiscoveryPage() {
 
   const handleCreateIntroduction = () => {
     // Navigate to introduction creation or match page
-    navigate('/match/testuser'); // TODO: Use actual matched user ID
+    navigate('/'); // TODO: Use actual matched user ID
   };
 
   return (

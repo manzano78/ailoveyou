@@ -14,7 +14,6 @@ function extractJson(apiResponseString: string) {
 
   if (match && match.groups && match.groups.jsonContent) {
     const jsonString = match.groups.jsonContent;
-    console.log('JSON String extracted:', jsonString);
 
     try {
       // Parse the extracted JSON string into a JavaScript object
