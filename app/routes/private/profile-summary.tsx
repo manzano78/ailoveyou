@@ -22,7 +22,7 @@ export default function ProfileSummaryRoute({
   loaderData,
 }: Route.ComponentProps) {
   const profile = useProfileSummary();
-  const { username } = loaderData;
+  const { username, age, location } = loaderData;
 
   if (!profile) {
     return (
@@ -171,7 +171,7 @@ export default function ProfileSummaryRoute({
           <div className="flex flex-col items-center justify-center">
             <h1 className="text-3xl font-bold text-white mb-2">{username}</h1>
             <p className="text-gray-400 text-lg">
-              {profile.age} • {profile.location}
+              {age || profile.age} • {location || profile.location}
             </p>
           </div>
         </div>

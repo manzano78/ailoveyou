@@ -1,0 +1,84 @@
+/* Custom animations for profile components */
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes spin-reverse {
+  from {
+    transform: rotate(360deg);
+  }
+  to {
+    transform: rotate(0deg);
+  }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 20s linear infinite;
+}
+
+.animate-spin-reverse {
+  animation: spin-reverse 15s linear infinite;
+}
+
+/* Profile avatar hover effects */
+.profile-avatar:hover .waveform-ring {
+  opacity: 0.6;
+  transform: scale(1.05);
+  transition: all 0.3s ease;
+}
+
+/* Tag hover effects */
+.tag-primary:hover {
+  background-color: rgba(139, 92, 246, 0.2);
+  border-color: rgba(139, 92, 246, 0.8);
+  transform: translateY(-1px);
+  transition: all 0.2s ease;
+}
+
+.tag-secondary:hover {
+  background-color: rgba(236, 72, 153, 0.2);
+  border-color: rgba(236, 72, 153, 0.8);
+  transform: translateY(-1px);
+  transition: all 0.2s ease;
+}
+
+/* Personality type card styling */
+.personality-card {
+  background: linear-gradient(
+    135deg,
+    rgba(139, 92, 246, 0.1) 0%,
+    rgba(236, 72, 153, 0.1) 100%
+  );
+  border: 1px solid rgba(139, 92, 246, 0.3);
+}
+
+/* Voice characteristics styling */
+.voice-characteristic {
+  padding: 0.75rem 0;
+  border-bottom: 1px solid rgba(55, 65, 81, 0.3);
+}
+
+.voice-characteristic:last-child {
+  border-bottom: none;
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .profile-container {
+    padding: 1rem;
+  }
+
+  .tag-grid {
+    gap: 0.5rem;
+  }
+
+  .profile-avatar-large {
+    width: 6rem;
+    height: 6rem;
+  }
+}
