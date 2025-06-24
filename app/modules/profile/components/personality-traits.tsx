@@ -1,6 +1,9 @@
 interface PersonalityTrait {
-  word: string;
+  word?: string;
   emoji: string;
+  id?: string;
+  label?: string;
+  category?: string;
 }
 
 interface PersonalityTraitsProps {
@@ -35,7 +38,7 @@ export function PersonalityTraits({ traits }: PersonalityTraitsProps) {
     <div className="flex items-center gap-2">
       <span className="text-2xl">{trait.emoji}</span>
       <span className="text-white text-base font-medium">
-        {capitalizeWords(trait.word)}
+        {capitalizeWords(trait.word!)}
       </span>
     </div>
   );

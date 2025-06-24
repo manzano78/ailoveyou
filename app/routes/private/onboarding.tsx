@@ -464,12 +464,12 @@ const OnboardingPage = () => {
     // Le code original ajoutait un effet de survol via JS.
     // Cet effet peut être répliqué ici si nécessaire, bien que le CSS gère déjà
     // le `transform` et `border-color` au survol. Le JS changeait la couleur de fond.
-    const stepCards = document.querySelectorAll('.step-card');
-    const handleMouseEnter = (e) => {
-      e.currentTarget.style.background = 'rgba(255, 255, 255, 0.05)';
+    const stepCards = document.querySelectorAll<HTMLElement>('.step-card');
+    const handleMouseEnter = (e: MouseEvent) => {
+      (e.currentTarget as any).style.background = 'rgba(255, 255, 255, 0.05)';
     };
-    const handleMouseLeave = (e) => {
-      e.currentTarget.style.background = 'rgba(255, 255, 255, 0.03)';
+    const handleMouseLeave = (e: MouseEvent) => {
+      (e.currentTarget as any).style.background = 'rgba(255, 255, 255, 0.03)';
     };
 
     stepCards.forEach((card) => {
@@ -487,7 +487,7 @@ const OnboardingPage = () => {
   }, []); // Le tableau de dépendances vide signifie que cet effet ne s'exécute qu'une fois.
 
   // Gérer le clic sur le bouton CTA
-  const handleCtaClick = (e) => {
+  const handleCtaClick = (e: MouseEvent) => {
     e.preventDefault();
     // Dans une vraie application, cela déclencherait une navigation ou une autre action.
     console.log('Navigating to voice capture...');
