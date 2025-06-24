@@ -30,6 +30,13 @@ async function loadConversation(): Promise<
   );
 }
 
+async function encodeAudioFile(audioFile: File): Promise<string> {
+  const arrayBuffer = await audioFile.arrayBuffer();
+  const byteArray = new Uint8Array(arrayBuffer);
+
+  return `\\x${byteArray.reduce((s, n) => s + n.toString(16).padStart(2, '0'), '')}`;
+}
+
 // Stream next openAI question
 export async function loader({ request }: Route.LoaderArgs) {
   const conversation = await loadConversation();
@@ -37,11 +44,12 @@ export async function loader({ request }: Route.LoaderArgs) {
   return textPrompt({
     abortSignal: request.signal,
     messages: [
+      ...conversation,
       {
         role: 'developer',
         content: conversation.length
-          ? 'Start a conversation. The goal is to collect the personality, the passions and the interests of the user that talks with you.'
-          : 'Continue the conversation. Do not hesitate to ask him about another interest, another passion, if you notice that the conversation gets repetitive or boring.',
+          ? 'Continue the conversation. Do not hesitate to ask him about another interest, another passion, if you notice that the current topic gets repetitive or boring.'
+          : 'Start a conversation. The goal is to collect the personality, the passions and the interests of the user that talks with you. The user is French, so talk in French.',
       },
     ],
   });
@@ -51,17 +59,16 @@ export async function loader({ request }: Route.LoaderArgs) {
 export async function action({ request }: Route.ActionArgs) {
   const formData = await request.formData();
   const botQuestion = formData.get('bot-question') as string;
-  const audioPrompt = formData.get('audio-prompt') as File;
-  // const audioPromptArrayBuffer = await audioPrompt.arrayBuffer();
-  const userAnswerText = await speechToText(audioPrompt);
-  // const userAnswerAudio = btoa(
-  //   String.fromCharCode(...new Uint8Array(audioPromptArrayBuffer)),
-  // );
+  const userAudioFile = formData.get('audio-prompt') as File;
+  const [userAudioData, userAnswerText] = await Promise.all([
+    encodeAudioFile(userAudioFile),
+    speechToText(userAudioFile),
+  ]);
 
   await supabaseClient.from('USER_PC_QUESTION_ANSWER').insert([
     {
       bot_question: botQuestion,
-      // user_answer_audio: userAnswerAudio,
+      user_answer_audio: userAudioData,
       user_answer_text: userAnswerText,
       user_id: getSessionUser().id,
     },
