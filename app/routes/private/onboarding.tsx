@@ -600,6 +600,7 @@ const OnboardingPage = () => {
         {/* CTA */}
         <div className="cta-section">
           <Link
+            reloadDocument
             to={href('/profile-capture/conversation')}
             className="cta-button"
           >

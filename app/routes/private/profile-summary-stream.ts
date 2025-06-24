@@ -2,7 +2,6 @@ import { textPrompt } from '~/infra/openai';
 
 import { loadConversation } from '~/modules/profile-capture/db-service';
 import type { Route } from './+types/profile-summary';
-import { openAI } from '~/infra/openai/client';
 
 export async function loader({ request }: Route.LoaderArgs) {
   const conversation = await loadConversation();
