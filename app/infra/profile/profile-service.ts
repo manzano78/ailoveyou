@@ -40,4 +40,17 @@ export class ProfileService {
 
     return profile;
   }
+
+  static async findProfiles(): Promise<Profile[]> {
+    const { data: dataUser, error: errorUser } = await supabaseClient
+      .from('USER')
+      .select('*')
+      .order('created_at', { ascending: true });
+
+    return (
+      dataUser?.map((d) => {
+        return { ...d, transcript: '', answer: [] };
+      }) || []
+    );
+  }
 }
