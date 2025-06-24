@@ -3,7 +3,6 @@ import { Header } from '~/modules/profile-capture/components/conversation/header
 import { RecordingController } from '~/modules/profile-capture/components/conversation/recording-controller';
 import { Waveform } from '~/modules/profile-capture/components/conversation/wave-form';
 import { Prompt } from '~/modules/profile-capture/components/conversation/prompt';
-import { Timer } from '~/modules/profile-capture/components/conversation/timer';
 import { useConversation } from '~/modules/profile-capture/hooks/useConversation';
 import { useAudioRecorder } from '~/hooks/useAudioRecorder';
 import './conversation.css';
@@ -23,8 +22,6 @@ export function Conversation() {
     stopAudioRecording();
     stopRecording();
   };
-
-  console.log(isRecording, isUsersTurn);
 
   return (
     <div className="container">
