@@ -1,26 +1,15 @@
 import { useState } from 'react';
 import { Container } from '~/components/container';
 import { VoiceClipPlayer } from '~/components/audio/voice-clip-player';
-import {
-  PersonalityTraits,
-  createMockPersonalityTraits,
-} from '~/modules/profile/components/personality-traits';
+import { PersonalityTraits } from '~/modules/profile/components/personality-traits';
 import {
   IceBreaker,
   createMockIceBreaker,
 } from '~/modules/match/components/ice-breaker';
 import { Header } from '~/components/header';
-import { ProfileService, type Profile } from '~/infra/profile';
-import { useLoaderData } from 'react-router';
+import { ProfileService } from '~/infra/profile';
 import { getKeywords } from '~/infra/openai/keywords';
-
-interface LoaderData {
-  userId: string;
-  profile: Profile;
-  profileAudios: ProfileAudio[];
-  personalityTraits: { word: string; emoji: string }[];
-  iceBreaker: any;
-}
+import type { Route } from './+types/match';
 
 export interface ProfileAudio {
   id: number;
@@ -68,12 +57,8 @@ async function getAudioDataURLFromHexString(
   return `data:${mimeType};base64,${base64String}`;
 }
 
-export async function loader({ params }: { params: { userId: string } }) {
+export async function loader({ params }: Route.LoaderArgs) {
   const { userId } = params;
-
-  if (!userId) {
-    throw new Response('User ID is required', { status: 400 });
-  }
 
   const profile = await ProfileService.findProfile(userId);
 
@@ -102,9 +87,8 @@ export async function loader({ params }: { params: { userId: string } }) {
   };
 }
 
-export default function MatchPage() {
-  const { userId, profile, profileAudios, personalityTraits, iceBreaker } =
-    useLoaderData<LoaderData>();
+export default function MatchPage({ loaderData }: Route.ComponentProps) {
+  const { profile, profileAudios, personalityTraits, iceBreaker } = loaderData;
   const [playingClip, setPlayingClip] = useState<number>(-1);
   const [clipProgress, setClipProgress] = useState<Record<string, number>>({});
   const [selectedAnswer, setSelectedAnswer] = useState<string>();
