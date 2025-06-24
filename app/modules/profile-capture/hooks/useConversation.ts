@@ -1,47 +1,31 @@
 import { href, useFetcher } from 'react-router';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { useTextStream } from '~/hooks/useTextStream';
 
 const MAX_CONVERSATION_LENGTH = 6;
 
 export function useConversation(conversationLength: number) {
   const { submit, state } = useFetcher();
-  const [botQuestion, setBotQuestion] = useState('');
+  const [botQuestion, getBotQuestion, resetBotQuestion] = useTextStream(
+    href('/profile-capture/conversation-message'),
+  );
   const [isUsersTurn, setIsUsersTurn] = useState(false);
   const isPostingUsersAnswer = state === 'submitting';
   const initialConversationLengthRef = useRef(conversationLength);
   const isFinished = conversationLength >= MAX_CONVERSATION_LENGTH;
 
-  console.log({ conversationLength });
-
-  const getNextQuestionRef = useRef(() => {
-    setBotQuestion('');
-    const sse = new EventSource(href('/profile-capture/conversation-message'));
-
-    sse.addEventListener('message', (event) => {
-      const { data: nextMessage } = event;
-
-      if (nextMessage === '[DONE]') {
-        sse.close();
-        setIsUsersTurn(true);
-      } else {
-        setBotQuestion((prevBotMessage) => `${prevBotMessage}${nextMessage}`);
-      }
-    });
-
-    sse.addEventListener('error', (event) => {
-      console.log('error: ', event);
-      sse.close();
-    });
-  });
+  const getNextQuestion = useCallback(() => {
+    getBotQuestion().then(() => setIsUsersTurn(true));
+  }, [getBotQuestion]);
 
   useEffect(() => {
     if (initialConversationLengthRef.current < MAX_CONVERSATION_LENGTH) {
-      getNextQuestionRef.current();
+      getNextQuestion();
     }
-  }, []);
+  }, [getNextQuestion]);
 
   const postUsersAnswer = async (audioPrompt: Blob) => {
-    setBotQuestion('');
+    resetBotQuestion();
     setIsUsersTurn(false);
 
     const formData = new FormData();
@@ -55,7 +39,7 @@ export function useConversation(conversationLength: number) {
       action: href('/profile-capture/conversation-message'),
     });
 
-    getNextQuestionRef.current();
+    getNextQuestion();
   };
 
   const stopRecording = () => {
