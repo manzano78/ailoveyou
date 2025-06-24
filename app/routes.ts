@@ -18,9 +18,10 @@ export default [
       route('base-info', 'routes/private/profile-capture/base-info.tsx'),
       route('conversation', 'routes/private/profile-capture/conversation.tsx'),
       route(
-        'api/conversation-message',
-        'routes/private/profile-capture/api-conversation-message.tsx',
+        'conversation-message',
+        'routes/private/profile-capture/conversation-message.tsx',
       ),
+      route('get-audio/:text', 'routes/private/profile-capture/get-audio.tsx'),
     ]),
     route('match/:userId', 'routes/private/match.tsx'),
     route('discovery', 'routes/private/resonance-discovery.tsx'),

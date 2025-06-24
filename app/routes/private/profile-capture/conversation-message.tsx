@@ -1,7 +1,7 @@
-import type { Route } from './+types/api-conversation-message';
 import { supabaseClient } from '~/infra/supabase';
 import { getSessionUser } from '~/infra/session';
 import { speechToText, textPrompt } from '~/infra/openai';
+import type { Route } from './+types/conversation-message';
 
 async function loadConversation(): Promise<
   Array<{ role: 'assistant' | 'user'; content: string }>

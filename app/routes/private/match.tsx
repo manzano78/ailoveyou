@@ -1,4 +1,3 @@
-import { useParams, useLoaderData } from 'react-router';
 import { useState } from 'react';
 import { Container } from '~/components/container';
 import { VoiceClipPlayer } from '~/components/audio/voice-clip-player';
@@ -13,21 +12,10 @@ import {
 import { MatchService } from '~/infra/match/match-service';
 import type { MatchUser, AudioClip } from '~/infra/match/types';
 import { Header } from '~/components/header';
-
-interface LoaderData {
-  userId: string;
-  matches: MatchUser[];
-  voiceClips: AudioClip[];
-  personalityTraits: any[];
-  iceBreaker: any;
-}
+import type { Route } from './+types/match';
 
 export async function loader({ params }: { params: { userId: string } }) {
   const { userId } = params;
-
-  if (!userId) {
-    throw new Response('User ID is required', { status: 400 });
-  }
 
   // Load match data (currently mock data)
   const matches = await MatchService.findMatches(userId);
@@ -42,9 +30,9 @@ export async function loader({ params }: { params: { userId: string } }) {
   };
 }
 
-export default function MatchPage() {
+export default function MatchPage({ loaderData }: Route.ComponentProps) {
   const { userId, matches, voiceClips, personalityTraits, iceBreaker } =
-    useLoaderData<LoaderData>();
+    loaderData;
   const [playingClip, setPlayingClip] = useState<string | null>(null);
   const [clipProgress, setClipProgress] = useState<Record<string, number>>({});
   const [selectedAnswer, setSelectedAnswer] = useState<string>();

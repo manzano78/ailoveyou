@@ -9,9 +9,7 @@ export function useConversation() {
 
   const getNextQuestionRef = useRef(() => {
     setBotQuestion('');
-    const sse = new EventSource(
-      href('/profile-capture/api/conversation-message'),
-    );
+    const sse = new EventSource(href('/profile-capture/conversation-message'));
 
     sse.addEventListener('message', (event) => {
       const { data: nextMessage } = event;
@@ -46,7 +44,7 @@ export function useConversation() {
     await submit(formData, {
       method: 'post',
       encType: 'multipart/form-data',
-      action: href('/profile-capture/api/conversation-message'),
+      action: href('/profile-capture/conversation-message'),
     });
 
     getNextQuestionRef.current();
