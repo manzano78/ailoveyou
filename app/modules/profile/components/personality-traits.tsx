@@ -5,11 +5,6 @@ interface PersonalityTraitsProps {
 }
 
 export function PersonalityTraits({ traits }: PersonalityTraitsProps) {
-  const primaryTraits = traits.filter((trait) => trait.category === 'primary');
-  const secondaryTraits = traits.filter(
-    (trait) => trait.category === 'secondary',
-  );
-
   const TraitItem = ({ trait }: { trait: PersonalityTrait }) => (
     <div className="flex items-center gap-2 py-2">
       <span className="text-2xl">{trait.emoji}</span>
@@ -18,37 +13,10 @@ export function PersonalityTraits({ traits }: PersonalityTraitsProps) {
   );
 
   return (
-    <div className="space-y-6">
-      {/* Primary Traits */}
-      {primaryTraits.length > 0 && (
-        <div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-2">
-            {primaryTraits.map((trait) => (
-              <TraitItem key={trait.id} trait={trait} />
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Secondary Traits */}
-      {secondaryTraits.length > 0 && (
-        <div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-2">
-            {secondaryTraits.map((trait) => (
-              <TraitItem key={trait.id} trait={trait} />
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* All traits in a single grid if no categorization */}
-      {primaryTraits.length === 0 && secondaryTraits.length === 0 && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-2">
-          {traits.map((trait) => (
-            <TraitItem key={trait.id} trait={trait} />
-          ))}
-        </div>
-      )}
+    <div className="grid grid-cols-2 grid-rows-3 gap-x-8 gap-y-2 justify-items-center">
+      {traits.map((trait) => (
+        <TraitItem key={trait.id} trait={trait} />
+      ))}
     </div>
   );
 }

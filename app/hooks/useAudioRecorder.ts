@@ -1,7 +1,6 @@
-import { useEffect, useRef } from 'react';
+import { useRef, useCallback, useState } from 'react';
 
 export function useAudioRecorder(
-  isActive: boolean,
   onEnd?: (audioPrompt: Blob) => void,
   onError?: (error: unknown) => void,
 ) {
@@ -9,44 +8,52 @@ export function useAudioRecorder(
   const streamRef = useRef<MediaStream | null>(null);
   const handleEndRef = useRef(onEnd);
   const handleErrorRef = useRef(onError);
+  const [isRecording, setIsRecording] = useState(false);
 
   handleEndRef.current = onEnd;
   handleErrorRef.current = onError;
 
-  useEffect(() => {
-    if (isActive) {
-      (async () => {
-        try {
-          streamRef.current = await navigator.mediaDevices.getUserMedia({
-            audio: true,
-          });
+  const startRecording = useCallback(async () => {
+    try {
+      streamRef.current = await navigator.mediaDevices.getUserMedia({
+        audio: true,
+      });
 
-          // ---- RECORDING ----
-          const audioChunks: Blob[] = [];
-          mediaRecorderRef.current = new MediaRecorder(streamRef.current);
-          mediaRecorderRef.current.ondataavailable = (event) => {
-            audioChunks.push(event.data);
-          };
-          mediaRecorderRef.current.onstop = () => {
-            const file = new File(audioChunks, 'audio.webm', {
-              type: 'audio/webm',
-            });
+      // ---- RECORDING ----
+      const audioChunks: Blob[] = [];
+      mediaRecorderRef.current = new MediaRecorder(streamRef.current);
+      mediaRecorderRef.current.ondataavailable = (event) => {
+        audioChunks.push(event.data);
+      };
+      mediaRecorderRef.current.onstop = () => {
+        const file = new File(audioChunks, 'audio.webm', {
+          type: 'audio/webm',
+        });
 
-            handleEndRef.current?.(file);
-          };
-          mediaRecorderRef.current.start();
-        } catch (error) {
-          handleErrorRef.current?.(error);
-        }
-      })();
-    } else {
-      if (
-        mediaRecorderRef.current &&
-        mediaRecorderRef.current.state === 'recording'
-      ) {
-        mediaRecorderRef.current.stop();
-        streamRef.current?.getTracks().forEach((track) => track.stop());
-      }
+        setIsRecording(false);
+        handleEndRef.current?.(file);
+      };
+      mediaRecorderRef.current.start();
+      setIsRecording(true);
+    } catch (error) {
+      setIsRecording(false);
+      handleErrorRef.current?.(error);
     }
-  }, [isActive]);
+  }, []);
+
+  const stopRecording = useCallback(() => {
+    if (
+      mediaRecorderRef.current &&
+      mediaRecorderRef.current.state === 'recording'
+    ) {
+      mediaRecorderRef.current.stop();
+      streamRef.current?.getTracks().forEach((track) => track.stop());
+    }
+  }, []);
+
+  return {
+    startRecording,
+    stopRecording,
+    isRecording,
+  };
 }
