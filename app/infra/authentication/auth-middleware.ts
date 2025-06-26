@@ -1,5 +1,5 @@
 import { href, redirect, type unstable_MiddlewareFunction } from 'react-router';
-import { destroySession, getSession } from '~/infra/session';
+import { getSession } from '~/infra/session';
 
 const areaConfigurations = {
   private: {

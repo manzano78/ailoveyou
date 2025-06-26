@@ -89,7 +89,6 @@ export function ResonanceResults({
       {/* Create Introduction Button */}
       <Link
         to={href('/matches')}
-        reloadDocument
         className="px-8 py-4 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-medium rounded-2xl transition-all duration-300 transform hover:scale-105"
       >
         See profile

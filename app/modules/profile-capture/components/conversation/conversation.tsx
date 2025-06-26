@@ -67,10 +67,7 @@ export function Conversation({ conversationLength }: ConversationProps) {
         </>
       )}
       {isFinished && (
-        <Link
-          to={href('/profile-summary')}
-          className="flex justify-center underline"
-        >
+        <Link to={href('/')} className="flex justify-center underline">
           Let's see your profile summary!
         </Link>
       )}

@@ -8,7 +8,7 @@ export const sessionStorage = createCookieSessionStorage<
   FlashSessionData
 >({
   cookie: {
-    name: 'sid',
+    name: 'resonance_sid',
     path: '/',
     sameSite: 'lax',
     secure: true,
