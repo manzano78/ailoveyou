@@ -26,3 +26,16 @@ export async function loadConversation(): Promise<
     [] as Array<{ role: 'assistant' | 'user'; content: string }>,
   );
 }
+
+export async function loadConversationCount() {
+  const { count, error } = await supabaseClient
+    .from('USER_PC_QUESTION_ANSWER')
+    .select('id', { count: 'exact', head: true })
+    .eq('user_id', getSessionUser().id);
+
+  if (error) {
+    throw error;
+  }
+
+  return count!;
+}

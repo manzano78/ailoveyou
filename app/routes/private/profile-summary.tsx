@@ -1,43 +1,26 @@
-import { useProfileSummary } from '~/hooks/useProfileSummary';
-import { ProfileAvatar } from '~/modules/profile/components/profile-avatar';
 import {
   ProfileSection,
   TagGrid,
 } from '~/modules/profile/components/profile-section';
-import { createMockProfileSummary } from '~/modules/profile/mock-data';
-import type { ProfileSummaryData } from '~/infra/profile/types';
-import { Link, useLoaderData } from 'react-router';
+import { href, Link, redirect } from 'react-router';
 import type { Route } from './+types/profile-summary';
 import { getSessionUser } from '~/infra/session';
+import { ProfileService } from '~/infra/profile';
 import { Container } from '~/components/container';
 
-export function loader() {
-  return {
-    username: getSessionUser().nickname,
-    age: getSessionUser().age,
-    location: getSessionUser().location,
-  };
+export async function loader() {
+  const profile = await ProfileService.findProfile(getSessionUser().id);
+
+  if (!profile.profile_summary) {
+    throw redirect(href('/profile-capture/conversation'));
+  }
+
+  return profile.profile_summary;
 }
 
 export default function ProfileSummaryRoute({
-  loaderData,
+  loaderData: profile,
 }: Route.ComponentProps) {
-  const profile = useProfileSummary();
-  const { username, age, location } = loaderData;
-
-  if (!profile) {
-    return (
-      <Container>
-        <div>
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500 mx-auto mb-4"></div>
-            <p className="text-gray-400">Loading your profile...</p>
-          </div>
-        </div>
-      </Container>
-    );
-  }
-
   // Use actual profile data or fall back to mock data
   return (
     <Container>
@@ -181,9 +164,11 @@ export default function ProfileSummaryRoute({
             </div>
 
             <div className="flex flex-col items-center justify-center">
-              <h1 className="text-3xl font-bold text-white mb-2">{username}</h1>
+              <h1 className="text-3xl font-bold text-white mb-2">
+                {profile.name}
+              </h1>
               <p className="text-gray-400 text-lg">
-                {age || profile.age} • {location || profile.location}
+                {profile.age} • {profile.location}
               </p>
             </div>
           </div>
@@ -223,7 +208,7 @@ export default function ProfileSummaryRoute({
           {profile.quotes && profile.quotes.length > 0 && (
             <ProfileSection title="Quotes">
               <div className="space-y-4">
-                {profile.quotes.map((quote, index) => (
+                {profile.quotes.map((quote: string, index: number) => (
                   <blockquote
                     key={index}
                     className="border-l-4 border-purple-500 pl-4 italic text-gray-300"

@@ -1,5 +1,28 @@
 import { supabaseClient } from '../supabase';
-import type { Profile } from './types';
+import type { Profile, ProfileSummaryData } from './types';
+
+function toProfileSummary({
+  age,
+  nickname,
+  location,
+  profile_summary: rawProfileSummary,
+}: {
+  age: number | null;
+  nickname: string;
+  location: string | null;
+  profile_summary: string | null;
+}): ProfileSummaryData | undefined {
+  if (!rawProfileSummary) {
+    return undefined;
+  }
+
+  return {
+    age,
+    name: nickname,
+    location,
+    ...JSON.parse(rawProfileSummary),
+  };
+}
 
 export class ProfileService {
   static async findProfile(userId: string): Promise<Profile> {
@@ -36,6 +59,7 @@ export class ProfileService {
       ...dataUser[0],
       answer: dataAnswer,
       transcript: transcript || '',
+      profile_summary: toProfileSummary(dataUser[0]),
     };
 
     return profile;
@@ -49,7 +73,12 @@ export class ProfileService {
 
     return (
       dataUser?.map((d) => {
-        return { ...d, transcript: '', answer: [] };
+        return {
+          ...d,
+          transcript: '',
+          answer: [],
+          profile_summary: toProfileSummary(d),
+        };
       }) || []
     );
   }

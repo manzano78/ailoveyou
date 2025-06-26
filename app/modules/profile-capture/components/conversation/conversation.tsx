@@ -9,18 +9,14 @@ import { href, Link } from 'react-router';
 import { SpeakerIcon } from '~/modules/profile-capture/components/conversation/speaker-icon';
 import { useRef } from 'react';
 
-interface ConversationProps {
-  conversationLength: number;
-}
-
-export function Conversation({ conversationLength }: ConversationProps) {
+export function Conversation() {
   const {
     isUsersTurn,
     postUsersAnswer,
     botQuestion,
     stopRecording,
-    isFinished,
-  } = useConversation(conversationLength);
+    isProcessingProfileSummary,
+  } = useConversation();
   const audioElRef = useRef<HTMLAudioElement>(null);
 
   const {
@@ -38,7 +34,7 @@ export function Conversation({ conversationLength }: ConversationProps) {
   return (
     <div>
       <Header />
-      {!isFinished && (
+      {!isProcessingProfileSummary && (
         <>
           <RecordingController
             isRecording={isRecording}
@@ -52,8 +48,12 @@ export function Conversation({ conversationLength }: ConversationProps) {
           )}
         </>
       )}
-      <Prompt value={botQuestion} isFinished={isFinished} />
-      {isUsersTurn && botQuestion && !isFinished && (
+
+      <Prompt
+        value={botQuestion}
+        isProcessingProfileSummary={isProcessingProfileSummary}
+      />
+      {isUsersTurn && botQuestion && !isProcessingProfileSummary && (
         <>
           <div
             className="flex justify-center"
@@ -68,11 +68,6 @@ export function Conversation({ conversationLength }: ConversationProps) {
             })}
           />
         </>
-      )}
-      {isFinished && (
-        <Link to={href('/')} className="flex justify-center underline">
-          Let's see your profile summary!
-        </Link>
       )}
     </div>
   );

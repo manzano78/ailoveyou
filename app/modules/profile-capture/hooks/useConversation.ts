@@ -1,27 +1,25 @@
 import { href, useFetcher } from 'react-router';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTextStream } from '~/hooks/useTextStream';
+import type { action } from '~/routes/private/profile-capture/conversation-message';
 
-const MAX_CONVERSATION_LENGTH = 6;
-
-export function useConversation(conversationLength: number) {
-  const { submit, state } = useFetcher();
+export function useConversation() {
+  const { submit, state, data } = useFetcher<typeof action>();
   const [botQuestion, getBotQuestion, resetBotQuestion] = useTextStream(
     href('/profile-capture/conversation-message'),
   );
   const [isUsersTurn, setIsUsersTurn] = useState(false);
   const isPostingUsersAnswer = state === 'submitting';
-  const initialConversationLengthRef = useRef(conversationLength);
-  const isFinished = conversationLength >= MAX_CONVERSATION_LENGTH;
+  const isProcessingProfileSummary = isPostingUsersAnswer && !!data?.isLast;
+
+  console.log({ botQuestion });
 
   const getNextQuestion = useCallback(() => {
     getBotQuestion().then(() => setIsUsersTurn(true));
   }, [getBotQuestion]);
 
   useEffect(() => {
-    if (initialConversationLengthRef.current < MAX_CONVERSATION_LENGTH) {
-      getNextQuestion();
-    }
+    getNextQuestion();
   }, [getNextQuestion]);
 
   const postUsersAnswer = async (audioPrompt: Blob) => {
@@ -52,6 +50,6 @@ export function useConversation(conversationLength: number) {
     postUsersAnswer,
     isPostingUsersAnswer,
     stopRecording,
-    isFinished,
+    isProcessingProfileSummary,
   };
 }

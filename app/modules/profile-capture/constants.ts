@@ -1,0 +1,1 @@
+export const MAX_CONVERSATION_LENGTH = 3;

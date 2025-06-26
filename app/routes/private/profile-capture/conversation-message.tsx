@@ -2,7 +2,42 @@ import { supabaseClient } from '~/infra/supabase';
 import { getSessionUser } from '~/infra/session';
 import { speechToText, textPrompt } from '~/infra/openai';
 import type { Route } from './+types/conversation-message';
-import { loadConversation } from '~/modules/profile-capture/db-service';
+import {
+  loadConversation,
+  loadConversationCount,
+} from '~/modules/profile-capture/db-service';
+import { href, redirect } from 'react-router';
+import { openAI } from '~/infra/openai/client';
+import { MAX_CONVERSATION_LENGTH } from '~/modules/profile-capture';
+
+async function saveProfileSummary() {
+  const conversation = await loadConversation();
+  const formattedHistory = conversation.reduce((glob, { role, content }, i) => {
+    return `${glob}${glob && (role === 'assistant' ? '\n\nQ' : '\nA')}${i + 1}: ${content}`;
+  }, '');
+
+  const response = await openAI.chat.completions.create({
+    model: 'gpt-4o',
+    messages: [
+      {
+        role: 'system',
+        content: `You are a senior expert in psychological profiling and natural language understanding. Your task is to create a personality and values summary from a person's answers to a series of self-exploration questions. This summary will be used in a dating profile system to help find compatible matches.`,
+      },
+      {
+        role: 'user',
+        content: `Here is the conversation history:\n\n${formattedHistory}.\n\nNow return a JSON object with the following keys:\n\n- core_values: string[] (3–5 words)\n- top_interests: string[] (3–5 words)\n- personality_style: string (freeform text)\n- voice_style: string (freeform description based on voice features)\n- emotional_signature: string (summary based on voice if available)\n- quotes: string[] (1–3 short authentic quotes)\n- summary: string (a short paragraph capturing personality and vibe)\n\nRespond only with the JSON. Do not include any commentary or extra explanation.`,
+      },
+    ],
+  });
+
+  await supabaseClient
+    .from('USER')
+    .update({
+      profile_summary: response.choices[0].message.content!.slice(8, -4),
+    })
+    .eq('id', getSessionUser().id)
+    .select();
+}
 
 async function encodeAudioFile(audioFile: File): Promise<string> {
   const arrayBuffer = await audioFile.arrayBuffer();
@@ -61,10 +96,15 @@ export async function action({ request }: Route.ActionArgs) {
   const formData = await request.formData();
   const botQuestion = formData.get('bot-question') as string;
   const userAudioFile = formData.get('audio-prompt') as File;
-  const [userAudioData, userAnswerText] = await Promise.all([
-    encodeAudioFile(userAudioFile),
-    speechToText(userAudioFile),
-  ]);
+  const [userAudioData, userAnswerText, conversationLength] = await Promise.all(
+    [
+      encodeAudioFile(userAudioFile),
+      speechToText(userAudioFile),
+      loadConversationCount(),
+    ],
+  );
+
+  console.log({ conversationLength });
 
   await supabaseClient.from('USER_PC_QUESTION_ANSWER').insert([
     {
@@ -75,5 +115,13 @@ export async function action({ request }: Route.ActionArgs) {
     },
   ]);
 
-  return null;
+  if (conversationLength === MAX_CONVERSATION_LENGTH - 1) {
+    await saveProfileSummary();
+
+    return redirect(href('/'));
+  }
+
+  return {
+    isLast: conversationLength === MAX_CONVERSATION_LENGTH - 2,
+  };
 }

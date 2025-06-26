@@ -1,22 +1,21 @@
 import { Conversation } from '~/modules/profile-capture';
-import { loadConversation } from '~/modules/profile-capture/db-service';
-import type { Route } from './+types/conversation';
 import { Container } from '~/components/container';
+import { loadConversationCount } from '~/modules/profile-capture/db-service';
+import { MAX_CONVERSATION_LENGTH } from '~/modules/profile-capture/constants';
+import { href, redirect } from 'react-router';
 
 export async function loader() {
-  const conversation = await loadConversation();
+  const conversationLength = await loadConversationCount();
 
-  return {
-    conversationLength: conversation.length / 2,
-  };
+  if (conversationLength >= MAX_CONVERSATION_LENGTH) {
+    throw redirect(href('/'));
+  }
 }
 
-export default function ProfileCaptureConversationStep({
-  loaderData,
-}: Route.ComponentProps) {
+export default function ProfileCaptureConversationStep() {
   return (
     <Container>
-      <Conversation conversationLength={loaderData.conversationLength} />
+      <Conversation />
     </Container>
   );
 }

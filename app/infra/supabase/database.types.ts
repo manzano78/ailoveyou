@@ -20,6 +20,7 @@ export type Database = {
           location: string | null;
           nickname: string;
           password: string;
+          profile_summary: string | null;
           username: string;
         };
         Insert: {
@@ -32,6 +33,7 @@ export type Database = {
           location?: string | null;
           nickname: string;
           password: string;
+          profile_summary?: string | null;
           username: string;
         };
         Update: {
@@ -44,6 +46,7 @@ export type Database = {
           location?: string | null;
           nickname?: string;
           password?: string;
+          profile_summary?: string | null;
           username?: string;
         };
         Relationships: [];

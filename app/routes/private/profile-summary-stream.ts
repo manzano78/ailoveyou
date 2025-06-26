@@ -9,6 +9,8 @@ export async function loader({ request }: Route.LoaderArgs) {
     return `${glob}${glob && (role === 'assistant' ? '\n\nQ' : '\nA')}${i + 1}: ${content}`;
   }, '');
 
+  console.log({ formattedHistory });
+
   // const formattedHistory = conversation
   //   .map(
   //     (entry: any, i: number) =>

@@ -14,6 +14,8 @@ export function useProfileSummary(): ProfileSummaryData | null {
 
     try {
       const rawJson = profileSummary.slice(8, -4);
+
+      console.log({ rawJson });
       const parsed = JSON.parse(rawJson);
 
       // Transform the streamed data into our ProfileSummaryData format
