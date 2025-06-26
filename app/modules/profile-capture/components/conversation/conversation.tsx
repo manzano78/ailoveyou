@@ -38,15 +38,19 @@ export function Conversation({ conversationLength }: ConversationProps) {
   return (
     <div>
       <Header />
-      <RecordingController
-        isRecording={isRecording}
-        onStartRecording={startRecording}
-        onStopRecording={handleStopRecording}
-      />
-      {isRecording && (
-        <div style={{ zoom: '0.8', marginTop: '-40px' }}>
-          <Waveform />
-        </div>
+      {!isFinished && (
+        <>
+          <RecordingController
+            isRecording={isRecording}
+            onStartRecording={startRecording}
+            onStopRecording={handleStopRecording}
+          />
+          {isRecording && (
+            <div style={{ zoom: '0.8', marginTop: '-40px' }}>
+              <Waveform />
+            </div>
+          )}
+        </>
       )}
       <Prompt value={botQuestion} isFinished={isFinished} />
       {isUsersTurn && botQuestion && !isFinished && (
