@@ -1,5 +1,3 @@
-import React from 'react';
-
 export const Header = () => (
   <div className="header">
     <div className="title">Resonance</div>

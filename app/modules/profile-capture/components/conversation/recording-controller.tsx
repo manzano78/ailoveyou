@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { MicIcon } from '~/modules/profile-capture/components/conversation/mic-icon';
 
 interface RecordingControllerProps {

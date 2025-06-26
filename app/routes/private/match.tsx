@@ -10,7 +10,6 @@ import { Header } from '~/components/header';
 import { ProfileService } from '~/infra/profile';
 import { getKeywords } from '~/infra/openai/keywords';
 import type { Route } from './+types/match';
-import { getSessionUser } from '~/infra/session';
 
 export interface ProfileAudio {
   id: number;

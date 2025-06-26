@@ -1,6 +1,5 @@
 // src/components/ThoughtButton.tsx
 
-import React from 'react';
 import './tought-button.css';
 
 // Définition des types pour les props du composant

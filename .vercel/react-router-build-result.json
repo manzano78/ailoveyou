@@ -13,15 +13,15 @@
       "root": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
       "routes/public/login": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
       "routes/public/register": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
-      "routes/private/matches": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/private/profile-summary": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
       "routes/private/logout": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
       "routes/private/profile-capture/base-info": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
       "routes/private/profile-capture/conversation": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
       "routes/private/profile-capture/conversation-message": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
       "routes/private/profile-capture/get-audio": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
       "routes/private/match": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/private/matches": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
       "routes/private/resonance-discovery": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
-      "routes/private/profile-summary": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
       "routes/private/profile-summary-stream": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
       "routes/private/onboarding": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0"
     },
@@ -60,10 +60,10 @@
         "file": "app/routes/private-layout.tsx",
         "config": {}
       },
-      "routes/private/matches": {
-        "id": "routes/private/matches",
+      "routes/private/profile-summary": {
+        "id": "routes/private/profile-summary",
         "parentId": "routes/private-layout",
-        "file": "app/routes/private/matches.tsx",
+        "file": "app/routes/private/profile-summary.tsx",
         "index": true,
         "config": {}
       },
@@ -109,18 +109,18 @@
         "path": "match/:userId",
         "config": {}
       },
+      "routes/private/matches": {
+        "id": "routes/private/matches",
+        "parentId": "routes/private-layout",
+        "file": "app/routes/private/matches.tsx",
+        "path": "matches",
+        "config": {}
+      },
       "routes/private/resonance-discovery": {
         "id": "routes/private/resonance-discovery",
         "parentId": "routes/private-layout",
         "file": "app/routes/private/resonance-discovery.tsx",
         "path": "discovery",
-        "config": {}
-      },
-      "routes/private/profile-summary": {
-        "id": "routes/private/profile-summary",
-        "parentId": "routes/private-layout",
-        "file": "app/routes/private/profile-summary.tsx",
-        "path": "profile-summary",
         "config": {}
       },
       "routes/private/profile-summary-stream": {
@@ -178,10 +178,10 @@
         "parentId": "root",
         "file": "routes/private-layout.tsx"
       },
-      "routes/private/matches": {
-        "id": "routes/private/matches",
+      "routes/private/profile-summary": {
+        "id": "routes/private/profile-summary",
         "parentId": "routes/private-layout",
-        "file": "routes/private/matches.tsx",
+        "file": "routes/private/profile-summary.tsx",
         "index": true
       },
       "routes/private/logout": {
@@ -220,17 +220,17 @@
         "file": "routes/private/match.tsx",
         "path": "match/:userId"
       },
+      "routes/private/matches": {
+        "id": "routes/private/matches",
+        "parentId": "routes/private-layout",
+        "file": "routes/private/matches.tsx",
+        "path": "matches"
+      },
       "routes/private/resonance-discovery": {
         "id": "routes/private/resonance-discovery",
         "parentId": "routes/private-layout",
         "file": "routes/private/resonance-discovery.tsx",
         "path": "discovery"
-      },
-      "routes/private/profile-summary": {
-        "id": "routes/private/profile-summary",
-        "parentId": "routes/private-layout",
-        "file": "routes/private/profile-summary.tsx",
-        "path": "profile-summary"
       },
       "routes/private/profile-summary-stream": {
         "id": "routes/private/profile-summary-stream",

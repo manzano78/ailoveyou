@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { href, Link } from 'react-router';
 
 // Pour faire fonctionner ce composant, vous devez l'importer et le rendre

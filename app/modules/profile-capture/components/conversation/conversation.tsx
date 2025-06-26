@@ -1,4 +1,3 @@
-import { StatusIndicator } from '~/modules/profile-capture/components/conversation/status-indicator';
 import { Header } from '~/modules/profile-capture/components/conversation/header';
 import { RecordingController } from '~/modules/profile-capture/components/conversation/recording-controller';
 import { Waveform } from '~/modules/profile-capture/components/conversation/wave-form';

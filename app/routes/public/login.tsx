@@ -3,7 +3,6 @@ import type { Route } from './+types/login';
 import bcrypt from 'bcryptjs';
 import { supabaseClient } from '~/infra/supabase';
 import { getSession } from '~/infra/session';
-import { useEffect } from 'react';
 import { Container } from '~/components/container';
 import { Header } from '~/components/header';
 import { Button } from '~/components/button/button';
