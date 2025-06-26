@@ -1,1 +1,1 @@
-export const MAX_CONVERSATION_LENGTH = 3;
+export const MAX_CONVERSATION_LENGTH = 6;
