@@ -61,8 +61,6 @@ async function getAudioDataURLFromHexString(
 export async function loader({ params }: Route.LoaderArgs) {
   const { userId } = params;
 
-  console.log(getSessionUser());
-
   const profile = await ProfileService.findProfile(userId);
 
   const profileAudios: ProfileAudio[] =

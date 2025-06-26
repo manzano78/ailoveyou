@@ -72,10 +72,6 @@ export default function LoginPage({ actionData }: Route.ComponentProps) {
   const navigation = useNavigation();
   const isPending = navigation.formAction === '/login';
 
-  useEffect(() => {
-    console.log(navigation);
-  }, [navigation]);
-
   return (
     <Container>
       <Form method="post" className="p-4">
