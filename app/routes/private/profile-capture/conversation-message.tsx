@@ -34,6 +34,7 @@ async function saveProfileSummary() {
     .from('USER')
     .update({
       profile_summary: response.choices[0].message.content!.slice(8, -4),
+      is_complete: true,
     })
     .eq('id', getSessionUser().id)
     .select();
@@ -104,8 +105,6 @@ export async function action({ request }: Route.ActionArgs) {
     ],
   );
 
-  console.log({ conversationLength });
-
   await supabaseClient.from('USER_PC_QUESTION_ANSWER').insert([
     {
       bot_question: botQuestion,
@@ -117,6 +116,8 @@ export async function action({ request }: Route.ActionArgs) {
 
   if (conversationLength === MAX_CONVERSATION_LENGTH - 1) {
     await saveProfileSummary();
+
+    getSessionUser().isProfileCaptureComplete = true;
 
     return redirect(href('/'));
   }

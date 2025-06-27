@@ -55,14 +55,12 @@ export class ProfileService {
       })
       .join('\n\n\n\n');
 
-    const profile: Profile = {
+    return {
       ...dataUser[0],
       answer: dataAnswer,
       transcript: transcript || '',
       profile_summary: toProfileSummary(dataUser[0]),
     };
-
-    return profile;
   }
 
   static async findProfiles(): Promise<Profile[]> {

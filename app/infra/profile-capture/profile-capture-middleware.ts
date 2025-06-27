@@ -1,38 +1,29 @@
 import { href, redirect, type unstable_MiddlewareFunction } from 'react-router';
 import { getSessionUser } from '~/infra/session';
 
-const initialProfileCapturePageHref = href('/profile-capture/base-info');
-const discoveryPageHref = href('/discovery');
+const areaConfigurations = {
+  'profile-complete': {
+    shouldHaveProfileComplete: true,
+    unmetConditionRedirection: href('/profile-capture/base-info'),
+  },
+  'profile-capture': {
+    shouldHaveProfileComplete: false,
+    unmetConditionRedirection: href('/'),
+  },
+} as const;
 
-const profileCapturePathNames: string[] = [
-  href('/profile-capture/base-info'),
-  href('/profile-capture/conversation'),
-  href('/profile-capture/conversation-message'),
-];
+export function createProfileCaptureMiddleware(
+  area: 'profile-capture' | 'profile-complete',
+): unstable_MiddlewareFunction {
+  const {
+    [area]: { shouldHaveProfileComplete, unmetConditionRedirection },
+  } = areaConfigurations;
 
-function isCapturingProfile(pathname: string): boolean {
-  return profileCapturePathNames.some((pcPathname) => pathname === pcPathname);
+  return () => {
+    const { isProfileCaptureComplete } = getSessionUser();
+
+    if (isProfileCaptureComplete !== shouldHaveProfileComplete) {
+      throw redirect(unmetConditionRedirection);
+    }
+  };
 }
-
-function isSigningOut(pathname: string): boolean {
-  return pathname === href('/logout');
-}
-
-export const profileCaptureMiddleware: unstable_MiddlewareFunction = ({
-  request,
-}) => {
-  const { pathname } = new URL(request.url);
-  const isInProfileCapture = isCapturingProfile(pathname);
-
-  if (
-    !getSessionUser().isProfileCaptureComplete &&
-    !isInProfileCapture &&
-    !isSigningOut(pathname)
-  ) {
-    throw redirect(initialProfileCapturePageHref);
-  }
-
-  if (getSessionUser().isProfileCaptureComplete && isInProfileCapture) {
-    throw redirect(discoveryPageHref);
-  }
-};

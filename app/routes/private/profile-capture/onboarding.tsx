@@ -1,5 +1,31 @@
 import { useEffect, useMemo } from 'react';
-import { href, Link } from 'react-router';
+import {
+  href,
+  Link,
+  redirect,
+  type unstable_MiddlewareFunction,
+} from 'react-router';
+import { getSessionUser } from '~/infra/session';
+import { loadConversationCount } from '~/modules/profile-capture/db-service';
+
+export const unstable_middleware: unstable_MiddlewareFunction[] = [
+  // REDIRECT TO THE RIGHT PC STEP IF REQUIRED
+  async ({ request }) => {
+    if (request.method.toUpperCase() === 'GET') {
+      if (!getSessionUser().location) {
+        throw redirect(href('/profile-capture/base-info'));
+      }
+
+      const conversationCount = await loadConversationCount();
+
+      if (conversationCount) {
+        throw redirect(href('/profile-capture/conversation'));
+      }
+    }
+  },
+];
+
+export function loader() {}
 
 // Pour faire fonctionner ce composant, vous devez l'importer et le rendre
 // dans votre application principale, par exemple dans App.js :
@@ -485,13 +511,6 @@ const OnboardingPage = () => {
       });
     };
   }, []); // Le tableau de dépendances vide signifie que cet effet ne s'exécute qu'une fois.
-
-  // Gérer le clic sur le bouton CTA
-  const handleCtaClick = (e: MouseEvent) => {
-    e.preventDefault();
-    // Dans une vraie application, cela déclencherait une navigation ou une autre action.
-    console.log('Navigating to voice capture...');
-  };
 
   // --- JSX ---
   // Rendre le HTML converti en JSX

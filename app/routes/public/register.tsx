@@ -1,4 +1,12 @@
-import { data, Form, href, Link, redirect, useNavigation } from 'react-router';
+import {
+  data,
+  Form,
+  href,
+  Link,
+  redirect,
+  redirectDocument,
+  useNavigation,
+} from 'react-router';
 import type { Route } from './+types/login';
 import bcrypt from 'bcryptjs';
 import { supabaseClient } from '~/infra/supabase';
@@ -56,7 +64,7 @@ export async function action({ request }: Route.LoaderArgs) {
       isProfileCaptureComplete: false,
     });
 
-    return redirect(href('/profile-capture/base-info'));
+    return redirectDocument(href('/profile-capture/base-info'));
   }
 
   return data(

@@ -12,8 +12,6 @@ export function useConversation() {
   const isPostingUsersAnswer = state === 'submitting';
   const isProcessingProfileSummary = isPostingUsersAnswer && !!data?.isLast;
 
-  console.log({ botQuestion });
-
   const getNextQuestion = useCallback(() => {
     getBotQuestion().then(() => setIsUsersTurn(true));
   }, [getBotQuestion]);

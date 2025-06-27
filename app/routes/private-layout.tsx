@@ -1,5 +1,4 @@
 import { createAuthMiddleware } from '~/infra/authentication/auth-middleware';
-// import { profileCaptureMiddleware } from '~/infra/profile-capture/profile-capture-middleware';
 import {
   href,
   Link,
@@ -9,8 +8,9 @@ import {
 
 export const unstable_middleware: unstable_MiddlewareFunction[] = [
   createAuthMiddleware('private'),
-  // profileCaptureMiddleware,
 ];
+
+export function loader() {}
 
 export default function PrivateLayout() {
   return (

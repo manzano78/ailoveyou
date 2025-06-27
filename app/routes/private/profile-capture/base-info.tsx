@@ -5,6 +5,24 @@ import { Header } from '~/components/header';
 import type { Route } from './+types/base-info';
 import { supabaseClient } from '~/infra/supabase';
 import { getSessionUser } from '~/infra/session';
+import { loadConversationCount } from '~/modules/profile-capture/db-service';
+
+export const unstable_middleware: Route.unstable_MiddlewareFunction[] = [
+  // REDIRECT TO THE RIGHT PC STEP IF REQUIRED
+  async ({ request }) => {
+    if (request.method.toUpperCase() === 'GET' && getSessionUser().location) {
+      const conversationCount = await loadConversationCount();
+
+      throw redirect(
+        conversationCount
+          ? href('/profile-capture/conversation')
+          : href('/profile-capture/onboarding'),
+      );
+    }
+  },
+];
+
+export function loader() {}
 
 export async function action({ request }: Route.LoaderArgs) {
   const formData = await request.formData();
@@ -30,7 +48,7 @@ export async function action({ request }: Route.LoaderArgs) {
     getSessionUser().genderSearch = gender as 'male' | 'female';
     getSessionUser().age = Number(age);
 
-    return redirect(href('/onboarding'));
+    return redirect(href('/profile-capture/onboarding'));
   }
 
   return data({ error: 'Bad request' }, 400);

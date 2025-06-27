@@ -1,16 +1,18 @@
 import { Conversation } from '~/modules/profile-capture';
 import { Container } from '~/components/container';
-import { loadConversationCount } from '~/modules/profile-capture/db-service';
-import { MAX_CONVERSATION_LENGTH } from '~/modules/profile-capture/constants';
-import { href, redirect } from 'react-router';
+import { href, redirect, type unstable_MiddlewareFunction } from 'react-router';
+import { getSessionUser } from '~/infra/session';
 
-export async function loader() {
-  const conversationLength = await loadConversationCount();
-
-  if (conversationLength >= MAX_CONVERSATION_LENGTH) {
-    throw redirect(href('/'));
-  }
-}
+export const unstable_middleware: unstable_MiddlewareFunction[] = [
+  // REDIRECT TO THE RIGHT PC STEP IF REQUIRED
+  async ({ request }) => {
+    if (request.method.toUpperCase() === 'GET') {
+      if (!getSessionUser().location) {
+        throw redirect(href('/profile-capture/base-info'));
+      }
+    }
+  },
+];
 
 export default function ProfileCaptureConversationStep() {
   return (
