@@ -73,6 +73,7 @@ async function loadData(userId: string) {
     getKeywords(profile.transcript),
     ...profileAudios.map(async (pa) => {
       pa.audioUrl = await getAudioDataURLFromHexString(pa.raw, 'audio/mpeg');
+      pa.raw = '';
     }),
   ]);
 
