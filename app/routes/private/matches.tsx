@@ -1,9 +1,11 @@
 import { Container } from '~/components/container';
-import { ProfileService } from '~/infra/profile';
+import { type Profile, ProfileService } from '~/infra/profile';
 import { href, Link, redirect } from 'react-router';
 import ThoughtButton from '~/components/tought-button/thought-button';
 import { getSessionUser } from '~/infra/session';
 import type { Route } from './+types/matches';
+import { Suspense, use } from 'react';
+import { Spinner } from '~/components/spinner';
 
 export async function loader() {
   if (getSessionUser().id === '509c871b-9762-4244-a193-6d8d94a1ae12') {
@@ -22,17 +24,38 @@ export async function loader() {
     );
   }
 
-  const profiles = await ProfileService.findProfiles();
-
   return {
-    profiles,
+    profilesPromise: ProfileService.findProfiles(),
   };
 }
 
 export default function MatchPage({ loaderData }: Route.ComponentProps) {
   return (
     <Container>
-      {loaderData.profiles.map((p) => (
+      <title>Matches</title>
+      <Suspense
+        fallback={
+          <div className="flex items-center justify-center h-full">
+            <Spinner />
+          </div>
+        }
+      >
+        <Profiles profilesPromise={loaderData.profilesPromise} />
+      </Suspense>
+    </Container>
+  );
+}
+
+function Profiles({
+  profilesPromise,
+}: {
+  profilesPromise: Promise<Profile[]>;
+}) {
+  const profiles = use(profilesPromise);
+
+  return (
+    <>
+      {profiles.map((p) => (
         <div className="m-1">
           <ThoughtButton>
             <Link to={href('/match/:userId', { userId: p.id })}>
@@ -41,6 +64,6 @@ export default function MatchPage({ loaderData }: Route.ComponentProps) {
           </ThoughtButton>
         </div>
       ))}
-    </Container>
+    </>
   );
 }

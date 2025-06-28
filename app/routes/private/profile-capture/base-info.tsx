@@ -61,6 +61,7 @@ const UserRegistrationScreen = () => {
 
   return (
     <Container>
+      <title>Base info</title>
       <div>
         <Header>Tell us about yourself!</Header>
         <Header type="h2">

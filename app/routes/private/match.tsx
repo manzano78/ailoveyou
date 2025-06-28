@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { Suspense, use, useState } from 'react';
 import { Container } from '~/components/container';
 import { VoiceClipPlayer } from '~/components/audio/voice-clip-player';
 import { PersonalityTraits } from '~/modules/profile/components/personality-traits';
@@ -10,6 +10,7 @@ import { Header } from '~/components/header';
 import { ProfileService } from '~/infra/profile';
 import { getKeywords } from '~/infra/openai/keywords';
 import type { Route } from './+types/match';
+import { Spinner } from '~/components/spinner';
 
 export interface ProfileAudio {
   id: number;
@@ -57,9 +58,7 @@ async function getAudioDataURLFromHexString(
   return `data:${mimeType};base64,${base64String}`;
 }
 
-export async function loader({ params }: Route.LoaderArgs) {
-  const { userId } = params;
-
+async function loadData(userId: string) {
   const profile = await ProfileService.findProfile(userId);
 
   const profileAudios: ProfileAudio[] =
@@ -70,16 +69,14 @@ export async function loader({ params }: Route.LoaderArgs) {
       id: index,
     })) || [];
 
-  await Promise.all(
-    profileAudios.map(async (pa) => {
+  const [personalityTraits] = await Promise.all([
+    getKeywords(profile.transcript),
+    ...profileAudios.map(async (pa) => {
       pa.audioUrl = await getAudioDataURLFromHexString(pa.raw, 'audio/mpeg');
     }),
-  );
-
-  const personalityTraits = await getKeywords(profile.transcript);
+  ]);
 
   return {
-    userId,
     profile,
     profileAudios,
     personalityTraits,
@@ -87,8 +84,34 @@ export async function loader({ params }: Route.LoaderArgs) {
   };
 }
 
+export async function loader({ params }: Route.LoaderArgs) {
+  return {
+    dataPromise: loadData(params.userId),
+  };
+}
+
 export default function MatchPage({ loaderData }: Route.ComponentProps) {
-  const { profile, profileAudios, personalityTraits, iceBreaker } = loaderData;
+  return (
+    <Container className="p-0">
+      <Suspense
+        fallback={
+          <>
+            <div className="flex items-center justify-center h-full">
+              <Spinner />
+            </div>
+            <title>Loading match...</title>
+          </>
+        }
+      >
+        <Match dataPromise={loaderData.dataPromise} />
+      </Suspense>
+    </Container>
+  );
+}
+
+function Match({ dataPromise }: { dataPromise: ReturnType<typeof loadData> }) {
+  const { profile, profileAudios, personalityTraits, iceBreaker } =
+    use(dataPromise);
   const [playingClip, setPlayingClip] = useState<number>(-1);
   const [clipProgress, setClipProgress] = useState<Record<string, number>>({});
   const [selectedAnswer, setSelectedAnswer] = useState<string>();
@@ -122,7 +145,8 @@ export default function MatchPage({ loaderData }: Route.ComponentProps) {
   };
 
   return (
-    <Container className="p-0">
+    <>
+      <title>{profile.nickname}</title>
       <div className="text-white flex flex-col h-full relative overflow-hidden">
         {/* Header */}
         <div className="mb-4 flex justify-center mt-10">
@@ -209,6 +233,6 @@ export default function MatchPage({ loaderData }: Route.ComponentProps) {
           </div>
         </div>
       </div>
-    </Container>
+    </>
   );
 }

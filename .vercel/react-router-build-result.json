@@ -13,17 +13,17 @@
       "root": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
       "routes/public/login": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
       "routes/public/register": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
-      "routes/private/profile-summary": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
-      "routes/private/logout": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/private/profile-capture/layout": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
       "routes/private/profile-capture/base-info": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/private/profile-capture/onboarding": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
       "routes/private/profile-capture/conversation": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
       "routes/private/profile-capture/conversation-message": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
       "routes/private/profile-capture/get-audio": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/private/my-profile-summary": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
       "routes/private/match": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
       "routes/private/matches": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
       "routes/private/resonance-discovery": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
-      "routes/private/profile-summary-stream": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
-      "routes/private/onboarding": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0"
+      "routes/private/logout": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0"
     },
     "routes": {
       "root": {
@@ -60,11 +60,80 @@
         "file": "app/routes/private-layout.tsx",
         "config": {}
       },
-      "routes/private/profile-summary": {
-        "id": "routes/private/profile-summary",
+      "routes/private/profile-capture/layout": {
+        "id": "routes/private/profile-capture/layout",
         "parentId": "routes/private-layout",
-        "file": "app/routes/private/profile-summary.tsx",
+        "file": "app/routes/private/profile-capture/layout.tsx",
+        "path": "profile-capture",
+        "config": {}
+      },
+      "routes/private/profile-capture/base-info": {
+        "id": "routes/private/profile-capture/base-info",
+        "parentId": "routes/private/profile-capture/layout",
+        "file": "app/routes/private/profile-capture/base-info.tsx",
+        "path": "base-info",
+        "config": {}
+      },
+      "routes/private/profile-capture/onboarding": {
+        "id": "routes/private/profile-capture/onboarding",
+        "parentId": "routes/private/profile-capture/layout",
+        "file": "app/routes/private/profile-capture/onboarding.tsx",
+        "path": "onboarding",
+        "config": {}
+      },
+      "routes/private/profile-capture/conversation": {
+        "id": "routes/private/profile-capture/conversation",
+        "parentId": "routes/private/profile-capture/layout",
+        "file": "app/routes/private/profile-capture/conversation.tsx",
+        "path": "conversation",
+        "config": {}
+      },
+      "routes/private/profile-capture/conversation-message": {
+        "id": "routes/private/profile-capture/conversation-message",
+        "parentId": "routes/private/profile-capture/layout",
+        "file": "app/routes/private/profile-capture/conversation-message.tsx",
+        "path": "conversation-message",
+        "config": {}
+      },
+      "routes/private/profile-capture/get-audio": {
+        "id": "routes/private/profile-capture/get-audio",
+        "parentId": "routes/private/profile-capture/layout",
+        "file": "app/routes/private/profile-capture/get-audio.tsx",
+        "path": "get-audio/:text",
+        "config": {}
+      },
+      "routes/private/profile-complete-layout": {
+        "id": "routes/private/profile-complete-layout",
+        "parentId": "routes/private-layout",
+        "file": "app/routes/private/profile-complete-layout.tsx",
+        "config": {}
+      },
+      "routes/private/my-profile-summary": {
+        "id": "routes/private/my-profile-summary",
+        "parentId": "routes/private/profile-complete-layout",
+        "file": "app/routes/private/my-profile-summary.tsx",
         "index": true,
+        "config": {}
+      },
+      "routes/private/match": {
+        "id": "routes/private/match",
+        "parentId": "routes/private/profile-complete-layout",
+        "file": "app/routes/private/match.tsx",
+        "path": "match/:userId",
+        "config": {}
+      },
+      "routes/private/matches": {
+        "id": "routes/private/matches",
+        "parentId": "routes/private/profile-complete-layout",
+        "file": "app/routes/private/matches.tsx",
+        "path": "matches",
+        "config": {}
+      },
+      "routes/private/resonance-discovery": {
+        "id": "routes/private/resonance-discovery",
+        "parentId": "routes/private/profile-complete-layout",
+        "file": "app/routes/private/resonance-discovery.tsx",
+        "path": "discovery",
         "config": {}
       },
       "routes/private/logout": {
@@ -72,69 +141,6 @@
         "parentId": "routes/private-layout",
         "file": "app/routes/private/logout.tsx",
         "path": "logout",
-        "config": {}
-      },
-      "routes/private/profile-capture/base-info": {
-        "id": "routes/private/profile-capture/base-info",
-        "parentId": "routes/private-layout",
-        "file": "app/routes/private/profile-capture/base-info.tsx",
-        "path": "profile-capture/base-info",
-        "config": {}
-      },
-      "routes/private/profile-capture/conversation": {
-        "id": "routes/private/profile-capture/conversation",
-        "parentId": "routes/private-layout",
-        "file": "app/routes/private/profile-capture/conversation.tsx",
-        "path": "profile-capture/conversation",
-        "config": {}
-      },
-      "routes/private/profile-capture/conversation-message": {
-        "id": "routes/private/profile-capture/conversation-message",
-        "parentId": "routes/private-layout",
-        "file": "app/routes/private/profile-capture/conversation-message.tsx",
-        "path": "profile-capture/conversation-message",
-        "config": {}
-      },
-      "routes/private/profile-capture/get-audio": {
-        "id": "routes/private/profile-capture/get-audio",
-        "parentId": "routes/private-layout",
-        "file": "app/routes/private/profile-capture/get-audio.tsx",
-        "path": "profile-capture/get-audio/:text",
-        "config": {}
-      },
-      "routes/private/match": {
-        "id": "routes/private/match",
-        "parentId": "routes/private-layout",
-        "file": "app/routes/private/match.tsx",
-        "path": "match/:userId",
-        "config": {}
-      },
-      "routes/private/matches": {
-        "id": "routes/private/matches",
-        "parentId": "routes/private-layout",
-        "file": "app/routes/private/matches.tsx",
-        "path": "matches",
-        "config": {}
-      },
-      "routes/private/resonance-discovery": {
-        "id": "routes/private/resonance-discovery",
-        "parentId": "routes/private-layout",
-        "file": "app/routes/private/resonance-discovery.tsx",
-        "path": "discovery",
-        "config": {}
-      },
-      "routes/private/profile-summary-stream": {
-        "id": "routes/private/profile-summary-stream",
-        "parentId": "routes/private-layout",
-        "file": "app/routes/private/profile-summary-stream.ts",
-        "path": "profile-summary-stream",
-        "config": {}
-      },
-      "routes/private/onboarding": {
-        "id": "routes/private/onboarding",
-        "parentId": "routes/private-layout",
-        "file": "app/routes/private/onboarding.tsx",
-        "path": "onboarding",
         "config": {}
       }
     }
@@ -178,71 +184,76 @@
         "parentId": "root",
         "file": "routes/private-layout.tsx"
       },
-      "routes/private/profile-summary": {
-        "id": "routes/private/profile-summary",
+      "routes/private/profile-capture/layout": {
+        "id": "routes/private/profile-capture/layout",
         "parentId": "routes/private-layout",
-        "file": "routes/private/profile-summary.tsx",
+        "file": "routes/private/profile-capture/layout.tsx",
+        "path": "profile-capture"
+      },
+      "routes/private/profile-capture/base-info": {
+        "id": "routes/private/profile-capture/base-info",
+        "parentId": "routes/private/profile-capture/layout",
+        "file": "routes/private/profile-capture/base-info.tsx",
+        "path": "base-info"
+      },
+      "routes/private/profile-capture/onboarding": {
+        "id": "routes/private/profile-capture/onboarding",
+        "parentId": "routes/private/profile-capture/layout",
+        "file": "routes/private/profile-capture/onboarding.tsx",
+        "path": "onboarding"
+      },
+      "routes/private/profile-capture/conversation": {
+        "id": "routes/private/profile-capture/conversation",
+        "parentId": "routes/private/profile-capture/layout",
+        "file": "routes/private/profile-capture/conversation.tsx",
+        "path": "conversation"
+      },
+      "routes/private/profile-capture/conversation-message": {
+        "id": "routes/private/profile-capture/conversation-message",
+        "parentId": "routes/private/profile-capture/layout",
+        "file": "routes/private/profile-capture/conversation-message.tsx",
+        "path": "conversation-message"
+      },
+      "routes/private/profile-capture/get-audio": {
+        "id": "routes/private/profile-capture/get-audio",
+        "parentId": "routes/private/profile-capture/layout",
+        "file": "routes/private/profile-capture/get-audio.tsx",
+        "path": "get-audio/:text"
+      },
+      "routes/private/profile-complete-layout": {
+        "id": "routes/private/profile-complete-layout",
+        "parentId": "routes/private-layout",
+        "file": "routes/private/profile-complete-layout.tsx"
+      },
+      "routes/private/my-profile-summary": {
+        "id": "routes/private/my-profile-summary",
+        "parentId": "routes/private/profile-complete-layout",
+        "file": "routes/private/my-profile-summary.tsx",
         "index": true
+      },
+      "routes/private/match": {
+        "id": "routes/private/match",
+        "parentId": "routes/private/profile-complete-layout",
+        "file": "routes/private/match.tsx",
+        "path": "match/:userId"
+      },
+      "routes/private/matches": {
+        "id": "routes/private/matches",
+        "parentId": "routes/private/profile-complete-layout",
+        "file": "routes/private/matches.tsx",
+        "path": "matches"
+      },
+      "routes/private/resonance-discovery": {
+        "id": "routes/private/resonance-discovery",
+        "parentId": "routes/private/profile-complete-layout",
+        "file": "routes/private/resonance-discovery.tsx",
+        "path": "discovery"
       },
       "routes/private/logout": {
         "id": "routes/private/logout",
         "parentId": "routes/private-layout",
         "file": "routes/private/logout.tsx",
         "path": "logout"
-      },
-      "routes/private/profile-capture/base-info": {
-        "id": "routes/private/profile-capture/base-info",
-        "parentId": "routes/private-layout",
-        "file": "routes/private/profile-capture/base-info.tsx",
-        "path": "profile-capture/base-info"
-      },
-      "routes/private/profile-capture/conversation": {
-        "id": "routes/private/profile-capture/conversation",
-        "parentId": "routes/private-layout",
-        "file": "routes/private/profile-capture/conversation.tsx",
-        "path": "profile-capture/conversation"
-      },
-      "routes/private/profile-capture/conversation-message": {
-        "id": "routes/private/profile-capture/conversation-message",
-        "parentId": "routes/private-layout",
-        "file": "routes/private/profile-capture/conversation-message.tsx",
-        "path": "profile-capture/conversation-message"
-      },
-      "routes/private/profile-capture/get-audio": {
-        "id": "routes/private/profile-capture/get-audio",
-        "parentId": "routes/private-layout",
-        "file": "routes/private/profile-capture/get-audio.tsx",
-        "path": "profile-capture/get-audio/:text"
-      },
-      "routes/private/match": {
-        "id": "routes/private/match",
-        "parentId": "routes/private-layout",
-        "file": "routes/private/match.tsx",
-        "path": "match/:userId"
-      },
-      "routes/private/matches": {
-        "id": "routes/private/matches",
-        "parentId": "routes/private-layout",
-        "file": "routes/private/matches.tsx",
-        "path": "matches"
-      },
-      "routes/private/resonance-discovery": {
-        "id": "routes/private/resonance-discovery",
-        "parentId": "routes/private-layout",
-        "file": "routes/private/resonance-discovery.tsx",
-        "path": "discovery"
-      },
-      "routes/private/profile-summary-stream": {
-        "id": "routes/private/profile-summary-stream",
-        "parentId": "routes/private-layout",
-        "file": "routes/private/profile-summary-stream.ts",
-        "path": "profile-summary-stream"
-      },
-      "routes/private/onboarding": {
-        "id": "routes/private/onboarding",
-        "parentId": "routes/private-layout",
-        "file": "routes/private/onboarding.tsx",
-        "path": "onboarding"
       }
     },
     "routeDiscovery": {

@@ -26,7 +26,7 @@ export default [
     ]),
     // PROFILE CAPTURE COMPLETE ROUTES
     layout('routes/private/profile-complete-layout.tsx', [
-      index('routes/private/profile-summary.tsx'),
+      index('routes/private/my-profile-summary.tsx'),
       route('match/:userId', 'routes/private/match.tsx'),
       route('matches', 'routes/private/matches.tsx'),
       route('discovery', 'routes/private/resonance-discovery.tsx'),

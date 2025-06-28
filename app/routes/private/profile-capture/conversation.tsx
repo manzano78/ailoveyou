@@ -17,6 +17,7 @@ export const unstable_middleware: unstable_MiddlewareFunction[] = [
 export default function ProfileCaptureConversationStep() {
   return (
     <Container>
+      <title>Conversation</title>
       <Conversation />
     </Container>
   );

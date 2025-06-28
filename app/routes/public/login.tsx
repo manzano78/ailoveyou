@@ -81,6 +81,7 @@ export default function LoginPage({ actionData }: Route.ComponentProps) {
 
   return (
     <Container>
+      <title>Sign in</title>
       <Form method="post" className="p-4">
         <Header>Sign in</Header>
         <Header type="h2">Please, sign in!</Header>

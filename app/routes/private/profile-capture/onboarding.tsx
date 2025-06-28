@@ -516,6 +516,7 @@ const OnboardingPage = () => {
   // Rendre le HTML converti en JSX
   return (
     <>
+      <title>Onboarding</title>
       <style>{styles}</style>
 
       {/* Background Effects */}

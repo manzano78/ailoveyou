@@ -81,6 +81,7 @@ export default function RegisterRoute({ actionData }: Route.ComponentProps) {
 
   return (
     <Container>
+      <title>Sign up</title>
       <Form method="post" className="p-4">
         <Header>Sign up</Header>
         <Header type="h2">Please, sign up!</Header>

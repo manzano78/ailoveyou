@@ -3,7 +3,6 @@ import { href, Link } from 'react-router';
 interface ResonanceResultsProps {
   chemistryScore: number;
   insights: string[];
-  onCreateIntroduction: () => void;
   avatarIcons?: {
     left: string;
     center: string;
@@ -14,7 +13,6 @@ interface ResonanceResultsProps {
 export function ResonanceResults({
   chemistryScore,
   insights,
-  onCreateIntroduction,
   avatarIcons = {
     left: '🎭', // Drama masks for emotional depth
     center: '✨', // Sparkles for connection
