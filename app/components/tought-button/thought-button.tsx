@@ -11,9 +11,7 @@ interface ThoughtButtonProps {
 // On utilise React.FC (Functional Component) et on lui passe notre interface de props
 const ThoughtButton: React.FC<ThoughtButtonProps> = ({ children, onClick }) => {
   return (
-    <button className="thought-button w-full" onClick={onClick}>
-      <span className="thought-button-text">{children}</span>
-    </button>
+    <div className="thought-button thought-button-text w-full">{children}</div>
   );
 };
 

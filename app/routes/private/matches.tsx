@@ -58,7 +58,10 @@ function Profiles({
       {profiles.map((p) => (
         <div className="m-1">
           <ThoughtButton>
-            <Link to={href('/match/:userId', { userId: p.id })}>
+            <Link
+              className="w-full h-full flex items-center px-5"
+              to={href('/match/:userId', { userId: p.id })}
+            >
               {p.nickname}
             </Link>
           </ThoughtButton>
