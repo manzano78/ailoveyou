@@ -5,18 +5,18 @@ import { Prompt } from '~/modules/profile-capture/components/conversation/prompt
 import { useConversation } from '~/modules/profile-capture/hooks/useConversation';
 import { useAudioRecorder } from '~/hooks/useAudioRecorder';
 import './conversation.css';
-import { href, Link } from 'react-router';
+import { href } from 'react-router';
 import { SpeakerIcon } from '~/modules/profile-capture/components/conversation/speaker-icon';
 import { useRef } from 'react';
 
-export function Conversation() {
+export function Conversation({ isLastQuestion }: { isLastQuestion: boolean }) {
   const {
     isUsersTurn,
     postUsersAnswer,
     botQuestion,
     stopRecording,
     isProcessingProfileSummary,
-  } = useConversation();
+  } = useConversation({ isLastQuestion });
   const audioElRef = useRef<HTMLAudioElement>(null);
 
   const {

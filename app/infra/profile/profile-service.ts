@@ -26,40 +26,40 @@ function toProfileSummary({
 
 export class ProfileService {
   static async findProfile(userId: string): Promise<Profile> {
-    const { data: dataUser, error: errorUser } = await supabaseClient
+    const { data: users, error } = await supabaseClient
       .from('USER')
-      .select('*')
+      .select('*, USER_PC_QUESTION_ANSWER(*)')
       .eq('id', userId)
-      .order('created_at', { ascending: true })
-      .limit(1);
+      .order('created_at', {
+        referencedTable: 'USER_PC_QUESTION_ANSWER',
+        ascending: true,
+      });
 
-    if (!dataUser) {
+    if (error) {
+      throw error;
+    }
+
+    const [user] = users;
+
+    if (!user) {
       throw new Error('User not found ' + userId);
     }
 
-    const { data: dataAnswer, error: errorAnswer } = await supabaseClient
-      .from('USER_PC_QUESTION_ANSWER')
-      .select('*')
-      .eq('user_id', userId)
-      .order('created_at', { ascending: true });
-
-    const transcript = dataAnswer
-      ?.map((a) => {
-        return (
-          'bot question : ' +
-          a.bot_question +
-          '\n\n' +
-          'user answer : ' +
-          a.user_answer_text
-        );
-      })
-      .join('\n\n\n\n');
+    const transcript = user.USER_PC_QUESTION_ANSWER.map((a) => {
+      return (
+        'bot question : ' +
+        a.bot_question +
+        '\n\n' +
+        'user answer : ' +
+        a.user_answer_text
+      );
+    }).join('\n\n\n\n');
 
     return {
-      ...dataUser[0],
-      answer: dataAnswer,
+      ...user,
+      answer: user.USER_PC_QUESTION_ANSWER,
       transcript: transcript || '',
-      profile_summary: toProfileSummary(dataUser[0]),
+      profile_summary: toProfileSummary(users[0]),
     };
   }
 

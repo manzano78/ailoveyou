@@ -19,7 +19,7 @@ export const Prompt = ({ value, isProcessingProfileSummary }: PromptProps) => {
     <div className="prompt" onClick={handleClick}>
       <p className="prompt-text">
         {isProcessingProfileSummary
-          ? "Ok we're good! Let's generate your profile summary..."
+          ? "Merci beaucoup, j'ai tout ce qu'il faut! Je génère maintenant ton profil, cela peut prendre quelques secondes..."
           : value || '...'}
       </p>
     </div>
