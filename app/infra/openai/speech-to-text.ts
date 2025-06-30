@@ -5,7 +5,6 @@ export async function speechToText(audioFile: File): Promise<string> {
     file: audioFile,
     model: 'gpt-4o-transcribe',
     response_format: 'json', // default is JSON, can be 'text', 'srt', etc.
-    language: 'fr', // optional
   });
 
   return text;
