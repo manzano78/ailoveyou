@@ -5,26 +5,20 @@ export function createMockProfileSummary(): ProfileSummaryData {
     name: 'Luna Chen',
     age: 28,
     location: 'San Francisco',
-    core_values: ['authenticité', 'curiosité', 'bienveillance'],
-    top_interests: [
-      'activités manuelles',
-      'lecture',
-      'voyages',
-      'cinéma',
-      'communauté',
-    ],
+    core_values: ['authenticity', 'curiosity', 'kindness'],
+    top_interests: ['handicrafts', 'reading', 'travel', 'cinema', 'community'],
     personality_style:
-      "Ouverte, créative et relationnelle, prônant l'authenticité et la sincérité. Aime explorer et établir des connexions significatives.",
+      'Open, creative and relational, advocating authenticity and sincerity. Loves to explore and establish meaningful connections.',
     voice_style:
-      'Chaleureux et dynamique, exprimant clairement et honnêtement ses pensées et émotions.',
+      'Warm and dynamic, clearly and honestly expressing thoughts and emotions.',
     emotional_signature:
-      'Équilibrée et expressive, avec une aisance à partager ses émotions de façon ouverte et respectueuse.',
+      'Balanced and expressive, with an ease in sharing emotions in an open and respectful way.',
     quotes: [
-      'Stay curious, il faut être curieux pour comprendre le monde qui nous entoure.',
-      "Il faut être soi-même, qu'il faut pas s'effacer ou s'abîmer pour les autres.",
-      "J'adore voyager et passer du temps avec mes amis.",
+      'Stay curious, you need to be curious to understand the world around us.',
+      "You have to be yourself, you shouldn't fade away or damage yourself for others.",
+      'I love traveling and spending time with my friends.',
     ],
     summary:
-      "Avec une forte appréciation pour l'authenticité, la curiosité et la bienveillance, cette personne est à la fois créative et sociale. Elle entretient des relations bienveillantes et exprime ses émotions sans réserve, toujours en recherchant des expériences enrichissantes qui favorisent la communauté et le partage. Passionnée par les arts et les voyages, elle se montre fan de planification tout en chérissant les moments d'improvisation.",
+      'With a strong appreciation for authenticity, curiosity and kindness, this person is both creative and social. She maintains benevolent relationships and expresses her emotions without reserve, always seeking enriching experiences that promote community and sharing. Passionate about arts and travel, she shows herself to be a fan of planning while cherishing moments of improvisation.',
   };
 }

@@ -6,11 +6,11 @@ interface PromptProps {
 export const Prompt = ({ value, isProcessingProfileSummary }: PromptProps) => {
   const handleClick = () => {
     const voices = speechSynthesis.getVoices();
-    const frenchVoice = voices.find((voice) => voice.lang.startsWith('fr'));
+    const englishVoice = voices.find((voice) => voice.lang.startsWith('en'));
 
-    if (frenchVoice) {
+    if (englishVoice) {
       const utterance = new SpeechSynthesisUtterance(value);
-      utterance.voice = frenchVoice;
+      utterance.voice = englishVoice;
       speechSynthesis.speak(utterance);
     }
   };
@@ -19,7 +19,7 @@ export const Prompt = ({ value, isProcessingProfileSummary }: PromptProps) => {
     <div className="prompt" onClick={handleClick}>
       <p className="prompt-text">
         {isProcessingProfileSummary
-          ? "Merci beaucoup, j'ai tout ce qu'il faut! Je génère maintenant ton profil, cela peut prendre quelques secondes..."
+          ? "Thank you so much, I have everything I need! I'm now generating your profile, this may take a few seconds..."
           : value || '...'}
       </p>
     </div>
