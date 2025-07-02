@@ -67,6 +67,7 @@ export class ProfileService {
     const { data: dataUser, error: errorUser } = await supabaseClient
       .from('USER')
       .select('*')
+      .eq('is_complete', true)
       .order('created_at', { ascending: false });
 
     return (
