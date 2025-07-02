@@ -1,18 +1,29 @@
 import { Conversation } from '~/modules/profile-capture';
 import { Container } from '~/components/container';
-import { href, redirect, type unstable_MiddlewareFunction } from 'react-router';
-import { getSessionUser } from '~/infra/session';
 import type { Route } from './+types/conversation';
 
-import { MAX_CONVERSATION_LENGTH } from '~/modules/profile-capture';
-import { ConversationService } from '~/infra/conversation';
 import { openAI } from '~/infra/openai/client';
-import { supabaseClient } from '~/infra/supabase';
 import { speechToText } from '~/infra/openai';
+import { getDomain } from '~/infra/request-context/domain';
+import { getPrincipal } from '~/infra/request-context/principal';
+import { redirectToNextProfileCaptureStep } from 'app/infra/profile-capture-routing';
+import {
+  MAX_AI_CONVERSATION_LENGTH,
+  type ProfileSummary,
+  type User,
+} from '~/domain/user';
 
-async function saveProfileSummary() {
-  const conversation = await ConversationService.getConversation(
-    getSessionUser().id,
+async function generateProfileSummary(user: User): Promise<ProfileSummary> {
+  const conversation = user.aiConversation.reduce(
+    (glob, { aiAssistantQuestionText, userAnswerText }) => {
+      glob.push(
+        { role: 'assistant', content: aiAssistantQuestionText },
+        { role: 'user', content: userAnswerText },
+      );
+
+      return glob;
+    },
+    [] as Array<{ role: 'assistant' | 'user'; content: string }>,
   );
   const formattedHistory = conversation.reduce((glob, { role, content }, i) => {
     return `${glob}${glob && (role === 'assistant' ? '\n\nQ' : '\nA')}${i + 1}: ${content}`;
@@ -32,73 +43,72 @@ async function saveProfileSummary() {
     ],
   });
 
-  await supabaseClient
-    .from('USER')
-    .update({
-      profile_summary: response.choices[0].message.content!.slice(8, -4),
-      is_complete: true,
-    })
-    .eq('id', getSessionUser().id)
-    .select();
+  return JSON.parse(response.choices[0].message.content!.slice(8, -4));
 }
 
-async function encodeAudioFile(audioFile: File): Promise<string> {
+async function toUrl(audioFile: File): Promise<string> {
   const arrayBuffer = await audioFile.arrayBuffer();
-  const byteArray = new Uint8Array(arrayBuffer);
+  const buffer = Buffer.from(arrayBuffer);
+  const mimeType = audioFile.type;
+  const base64 = buffer.toString('base64');
 
-  return `\\x${byteArray.reduce((s, n) => s + n.toString(16).padStart(2, '0'), '')}`;
+  return `data:${mimeType};base64,${base64}`;
 }
-
-export const unstable_middleware: unstable_MiddlewareFunction[] = [
-  // REDIRECT TO THE RIGHT PC STEP IF REQUIRED
-  async ({ request }) => {
-    if (request.method.toUpperCase() === 'GET') {
-      if (!getSessionUser().location) {
-        throw redirect(href('/profile-capture/base-info'));
-      }
-    }
-  },
-];
 
 export async function loader() {
-  const conversationLength = await ConversationService.getConversationLength(
-    getSessionUser().id,
-  );
+  const conversationLength =
+    await getDomain().userRepository.countUserAiConversationItems(
+      getPrincipal().id,
+    );
 
-  return { isLastQuestion: conversationLength === MAX_CONVERSATION_LENGTH - 1 };
+  console.log({
+    isLastQuestion: conversationLength === MAX_AI_CONVERSATION_LENGTH - 1,
+  });
+
+  return {
+    isLastQuestion: conversationLength === MAX_AI_CONVERSATION_LENGTH - 1,
+  };
 }
 
 // Post openAI question along with the user response
 export async function action({ request }: Route.ActionArgs) {
   const formData = await request.formData();
-  const botQuestion = formData.get('bot-question') as string;
+  const aiAssistantQuestionText = formData.get('bot-question') as string;
   const userAudioFile = formData.get('audio-prompt') as File;
-  const [userAudioData, userAnswerText, conversationLength] = await Promise.all(
-    [
-      encodeAudioFile(userAudioFile),
+  const [userAnswerText, userAnswerAudioUrl, conversationLengthBeforeThis] =
+    await Promise.all([
       speechToText(userAudioFile),
-      ConversationService.getConversationLength(getSessionUser().id),
-    ],
+      toUrl(userAudioFile),
+      getDomain().userRepository.countUserAiConversationItems(
+        getPrincipal().id,
+      ),
+    ]);
+
+  await getDomain().userRepository.insertUserAiConversationItem(
+    getPrincipal().id,
+    {
+      aiAssistantQuestionText,
+      userAnswerText,
+      userAnswerAudioUrl,
+    },
   );
 
-  await supabaseClient.from('USER_PC_QUESTION_ANSWER').insert([
-    {
-      bot_question: botQuestion,
-      user_answer_audio: userAudioData,
-      user_answer_text: userAnswerText,
-      user_id: getSessionUser().id,
-    },
-  ]);
+  const remainingQuestionsCount =
+    MAX_AI_CONVERSATION_LENGTH - conversationLengthBeforeThis - 1;
 
-  if (conversationLength === MAX_CONVERSATION_LENGTH - 1) {
-    await saveProfileSummary();
+  console.log({ remainingQuestionsCount, conversationLengthBeforeThis });
 
-    getSessionUser().isProfileCaptureComplete = true;
+  if (remainingQuestionsCount === 0) {
+    const user = await getDomain().userService.getUserById(getPrincipal().id);
 
-    return redirect(href('/'));
+    user.summary = await generateProfileSummary(user);
+
+    await getDomain().userRepository.updateOne(user);
+
+    return redirectToNextProfileCaptureStep();
   }
 
-  return redirect(href('/profile-capture/conversation'));
+  return { remainingQuestionsCount };
 }
 
 export default function ProfileCaptureConversationStep({

@@ -1,7 +1,13 @@
 import { createCookieSessionStorage } from 'react-router';
-import type { FlashSessionData, SessionData } from '~/infra/session/types';
+import type { AuthenticatedPrincipal } from '~/infra/security';
 
 const { SESSION_COOKIE_SECRET } = process.env;
+
+interface SessionData {
+  principal: AuthenticatedPrincipal;
+}
+
+type FlashSessionData = {};
 
 export const sessionStorage = createCookieSessionStorage<
   SessionData,

@@ -4,17 +4,18 @@ import {
 } from '~/modules/profile/components/profile-section';
 import { href, Link } from 'react-router';
 import type { Route } from './+types/my-profile-summary';
-import { getSessionUser } from '~/infra/session';
-import { ProfileService, type ProfileSummaryData } from '~/infra/profile';
 import { Container } from '~/components/container';
 import { Suspense, use } from 'react';
 import { Spinner } from '~/components/spinner';
+import { getDomain } from '~/infra/request-context/domain';
+import { getPrincipal } from '~/infra/request-context/principal';
+import type { ProfileSummary } from '~/domain/user';
 
 export async function loader() {
   return {
-    myProfileSummary: ProfileService.findProfile(getSessionUser().id).then(
-      ({ profile_summary }) => profile_summary!,
-    ),
+    myProfileSummary: getDomain()
+      .userService.getUserById(getPrincipal().id)
+      .then(({ summary }) => summary!),
   };
 }
 
@@ -42,7 +43,7 @@ export default function ProfileSummaryRoute({
 function MyProfileSummary({
   myProfileSummaryPromise,
 }: {
-  myProfileSummaryPromise: Promise<ProfileSummaryData>;
+  myProfileSummaryPromise: Promise<ProfileSummary>;
 }) {
   const profile = use(myProfileSummaryPromise);
 

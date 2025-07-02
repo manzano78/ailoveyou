@@ -1,62 +1,36 @@
 import { data, Form, href, Link, redirect, useNavigation } from 'react-router';
 import type { Route } from './+types/login';
-import bcrypt from 'bcryptjs';
-import { supabaseClient } from '~/infra/supabase';
-import { getSession } from '~/infra/session';
 import { Container } from '~/components/container';
 import { Header } from '~/components/header';
 import { Button } from '~/components/button/button';
 
 import './login.css';
+import { getSession } from '~/infra/request-context/session';
+import { getUserProfileCaptureStep } from '~/domain/user';
+import { getDomain } from '~/infra/request-context/domain';
 
 export async function action({ request }: Route.LoaderArgs) {
   const formData = await request.formData();
-  const username = formData.get('username');
-  const password = formData.get('password');
+  const username = formData.get('username') as string;
+  const password = formData.get('password') as string;
 
   if (username && password) {
-    const { data, error } = await supabaseClient
-      .from('USER')
-      .select('*')
-      .eq('username', username as string);
-
-    if (error) {
-      throw error;
-    }
-
-    if (data.length) {
-      const [
-        {
-          password: passwordHash,
-          nickname,
-          id,
-          is_complete: isProfileCaptureComplete,
-          age,
-          gender,
-          location,
-          gender_search,
-        },
-      ] = data;
-      const isPasswordValid = await bcrypt.compare(
-        password as string,
-        passwordHash,
+    try {
+      const user = await getDomain().userService.getUserByCredentials(
+        username,
+        password,
       );
 
-      if (isPasswordValid) {
-        getSession().set('user', {
-          nickname,
-          id,
-          isProfileCaptureComplete,
-          age: age ?? undefined,
-          gender: (gender as 'male' | 'female' | null) ?? undefined,
-          genderSearch:
-            (gender_search as 'male' | 'female' | null) ?? undefined,
-          location: location ?? undefined,
-        });
+      getSession().set('principal', {
+        id: user.id,
+        displayName: user.displayName,
+        userName: user.username,
+        status: 'authenticated',
+        profileCaptureStep: getUserProfileCaptureStep(user),
+      });
 
-        return redirect(href('/'));
-      }
-    }
+      return redirect(href('/'));
+    } catch (error) {}
   }
 
   return data(

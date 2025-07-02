@@ -1,6 +1,6 @@
-import type { ProfileSummaryData } from '~/infra/profile/types';
+import type { ProfileSummary } from '~/domain/user';
 
-export function createMockProfileSummary(): ProfileSummaryData {
+export function createMockProfileSummary(): ProfileSummary {
   return {
     name: 'Luna Chen',
     age: 28,

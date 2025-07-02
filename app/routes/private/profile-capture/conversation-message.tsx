@@ -1,10 +1,25 @@
 import { textPrompt } from '~/infra/openai';
 import type { Route } from './+types/conversation-message';
-import { loadConversation } from '~/modules/profile-capture/db-service';
+import { getDomain } from '~/infra/request-context/domain';
+import { getPrincipal } from '~/infra/request-context/principal';
 
 // Stream next openAI question
 export async function loader({ request }: Route.LoaderArgs) {
-  const conversation = await loadConversation();
+  const user = await getDomain().userService.getUserById(
+    getPrincipal().id,
+    true,
+  );
+  const conversation = user.aiConversation.reduce(
+    (glob, { aiAssistantQuestionText, userAnswerText }) => {
+      glob.push(
+        { role: 'assistant', content: aiAssistantQuestionText },
+        { role: 'user', content: userAnswerText },
+      );
+
+      return glob;
+    },
+    [] as Array<{ role: 'assistant' | 'user'; content: string }>,
+  );
 
   const themes = [
     'core values and life vision',

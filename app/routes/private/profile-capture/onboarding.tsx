@@ -1,40 +1,13 @@
 import { useEffect, useMemo } from 'react';
-import {
-  href,
-  Link,
-  redirect,
-  type unstable_MiddlewareFunction,
-} from 'react-router';
-import { getSessionUser } from '~/infra/session';
-import { loadConversationCount } from '~/modules/profile-capture/db-service';
+import { Form } from 'react-router';
+import { Button } from '~/components/button/button';
+import { redirectToNextProfileCaptureStep } from 'app/infra/profile-capture-routing';
 
-export const unstable_middleware: unstable_MiddlewareFunction[] = [
-  // REDIRECT TO THE RIGHT PC STEP IF REQUIRED
-  async ({ request }) => {
-    if (request.method.toUpperCase() === 'GET') {
-      if (!getSessionUser().location) {
-        throw redirect(href('/profile-capture/base-info'));
-      }
+export function action() {
+  return redirectToNextProfileCaptureStep();
+}
 
-      const conversationCount = await loadConversationCount();
-
-      if (conversationCount) {
-        throw redirect(href('/profile-capture/conversation'));
-      }
-    }
-  },
-];
-
-export function loader() {}
-
-// Pour faire fonctionner ce composant, vous devez l'importer et le rendre
-// dans votre application principale, par exemple dans App.js :
-// import OnboardingPage from './OnboardingPage';
-// function App() {
-//   return <OnboardingPage />;
-// }
-
-const OnboardingPage = () => {
+export default function OnboardingPage() {
   // --- CSS ---
   // Le CSS est placé dans une chaîne de caractères pour être injecté via une balise <style>.
   const styles = `
@@ -619,18 +592,14 @@ const OnboardingPage = () => {
 
         {/* CTA */}
         <div className="cta-section">
-          <Link
-            reloadDocument
-            to={href('/profile-capture/conversation')}
-            className="cta-button"
-          >
-            <span>I'm Ready to Share My Voice</span>
-            <span className="cta-icon">→</span>
-          </Link>
+          <Form method="post">
+            <Button type="submit">
+              <span>I'm Ready to Share My Voice</span>
+              <span className="cta-icon">→</span>
+            </Button>
+          </Form>
         </div>
       </div>
     </>
   );
-};
-
-export default OnboardingPage;
+}

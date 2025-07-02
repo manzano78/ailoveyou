@@ -1,1 +1,0 @@
-export const MAX_CONVERSATION_LENGTH = 6;

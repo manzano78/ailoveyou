@@ -1,18 +1,22 @@
-import { data, Form, href, Link, redirect, useNavigation } from 'react-router';
+import { data, Form, href, Link, useNavigation } from 'react-router';
 import type { Route } from './+types/login';
-import bcrypt from 'bcryptjs';
-import { supabaseClient } from '~/infra/supabase';
-import { getSession } from '~/infra/session';
 import { Container } from '~/components/container';
 import { Button } from '~/components/button/button';
 import { Header } from '~/components/header';
+import {
+  getUserProfileCaptureStep,
+  UsernameNotAvailableError,
+} from '~/domain/user';
+import { redirectToCurrentProfileCaptureStep } from 'app/infra/profile-capture-routing';
+import { getSession } from '~/infra/request-context/session';
+import { getDomain } from '~/infra/request-context/domain';
 
 export async function action({ request }: Route.LoaderArgs) {
   const formData = await request.formData();
-  const nickname = formData.get('nickname');
-  const username = formData.get('username');
-  const password = formData.get('password');
-  const passwordConfirm = formData.get('passwordConfirm');
+  const nickname = formData.get('nickname') as string;
+  const username = formData.get('username') as string;
+  const password = formData.get('password') as string;
+  const passwordConfirm = formData.get('passwordConfirm') as string;
 
   if (username && password && passwordConfirm && nickname) {
     if (password !== passwordConfirm) {
@@ -24,24 +28,25 @@ export async function action({ request }: Route.LoaderArgs) {
       );
     }
 
-    const passwordHash = await bcrypt.hash(password as string, 12);
+    try {
+      const createdUser = await getDomain().userService.createUser({
+        username: username,
+        displayName: nickname,
+        password: password,
+      });
 
-    const { data: insertedData, error } = await supabaseClient
-      .from('USER')
-      .insert([
-        {
-          username: username as string,
-          nickname: nickname as string,
-          password: passwordHash,
-        },
-      ])
-      .select();
-
-    if (error) {
-      if (error.code === '23505') {
+      getSession().set('principal', {
+        id: createdUser.id,
+        userName: createdUser.username,
+        displayName: createdUser.displayName,
+        status: 'authenticated',
+        profileCaptureStep: getUserProfileCaptureStep(createdUser),
+      });
+    } catch (error) {
+      if (error instanceof UsernameNotAvailableError) {
         return data(
           {
-            errorMessage: 'This username is not available, sorry.',
+            errorMessage: error.message,
           },
           400,
         );
@@ -50,13 +55,7 @@ export async function action({ request }: Route.LoaderArgs) {
       throw error;
     }
 
-    getSession().set('user', {
-      id: insertedData[0].id,
-      nickname: nickname as string,
-      isProfileCaptureComplete: false,
-    });
-
-    return redirect(href('/profile-capture/base-info'));
+    return redirectToCurrentProfileCaptureStep();
   }
 
   return data(

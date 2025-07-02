@@ -1,5 +1,5 @@
-import { destroySession } from '~/infra/session';
 import { href, redirect } from 'react-router';
+import { destroySession } from '~/infra/request-context/session';
 
 function logout() {
   destroySession();

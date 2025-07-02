@@ -1,27 +1,25 @@
 import { href, redirect, type unstable_MiddlewareFunction } from 'react-router';
-import { getSession } from '~/infra/session';
+import { getPrincipal } from '~/infra/request-context/principal';
 
 const areaConfigurations = {
   private: {
-    shouldHaveAuthenticatedUser: true,
+    requiredStatus: 'authenticated',
     unmetConditionRedirection: href('/login'),
   },
   public: {
-    shouldHaveAuthenticatedUser: false,
+    requiredStatus: 'anonymous',
     unmetConditionRedirection: href('/'),
   },
 } as const;
 
-export function createAuthMiddleware(
+export function createSecurityMiddleware(
   area: 'private' | 'public',
-): unstable_MiddlewareFunction {
-  const { shouldHaveAuthenticatedUser, unmetConditionRedirection } =
+): unstable_MiddlewareFunction<Response> {
+  const { requiredStatus, unmetConditionRedirection } =
     areaConfigurations[area];
 
   return () => {
-    const session = getSession();
-
-    if (session.has('user') !== shouldHaveAuthenticatedUser) {
+    if (getPrincipal().status !== requiredStatus) {
       throw redirect(unmetConditionRedirection);
     }
   };

@@ -7,75 +7,36 @@ import {
   createMockIceBreaker,
 } from '~/modules/match/components/ice-breaker';
 import { Header } from '~/components/header';
-import { ProfileService } from '~/infra/profile';
 import { getKeywords } from '~/infra/openai/keywords';
 import type { Route } from './+types/match';
 import { Spinner } from '~/components/spinner';
+import { getDomain } from '~/infra/request-context/domain';
 
 export interface ProfileAudio {
   id: number;
-  raw: string;
   audioUrl: string;
 }
 
-/**
- * Converts a hexadecimal string representation of audio data into a Data URL
- * suitable for an HTML <audio> element's src attribute.
- *
- * @param hexString The hexadecimal string representing the audio data (e.g., "\\x010203...").
- * @param mimeType The MIME type of the audio (e.g., 'audio/mpeg' for MP3, 'audio/wav', 'audio/ogg').
- * This is crucial for the browser to correctly interpret the audio format.
- * @returns A Promise that resolves with the Data URL string.
- */
-async function getAudioDataURLFromHexString(
-  hexString: string,
-  mimeType: string,
-): Promise<string> {
-  // Remove the initial '\x' if it's present, as well as any other non-hex characters for safety.
-  const cleanedHexString = hexString.startsWith('\\x')
-    ? hexString.substring(2)
-    : hexString;
-
-  if (cleanedHexString.length % 2 !== 0) {
-    throw new Error('Hex string length is not even. Invalid format.');
-  }
-
-  // Convert hexadecimal string to Uint8Array
-  const byteArray = new Uint8Array(cleanedHexString.length / 2);
-  for (let i = 0; i < cleanedHexString.length; i += 2) {
-    byteArray[i / 2] = parseInt(cleanedHexString.substring(i, i + 2), 16);
-  }
-
-  // Convert the Uint8Array to a binary string, then to Base64.
-  // This is a common and efficient way to prepare binary data for Base64 encoding.
-  let binaryString = '';
-  byteArray.forEach((byte: number) => {
-    binaryString += String.fromCharCode(byte);
-  });
-  const base64String = btoa(binaryString);
-
-  // Construct the Data URL
-  return `data:${mimeType};base64,${base64String}`;
-}
-
 async function loadData(userId: string) {
-  const profile = await ProfileService.findProfile(userId);
-
-  const profileAudios: ProfileAudio[] =
-    profile.answer?.map((a, index) => ({
-      raw: a.user_answer_audio ? a.user_answer_audio : '',
-      audioUrl: '',
-      audioDuration: 0,
-      id: index,
-    })) || [];
-
-  const [personalityTraits] = await Promise.all([
-    getKeywords(profile.transcript),
-    ...profileAudios.map(async (pa) => {
-      pa.audioUrl = await getAudioDataURLFromHexString(pa.raw, 'audio/mpeg');
-      pa.raw = '';
+  const profile = await getDomain().userService.getUserById(userId, true);
+  const transcript = profile.aiConversation
+    .map((a) => {
+      return (
+        'bot question : ' +
+        a.aiAssistantQuestionText +
+        '\n\n' +
+        'user answer : ' +
+        a.userAnswerText
+      );
+    })
+    .join('\n\n\n\n');
+  const personalityTraits = await getKeywords(transcript);
+  const profileAudios: ProfileAudio[] = profile.aiConversation.map(
+    ({ userAnswerAudioUrl }, i): ProfileAudio => ({
+      id: i,
+      audioUrl: userAnswerAudioUrl,
     }),
-  ]);
+  );
 
   return {
     profile,
@@ -147,11 +108,11 @@ function Match({ dataPromise }: { dataPromise: ReturnType<typeof loadData> }) {
 
   return (
     <>
-      <title>{profile.nickname}</title>
+      <title>{profile.displayName}</title>
       <div className="text-white flex flex-col h-full relative overflow-hidden">
         {/* Header */}
         <div className="mb-4 flex justify-center mt-10">
-          <Header>{profile.nickname}</Header>
+          <Header>{profile.displayName}</Header>
         </div>
 
         {/* Voice Clips Row */}

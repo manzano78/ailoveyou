@@ -1,28 +1,11 @@
-import { data, Form, href, redirect, useNavigation } from 'react-router';
+import { data, Form, href, useNavigation } from 'react-router';
 import { Button } from '~/components/button/button';
 import { Container } from '~/components/container';
 import { Header } from '~/components/header';
 import type { Route } from './+types/base-info';
 import { supabaseClient } from '~/infra/supabase';
-import { getSessionUser } from '~/infra/session';
-import { loadConversationCount } from '~/modules/profile-capture/db-service';
-
-export const unstable_middleware: Route.unstable_MiddlewareFunction[] = [
-  // REDIRECT TO THE RIGHT PC STEP IF REQUIRED
-  async ({ request }) => {
-    if (request.method.toUpperCase() === 'GET' && getSessionUser().location) {
-      const conversationCount = await loadConversationCount();
-
-      throw redirect(
-        conversationCount
-          ? href('/profile-capture/conversation')
-          : href('/profile-capture/onboarding'),
-      );
-    }
-  },
-];
-
-export function loader() {}
+import { getPrincipal } from '~/infra/request-context/principal';
+import { redirectToNextProfileCaptureStep } from 'app/infra/profile-capture-routing';
 
 export async function action({ request }: Route.LoaderArgs) {
   const formData = await request.formData();
@@ -40,21 +23,16 @@ export async function action({ request }: Route.LoaderArgs) {
         gender: gender as string,
         gender_search: genderSearch as string,
       })
-      .eq('id', getSessionUser().id)
+      .eq('id', getPrincipal().id)
       .select();
 
-    getSessionUser().location = location as string;
-    getSessionUser().gender = gender as 'male' | 'female';
-    getSessionUser().genderSearch = gender as 'male' | 'female';
-    getSessionUser().age = Number(age);
-
-    return redirect(href('/profile-capture/onboarding'));
+    return redirectToNextProfileCaptureStep();
   }
 
   return data({ error: 'Bad request' }, 400);
 }
 
-const UserRegistrationScreen = () => {
+export default function UserRegistrationScreen() {
   const navigation = useNavigation();
   const isPending =
     navigation.formAction === href('/profile-capture/base-info');
@@ -199,6 +177,4 @@ const UserRegistrationScreen = () => {
       </div>
     </Container>
   );
-};
-
-export default UserRegistrationScreen;
+}

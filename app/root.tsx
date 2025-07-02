@@ -1,8 +1,5 @@
 import {
-  Form,
-  href,
   isRouteErrorResponse,
-  Link,
   Links,
   Meta,
   Outlet,
@@ -13,9 +10,11 @@ import type { ReactNode } from 'react';
 
 import type { Route } from './+types/root';
 import stylesheetUrl from './app.css?url';
-import { sessionMiddleware } from '~/infra/session';
+import { sessionMiddleware } from '~/infra/middlewares/session';
+import { requestContextMiddleware } from '~/infra/middlewares/request-context';
 
 export const unstable_middleware: Route.unstable_MiddlewareFunction[] = [
+  requestContextMiddleware,
   sessionMiddleware,
 ];
 

@@ -1,4 +1,4 @@
-import { createAuthMiddleware } from '~/infra/authentication/auth-middleware';
+import { createSecurityMiddleware } from '~/infra/middlewares/security';
 import {
   href,
   Link,
@@ -6,8 +6,8 @@ import {
   type unstable_MiddlewareFunction,
 } from 'react-router';
 
-export const unstable_middleware: unstable_MiddlewareFunction[] = [
-  createAuthMiddleware('private'),
+export const unstable_middleware: unstable_MiddlewareFunction<Response>[] = [
+  createSecurityMiddleware('private'),
 ];
 
 export function loader() {}
