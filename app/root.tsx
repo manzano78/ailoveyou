@@ -1,8 +1,5 @@
 import {
-  Form,
-  href,
   isRouteErrorResponse,
-  Link,
   Links,
   Meta,
   Outlet,
@@ -13,11 +10,6 @@ import type { ReactNode } from 'react';
 
 import type { Route } from './+types/root';
 import stylesheetUrl from './app.css?url';
-import { sessionMiddleware } from '~/infra/session';
-
-export const unstable_middleware: Route.unstable_MiddlewareFunction[] = [
-  sessionMiddleware,
-];
 
 export function Layout({ children }: { children: ReactNode }) {
   return (

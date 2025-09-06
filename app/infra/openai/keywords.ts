@@ -34,7 +34,7 @@ export async function getKeywords(transcript: string): Promise<Keyword[]> {
       { role: 'system', content: 'You are a helpful assistant.' }, // Optional: Define the assistant's persona
       {
         role: 'user',
-        content: `From this transcription of a user profile description for an AI-powered dating app, I would like you to extract 6 keywords with an associated emoji that correspond to the person in JSON format [{word:"", emoji: ""}] I only need the JSON array as output and nothing else \n\n transcript ${transcript}`,
+        content: `À partir de cette transcription de description de profil d'utilisateur pour une app de rencontre animée par une IA, j'aimerais que tu m'extraies 6 mots clé avec un emoji associé qui correspondent à la personne au format JSON [{word:"", emoji: ""}]. Il ne me faut que le tableau JSON en sortie et rien d'autre \n\n transcripte ${transcript}`,
       }, // The user's actual prompt
     ],
     temperature: 0.7, // Controls randomness. Lower is more deterministic.

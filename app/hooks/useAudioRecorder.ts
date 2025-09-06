@@ -9,11 +9,18 @@ export function useAudioRecorder(
   const handleEndRef = useRef(onEnd);
   const handleErrorRef = useRef(onError);
   const [isRecording, setIsRecording] = useState(false);
+  const isRecordingProcessStartedRef = useRef(false);
 
   handleEndRef.current = onEnd;
   handleErrorRef.current = onError;
 
   const startRecording = useCallback(async () => {
+    if (isRecordingProcessStartedRef.current) {
+      return;
+    }
+
+    isRecordingProcessStartedRef.current = true;
+
     try {
       streamRef.current = await navigator.mediaDevices.getUserMedia({
         audio: true,
@@ -37,6 +44,7 @@ export function useAudioRecorder(
       setIsRecording(true);
     } catch (error) {
       setIsRecording(false);
+      isRecordingProcessStartedRef.current = false;
       handleErrorRef.current?.(error);
     }
   }, []);
@@ -48,6 +56,8 @@ export function useAudioRecorder(
     ) {
       mediaRecorderRef.current.stop();
       streamRef.current?.getTracks().forEach((track) => track.stop());
+      setIsRecording(false);
+      isRecordingProcessStartedRef.current = false;
     }
   }, []);
 

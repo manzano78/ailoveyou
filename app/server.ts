@@ -1,6 +1,6 @@
 import {
   createRequestHandler,
-  type unstable_RouterContext,
+  unstable_RouterContextProvider,
 } from 'react-router';
 import * as build from 'virtual:react-router/server-build';
 
@@ -9,5 +9,5 @@ const handle = createRequestHandler(build);
 export default async function handleRequest(
   request: Request,
 ): Promise<Response> {
-  return handle(request, new Map<unstable_RouterContext, unknown>());
+  return handle(request, new unstable_RouterContextProvider());
 }

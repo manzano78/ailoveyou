@@ -1,9 +1,10 @@
 import { textPrompt } from '~/infra/openai';
 import type { Route } from './+types/conversation-message';
 import { loadConversation } from '~/modules/profile-capture/db-service';
+import { getSessionUser } from '~/infra/session';
 
 export async function loader({ request }: Route.LoaderArgs) {
-  const conversation = await loadConversation();
+  const conversation = await loadConversation(getSessionUser().id);
 
   const themes = [
     'core values and life vision',
