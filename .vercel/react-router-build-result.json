@@ -23,20 +23,29 @@
       "routes/private/match": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
       "routes/private/matches": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
       "routes/private/resonance-discovery": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
-      "routes/private/logout": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0"
+      "routes/private/logout": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/api/base-api": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/api/next-question": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/api/generate-summary": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0"
     },
     "routes": {
       "root": {
-        "path": "",
         "id": "root",
         "file": "app/root.tsx",
+        "path": "",
         "config": {
           "runtime": "nodejs"
         }
       },
+      "routes/ui-layout": {
+        "id": "routes/ui-layout",
+        "parentId": "root",
+        "file": "app/routes/ui-layout.tsx",
+        "config": {}
+      },
       "routes/public-layout": {
         "id": "routes/public-layout",
-        "parentId": "root",
+        "parentId": "routes/ui-layout",
         "file": "app/routes/public-layout.tsx",
         "config": {}
       },
@@ -56,7 +65,7 @@
       },
       "routes/private-layout": {
         "id": "routes/private-layout",
-        "parentId": "root",
+        "parentId": "routes/ui-layout",
         "file": "app/routes/private-layout.tsx",
         "config": {}
       },
@@ -142,6 +151,27 @@
         "file": "app/routes/private/logout.tsx",
         "path": "logout",
         "config": {}
+      },
+      "routes/api/base-api": {
+        "id": "routes/api/base-api",
+        "parentId": "root",
+        "file": "app/routes/api/base-api.ts",
+        "path": "api",
+        "config": {}
+      },
+      "routes/api/next-question": {
+        "id": "routes/api/next-question",
+        "parentId": "routes/api/base-api",
+        "file": "app/routes/api/next-question.ts",
+        "path": "next-question",
+        "config": {}
+      },
+      "routes/api/generate-summary": {
+        "id": "routes/api/generate-summary",
+        "parentId": "routes/api/base-api",
+        "file": "app/routes/api/generate-summary.ts",
+        "path": "generate-summary",
+        "config": {}
       }
     }
   },
@@ -158,13 +188,18 @@
     },
     "routes": {
       "root": {
-        "path": "",
         "id": "root",
-        "file": "root.tsx"
+        "file": "root.tsx",
+        "path": ""
+      },
+      "routes/ui-layout": {
+        "id": "routes/ui-layout",
+        "parentId": "root",
+        "file": "routes/ui-layout.tsx"
       },
       "routes/public-layout": {
         "id": "routes/public-layout",
-        "parentId": "root",
+        "parentId": "routes/ui-layout",
         "file": "routes/public-layout.tsx"
       },
       "routes/public/login": {
@@ -181,7 +216,7 @@
       },
       "routes/private-layout": {
         "id": "routes/private-layout",
-        "parentId": "root",
+        "parentId": "routes/ui-layout",
         "file": "routes/private-layout.tsx"
       },
       "routes/private/profile-capture/layout": {
@@ -254,6 +289,24 @@
         "parentId": "routes/private-layout",
         "file": "routes/private/logout.tsx",
         "path": "logout"
+      },
+      "routes/api/base-api": {
+        "id": "routes/api/base-api",
+        "parentId": "root",
+        "file": "routes/api/base-api.ts",
+        "path": "api"
+      },
+      "routes/api/next-question": {
+        "id": "routes/api/next-question",
+        "parentId": "routes/api/base-api",
+        "file": "routes/api/next-question.ts",
+        "path": "next-question"
+      },
+      "routes/api/generate-summary": {
+        "id": "routes/api/generate-summary",
+        "parentId": "routes/api/base-api",
+        "file": "routes/api/generate-summary.ts",
+        "path": "generate-summary"
       }
     },
     "routeDiscovery": {
@@ -262,7 +315,104 @@
     },
     "serverBuildFile": "index.js",
     "serverModuleFormat": "esm",
-    "ssr": true
+    "ssr": true,
+    "unstable_routeConfig": [
+      {
+        "id": "root",
+        "path": "",
+        "file": "root.tsx",
+        "children": [
+          {
+            "file": "routes/ui-layout.tsx",
+            "children": [
+              {
+                "file": "routes/public-layout.tsx",
+                "children": [
+                  {
+                    "file": "routes/public/login.tsx",
+                    "path": "login"
+                  },
+                  {
+                    "file": "routes/public/register.tsx",
+                    "path": "register"
+                  }
+                ]
+              },
+              {
+                "file": "routes/private-layout.tsx",
+                "children": [
+                  {
+                    "file": "routes/private/profile-capture/layout.tsx",
+                    "children": [
+                      {
+                        "file": "routes/private/profile-capture/base-info.tsx",
+                        "path": "base-info"
+                      },
+                      {
+                        "file": "routes/private/profile-capture/onboarding.tsx",
+                        "path": "onboarding"
+                      },
+                      {
+                        "file": "routes/private/profile-capture/conversation.tsx",
+                        "path": "conversation"
+                      },
+                      {
+                        "file": "routes/private/profile-capture/conversation-message.tsx",
+                        "path": "conversation-message"
+                      },
+                      {
+                        "file": "routes/private/profile-capture/get-audio.tsx",
+                        "path": "get-audio/:text"
+                      }
+                    ],
+                    "path": "profile-capture"
+                  },
+                  {
+                    "file": "routes/private/profile-complete-layout.tsx",
+                    "children": [
+                      {
+                        "file": "routes/private/my-profile-summary.tsx",
+                        "index": true
+                      },
+                      {
+                        "file": "routes/private/match.tsx",
+                        "path": "match/:userId"
+                      },
+                      {
+                        "file": "routes/private/matches.tsx",
+                        "path": "matches"
+                      },
+                      {
+                        "file": "routes/private/resonance-discovery.tsx",
+                        "path": "discovery"
+                      }
+                    ]
+                  },
+                  {
+                    "file": "routes/private/logout.tsx",
+                    "path": "logout"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "file": "routes/api/base-api.ts",
+            "children": [
+              {
+                "file": "routes/api/next-question.ts",
+                "path": "next-question"
+              },
+              {
+                "file": "routes/api/generate-summary.ts",
+                "path": "generate-summary"
+              }
+            ],
+            "path": "api"
+          }
+        ]
+      }
+    ]
   },
   "viteConfig": {
     "build": {

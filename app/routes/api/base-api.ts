@@ -1,16 +1,16 @@
 import type { unstable_MiddlewareFunction } from 'react-router';
-import { provideAuthenticatedUserId } from '~/routes/api/auth';
+// import { provideAuthenticatedUserId } from '~/routes/api/auth';
 
-const securityMiddleware: unstable_MiddlewareFunction<Response> = async (
-  { request },
-  next,
-) => {
-  const authorizationHeader = request.headers.get('Authorization');
-
-  return await provideAuthenticatedUserId(authorizationHeader, next, () => {
-    throw Response.json({ errorMessage: 'Unauthorized' }, { status: 401 });
-  });
-};
+// const securityMiddleware: unstable_MiddlewareFunction<Response> = async (
+//   { request },
+//   next,
+// ) => {
+//   const authorizationHeader = request.headers.get('Authorization');
+//
+//   return await provideAuthenticatedUserId(authorizationHeader, next, () => {
+//     throw Response.json({ errorMessage: 'Unauthorized' }, { status: 401 });
+//   });
+// };
 
 const corsMiddleware: unstable_MiddlewareFunction<Response> = async (
   _,
