@@ -1,13 +1,13 @@
 import { supabaseClient } from '~/infra/supabase';
 import { getSessionUser } from '~/infra/session';
 
-export async function loadConversation(): Promise<
-  Array<{ role: 'assistant' | 'user'; content: string }>
-> {
+export async function loadConversation(
+  userId: string,
+): Promise<Array<{ role: 'assistant' | 'user'; content: string }>> {
   const { data, error } = await supabaseClient
     .from('USER_PC_QUESTION_ANSWER')
     .select('*')
-    .eq('user_id', getSessionUser().id)
+    .eq('user_id', userId)
     .order('created_at', { ascending: true });
 
   if (error) {
