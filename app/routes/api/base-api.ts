@@ -30,6 +30,6 @@ const corsMiddleware: unstable_MiddlewareFunction<Response> = async (
 };
 
 export const unstable_middleware: unstable_MiddlewareFunction<Response>[] = [
-  // corsMiddleware,
+  corsMiddleware,
   // securityMiddleware,
 ];
