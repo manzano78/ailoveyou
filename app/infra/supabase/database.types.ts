@@ -14,6 +14,24 @@ export type Database = {
   };
   public: {
     Tables: {
+      API_LIMITATION: {
+        Row: {
+          last_usage_day: string;
+          last_usage_day_counter: number;
+          user_id: string;
+        };
+        Insert: {
+          last_usage_day: string;
+          last_usage_day_counter: number;
+          user_id: string;
+        };
+        Update: {
+          last_usage_day?: string;
+          last_usage_day_counter?: number;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
       USER: {
         Row: {
           age: number | null;

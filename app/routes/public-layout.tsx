@@ -1,8 +1,8 @@
 import type { unstable_MiddlewareFunction } from 'react-router';
-import { createAuthMiddleware } from '~/infra/authentication/auth-middleware';
+import { createUiAuthMiddleware } from '~/infra/authentication/ui-auth-middleware';
 
 export const unstable_middleware: unstable_MiddlewareFunction[] = [
-  createAuthMiddleware('public'),
+  createUiAuthMiddleware('public'),
 ];
 
 export function loader() {}

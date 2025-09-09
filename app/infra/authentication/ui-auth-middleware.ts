@@ -12,7 +12,7 @@ const areaConfigurations = {
   },
 } as const;
 
-export function createAuthMiddleware(
+export function createUiAuthMiddleware(
   area: 'private' | 'public',
 ): unstable_MiddlewareFunction {
   const { shouldHaveAuthenticatedUser, unmetConditionRedirection } =

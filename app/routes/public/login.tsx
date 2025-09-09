@@ -8,6 +8,7 @@ import { Header } from '~/components/header';
 import { Button } from '~/components/button/button';
 
 import './login.css';
+import { useEffect } from 'react';
 
 export async function action({ request }: Route.LoaderArgs) {
   const formData = await request.formData();
@@ -70,6 +71,15 @@ export async function action({ request }: Route.LoaderArgs) {
 export default function LoginPage({ actionData }: Route.ComponentProps) {
   const navigation = useNavigation();
   const isPending = navigation.formAction === '/login';
+
+  useEffect(() => {
+    (async () => {
+      const response = await fetch('/api/next-question', {
+        method: 'POST',
+        body: new FormData(),
+      });
+    })();
+  }, []);
 
   return (
     <Container>
