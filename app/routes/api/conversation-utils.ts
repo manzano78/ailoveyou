@@ -6,9 +6,8 @@ export interface ConversationItem {
 }
 
 export async function loadConversation(
-  request: Request,
+  formData: FormData,
 ): Promise<Array<ConversationItem>> {
-  const formData = await request.formData();
   const messages = formData.getAll('m');
 
   if (messages.length % 2 !== 0) {

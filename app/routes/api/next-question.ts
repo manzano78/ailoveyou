@@ -9,15 +9,22 @@ const THEMES = [
   'past relationships and emotional baggage',
 ];
 
-const TOTAL_QUESTIONS_TO_ASK = 6;
-
 export async function action({ request }: Route.LoaderArgs) {
-  const conversation = await loadConversation(request);
+  const formData = await request.formData();
+  const totalQuestionsToAsk = Number(formData.get('totalQuestionsToAsk'));
+  const conversation = await loadConversation(formData);
 
-  if (conversation.length > TOTAL_QUESTIONS_TO_ASK * 2) {
+  if (conversation.length > totalQuestionsToAsk * 2) {
     throw Response.json(
       {
         message: 'The maximum questions to ask has been reached',
+      },
+      { status: 400 },
+    );
+  } else if (totalQuestionsToAsk < THEMES.length) {
+    throw Response.json(
+      {
+        message: `"totalQuestionsToAsk" value must be ${THEMES.length} or higher in order to cover every mandatory themes.`,
       },
       { status: 400 },
     );
@@ -27,12 +34,7 @@ export async function action({ request }: Route.LoaderArgs) {
     ? conversation[conversation.length - 1].content
     : undefined;
 
-  const endingEvents: EndingEvent[] = [
-    {
-      event: 'has-more-questions',
-      data: String(conversation.length < TOTAL_QUESTIONS_TO_ASK * 2 - 2),
-    },
-  ];
+  const endingEvents: EndingEvent[] = [];
 
   if (lastUserTextAnswer) {
     endingEvents.push({
@@ -51,7 +53,7 @@ export async function action({ request }: Route.LoaderArgs) {
         content: `
     Tu es un(e) expert(e) en relations amoureuses, doté(e) d'une grande empathie et d'une curiosité sincère. Tu mènes une conversation fluide, comme lors d'un premier rendez-vous inoubliable. Ton objectif est d'aider ton interlocuteur·rice à se révéler naturellement.
 **Règles du jeu :**
-- Tu mènes une discussion de ${TOTAL_QUESTIONS_TO_ASK} questions.
+- Tu mènes une discussion de ${totalQuestionsToAsk} questions.
 - Tu dois aborder *chacun* des ${THEMES.length} thèmes suivants au moins une fois :
 ${THEMES.map((t, i) => `  ${i + 1}. ${t}`).join('\n')}
 - Pose **des questions profondes mais naturelles**, en t'adaptant aux réponses précédentes.

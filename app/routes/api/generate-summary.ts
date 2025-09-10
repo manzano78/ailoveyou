@@ -3,7 +3,8 @@ import { loadConversation } from '~/routes/api/conversation-utils';
 import { openAI } from '~/infra/openai/client';
 
 export async function action({ request }: Route.ActionArgs) {
-  const conversation = await loadConversation(request);
+  const formData = await request.formData();
+  const conversation = await loadConversation(formData);
   const formattedHistory = conversation.reduce((glob, { role, content }, i) => {
     return `${glob}${glob && (role === 'assistant' ? '\n\nQ' : '\nA')}${i + 1}: ${content}`;
   }, '');
