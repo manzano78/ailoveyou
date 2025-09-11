@@ -62,7 +62,10 @@ Si 'is_safe_for_profile' est faux, les champs de l'objet 'profile' doivent être
     response.choices[0].message.content!.slice(8, -4),
   );
 
-  jsonContent['last_answer'] = lastUserTextAnswer ?? '';
+  jsonContent.last_answer =
+    lastUserTextAnswer && jsonContent.moderation?.is_safe_for_profile
+      ? lastUserTextAnswer
+      : '';
 
   return Response.json(jsonContent);
 }
