@@ -11,7 +11,7 @@ export default [
     // PUBLIC ROUTES (NO AUTHENTICATED USER)
     layout('routes/public-layout.tsx', [
       route('login', 'routes/public/login.tsx'),
-      route('register', 'routes/public/register.tsx'),
+      // route('register', 'routes/public/register.tsx'),
     ]),
     // PRIVATE ROUTES (AUTHENTICATED USER)
     layout('routes/private-layout.tsx', [

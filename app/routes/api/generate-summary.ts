@@ -14,11 +14,43 @@ export async function action({ request }: Route.ActionArgs) {
     messages: [
       {
         role: 'system',
-        content: `You are a senior expert in psychological profiling and natural language understanding. Your task is to create a personality and values summary from a person's answers to a series of self-exploration questions. This summary will be used in a dating profile system to help find compatible matches. The values must be in French, it's mandatory.`,
+        content: `Vous êtes un expert senior en profilage psychologique et un modérateur de contenu pour une plateforme de rencontres. Votre responsabilité principale est de garantir la sécurité des utilisateurs et l'intégrité de la plateforme.
+
+Votre tâche se déroule en deux parties :
+1.  **Analyse de Sécurité** : D'abord, analysez méticuleusement l'intégralité de la conversation de l'utilisateur pour tout contenu qui enfreint les règles de sécurité. Cela inclut, sans s'y limiter :
+    - Langage NSFW, explicite ou sexuellement graphique.
+    - Discours haineux, propos discriminatoires ou incitation à la violence.
+    - Mention d'activités illégales ou d'abus de substances.
+    - Indications de minorité (utilisateur de moins de 18 ans).
+    - Contenu suggérant des arnaques, de la fraude ou une intention malveillante.
+    - Signes clairs de détresse émotionnelle, d'automutilation ou de menaces envers autrui.
+    - Incohérences majeures ou "signaux d'alarme" (red flags) suggérant un profil non authentique.
+
+2.  **Génération du Résumé de Profil** : Si ET SEULEMENT SI le contenu est jugé sûr et approprié, créez un résumé de personnalité et de valeurs qui soit positif, authentique et attrayant. Ce résumé sera utilisé dans un profil de rencontre. N'incluez jamais de contenu négatif, inapproprié ou signalé dans le résumé de profil généré. Le résumé doit toujours être présenté sous un jour positif, adapté à une application de rencontres.`,
       },
       {
         role: 'user',
-        content: `Here is the conversation history:\n\n${formattedHistory}.\n\nNow return a JSON object with the following keys:\n\n- core_values: string[] (3–5 words)\n- top_interests: string[] (3–5 words)\n- personality_style: string (freeform text)\n- voice_style: string (freeform description based on voice features)\n- emotional_signature: string (summary based on voice if available)\n- quotes: string[] (1–3 short authentic quotes)\n- summary: string (a short paragraph capturing personality and vibe)\n\nRespond only with the JSON. Do not include any commentary or extra explanation.`,
+        content: `Voici l'historique de la conversation :\n\n${formattedHistory}.\n\nMaintenant, retournez un unique objet JSON avec la structure suivante. Ne répondez QU'AVEC le JSON.
+
+{
+  "moderation": {
+    "is_safe_for_profile": boolean, // true si le contenu est approprié ; false si une violation est détectée.
+    "violation_category": string | null, // ex: "NSFW", "Discours Haineux", "Risque de sécurité", "Incohérent". Null si sûr.
+    "reasoning": string | null, // Brève explication pour le signalement. Null si sûr.
+    "flagged_content": string[] // Tableau des citations/phrases spécifiques qui sont problématiques.
+  },
+  "profile": {
+    "core_values": string[], // 3-5 mots. À générer seulement si le contenu est sûr.
+    "top_interests": string[], // 3-5 mots. À générer seulement si le contenu est sûr.
+    "personality_style": string, // Texte libre. À générer seulement si le contenu est sûr.
+    "voice_style": string, // Description libre basée sur les caractéristiques vocales.
+    "emotional_signature": string, // Résumé basé sur la voix.
+    "quotes": string[], // 1-3 citations courtes, authentiques et SANS DANGER.
+    "summary": string, // Un court paragraphe. À générer seulement si le contenu est sûr.
+  }
+}
+
+Si 'is_safe_for_profile' est faux, les champs de l'objet 'profile' doivent être des chaînes de caractères vides et des tableaux vides. Votre objectif principal est l'évaluation de la modération.`,
       },
     ],
   });
