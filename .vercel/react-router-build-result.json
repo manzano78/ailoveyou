@@ -12,7 +12,6 @@
     "routeIdToServerBundleId": {
       "root": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
       "routes/public/login": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
-      "routes/public/register": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
       "routes/private/profile-capture/layout": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
       "routes/private/profile-capture/base-info": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
       "routes/private/profile-capture/onboarding": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
@@ -54,13 +53,6 @@
         "parentId": "routes/public-layout",
         "file": "app/routes/public/login.tsx",
         "path": "login",
-        "config": {}
-      },
-      "routes/public/register": {
-        "id": "routes/public/register",
-        "parentId": "routes/public-layout",
-        "file": "app/routes/public/register.tsx",
-        "path": "register",
         "config": {}
       },
       "routes/private-layout": {
@@ -208,12 +200,6 @@
         "file": "routes/public/login.tsx",
         "path": "login"
       },
-      "routes/public/register": {
-        "id": "routes/public/register",
-        "parentId": "routes/public-layout",
-        "file": "routes/public/register.tsx",
-        "path": "register"
-      },
       "routes/private-layout": {
         "id": "routes/private-layout",
         "parentId": "routes/ui-layout",
@@ -331,10 +317,6 @@
                   {
                     "file": "routes/public/login.tsx",
                     "path": "login"
-                  },
-                  {
-                    "file": "routes/public/register.tsx",
-                    "path": "register"
                   }
                 ]
               },

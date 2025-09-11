@@ -8,6 +8,9 @@ export async function action({ request }: Route.ActionArgs) {
   const formattedHistory = conversation.reduce((glob, { role, content }, i) => {
     return `${glob}${glob && (role === 'assistant' ? '\n\nQ' : '\nA')}${i + 1}: ${content}`;
   }, '');
+  const lastUserTextAnswer = conversation.length
+    ? conversation[conversation.length - 1].content
+    : undefined;
 
   const response = await openAI.chat.completions.create({
     model: 'gpt-4o',
@@ -58,6 +61,8 @@ Si 'is_safe_for_profile' est faux, les champs de l'objet 'profile' doivent être
   const jsonContent = JSON.parse(
     response.choices[0].message.content!.slice(8, -4),
   );
+
+  jsonContent['last_answer'] = lastUserTextAnswer ?? '';
 
   return Response.json(jsonContent);
 }

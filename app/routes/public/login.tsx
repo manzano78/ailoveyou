@@ -115,11 +115,11 @@ export default function LoginPage({ actionData }: Route.ComponentProps) {
               <div className="text-red-600">{actionData.errorMessage}</div>
             )}
           </div>
-          <div className="mt-2 pt-2">
-            <Link className="underline" to={href('/register')}>
-              No account yet? Please sign up!
-            </Link>
-          </div>
+          {/*<div className="mt-2 pt-2">*/}
+          {/*  <Link className="underline" to={href('/register')}>*/}
+          {/*    No account yet? Please sign up!*/}
+          {/*  </Link>*/}
+          {/*</div>*/}
         </div>
       </Form>
     </Container>
