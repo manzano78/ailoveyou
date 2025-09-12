@@ -1,4 +1,4 @@
-import type { unstable_MiddlewareFunction } from 'react-router';
+import type { MiddlewareFunction } from 'react-router';
 
 const allowedOrigins: Array<string | RegExp> = [
   'https://www.meetic.fr',
@@ -13,7 +13,7 @@ const isAllowedOrigin = (origin: string): boolean => {
   );
 };
 
-export const corsMiddleware: unstable_MiddlewareFunction<Response> = async (
+export const corsMiddleware: MiddlewareFunction<Response> = async (
   { request },
   next,
 ) => {

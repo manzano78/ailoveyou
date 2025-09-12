@@ -7,7 +7,7 @@ import { supabaseClient } from '~/infra/supabase';
 import { getSessionUser } from '~/infra/session';
 import { loadConversationCount } from '~/modules/profile-capture/db-service';
 
-export const unstable_middleware: Route.unstable_MiddlewareFunction[] = [
+export const middleware: Route.MiddlewareFunction[] = [
   // REDIRECT TO THE RIGHT PC STEP IF REQUIRED
   async ({ request }) => {
     if (request.method.toUpperCase() === 'GET' && getSessionUser().location) {

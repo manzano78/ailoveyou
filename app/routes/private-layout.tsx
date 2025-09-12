@@ -1,12 +1,7 @@
 import { createUiAuthMiddleware } from '~/infra/authentication/ui-auth-middleware';
-import {
-  href,
-  Link,
-  Outlet,
-  type unstable_MiddlewareFunction,
-} from 'react-router';
+import { href, Link, Outlet, type MiddlewareFunction } from 'react-router';
 
-export const unstable_middleware: unstable_MiddlewareFunction[] = [
+export const middleware: MiddlewareFunction[] = [
   createUiAuthMiddleware('private'),
 ];
 

@@ -1,7 +1,7 @@
-import type { unstable_MiddlewareFunction } from 'react-router';
+import type { MiddlewareFunction } from 'react-router';
 import { provideApiUserIdHash } from '~/infra/authentication/api-auth-context';
 
-export const apiAuthMiddleware: unstable_MiddlewareFunction<Response> = (
+export const apiAuthMiddleware: MiddlewareFunction<Response> = (
   { request },
   next,
 ) =>

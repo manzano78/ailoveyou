@@ -1,6 +1,6 @@
 import { Conversation } from '~/modules/profile-capture';
 import { Container } from '~/components/container';
-import { href, redirect, type unstable_MiddlewareFunction } from 'react-router';
+import { href, redirect, type MiddlewareFunction } from 'react-router';
 import { getSessionUser } from '~/infra/session';
 import type { Route } from './+types/conversation';
 
@@ -49,7 +49,7 @@ async function encodeAudioFile(audioFile: File): Promise<string> {
   return `\\x${byteArray.reduce((s, n) => s + n.toString(16).padStart(2, '0'), '')}`;
 }
 
-export const unstable_middleware: unstable_MiddlewareFunction[] = [
+export const middleware: MiddlewareFunction[] = [
   // REDIRECT TO THE RIGHT PC STEP IF REQUIRED
   async ({ request }) => {
     if (request.method.toUpperCase() === 'GET') {

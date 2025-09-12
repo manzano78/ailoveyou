@@ -1,4 +1,4 @@
-import { href, redirect, type unstable_MiddlewareFunction } from 'react-router';
+import { href, redirect, type MiddlewareFunction } from 'react-router';
 import { getSessionUser } from '~/infra/session';
 
 const areaConfigurations = {
@@ -14,7 +14,7 @@ const areaConfigurations = {
 
 export function createProfileCaptureMiddleware(
   area: 'profile-capture' | 'profile-complete',
-): unstable_MiddlewareFunction {
+): MiddlewareFunction {
   const {
     [area]: { shouldHaveProfileComplete, unmetConditionRedirection },
   } = areaConfigurations;

@@ -1,14 +1,9 @@
 import { useEffect, useMemo } from 'react';
-import {
-  href,
-  Link,
-  redirect,
-  type unstable_MiddlewareFunction,
-} from 'react-router';
+import { href, Link, redirect, type MiddlewareFunction } from 'react-router';
 import { getSessionUser } from '~/infra/session';
 import { loadConversationCount } from '~/modules/profile-capture/db-service';
 
-export const unstable_middleware: unstable_MiddlewareFunction[] = [
+export const middleware: MiddlewareFunction[] = [
   // REDIRECT TO THE RIGHT PC STEP IF REQUIRED
   async ({ request }) => {
     if (request.method.toUpperCase() === 'GET') {

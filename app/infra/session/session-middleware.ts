@@ -1,11 +1,11 @@
-import type { unstable_MiddlewareFunction } from 'react-router';
+import type { MiddlewareFunction } from 'react-router';
 import { sessionStorage } from '~/infra/session/session-storage';
 import {
   createSessionContext,
   sessionContextAsyncLocalStorage,
 } from '~/infra/session/session-context';
 
-export const sessionMiddleware: unstable_MiddlewareFunction<Response> = async (
+export const sessionMiddleware: MiddlewareFunction<Response> = async (
   { request },
   next,
 ) => {

@@ -1,4 +1,4 @@
-import type { unstable_MiddlewareFunction } from 'react-router';
+import type { MiddlewareFunction } from 'react-router';
 import { supabaseClient } from '~/infra/supabase';
 import { getApiUserIdHash } from '~/infra/authentication';
 
@@ -14,7 +14,7 @@ function serializeDay(date: Date): string {
   return currentDateString;
 }
 
-export const apiLimitationMiddleware: unstable_MiddlewareFunction<
+export const apiLimitationMiddleware: MiddlewareFunction<
   Response
 > = async () => {
   // Check if the current user exists in the limitation table

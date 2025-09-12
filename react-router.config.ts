@@ -7,8 +7,8 @@ export default {
   ssr: true,
   future: {
     unstable_optimizeDeps: true,
-    unstable_middleware: true,
     unstable_splitRouteModules: true,
+    v8_middleware: true,
   },
   presets: [vercelPreset()],
 } satisfies Config;
