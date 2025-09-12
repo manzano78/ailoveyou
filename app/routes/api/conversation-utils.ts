@@ -5,6 +5,15 @@ export interface ConversationItem {
   content: string;
 }
 
+function toConversation(messages: string[]): Array<ConversationItem> {
+  return messages.map(
+    (message, i): ConversationItem => ({
+      role: i % 2 === 0 ? 'assistant' : 'user', // The assistant asks first, then the user answers (and so on)
+      content: message,
+    }),
+  );
+}
+
 export async function loadConversation(
   formData: FormData,
 ): Promise<Array<ConversationItem>> {
@@ -24,19 +33,12 @@ export async function loadConversation(
     return [];
   }
 
+  if (typeof messages[messages.length - 1] === 'string') {
+    return toConversation(messages as string[]);
+  }
+
   const lastUserAudioAnswer = messages.pop() as File;
   const lastUserAnswer = await speechToText(lastUserAudioAnswer, 'fr');
 
-  return [
-    ...messages.map(
-      (message, i): ConversationItem => ({
-        role: i % 2 === 0 ? 'assistant' : 'user', // The assistant asks first, then the user answers (and so on)
-        content: message as string,
-      }),
-    ),
-    {
-      role: 'user',
-      content: lastUserAnswer,
-    },
-  ];
+  return toConversation([...(messages as string[]), lastUserAnswer]);
 }
