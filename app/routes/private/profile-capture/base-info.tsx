@@ -1,4 +1,11 @@
-import { data, Form, href, redirect, useNavigation } from 'react-router';
+import {
+  data,
+  Form,
+  href,
+  type MiddlewareFunction,
+  redirect,
+  useNavigation,
+} from 'react-router';
 import { Button } from '~/components/button/button';
 import { Container } from '~/components/container';
 import { Header } from '~/components/header';
@@ -7,7 +14,7 @@ import { supabaseClient } from '~/infra/supabase';
 import { getSessionUser } from '~/infra/session';
 import { loadConversationCount } from '~/modules/profile-capture/db-service';
 
-export const middleware: Route.MiddlewareFunction[] = [
+export const middleware: MiddlewareFunction<Response>[] = [
   // REDIRECT TO THE RIGHT PC STEP IF REQUIRED
   async ({ request }) => {
     if (request.method.toUpperCase() === 'GET' && getSessionUser().location) {

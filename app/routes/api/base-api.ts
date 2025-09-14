@@ -1,9 +1,9 @@
 import { corsMiddleware } from '~/infra/cors';
 import { apiAuthMiddleware } from '~/infra/authentication';
 import { apiLimitationMiddleware } from '~/infra/api-limitation/api-limitation-middleware';
-import type { Route } from './+types/base-api';
+import type { MiddlewareFunction } from 'react-router';
 
-export const middleware: Route.MiddlewareFunction[] = [
+export const middleware: MiddlewareFunction<Response>[] = [
   apiAuthMiddleware,
   apiLimitationMiddleware,
   corsMiddleware,
