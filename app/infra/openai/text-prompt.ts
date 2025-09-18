@@ -1,10 +1,6 @@
 import { openAI } from '~/infra/openai/client';
 import { eventStream } from 'remix-utils/sse/server';
 
-export type Messages = Parameters<
-  typeof openAI.chat.completions.create
->[0]['messages'];
-
 export interface EndingEvent {
   event: string;
   data: string;
@@ -14,26 +10,39 @@ export async function textPrompt({
   messages,
   abortSignal,
   sendEndingMarker = true,
+  sendResponseId = false,
   endingEvents,
+  previousResponseId,
 }: {
-  messages: Messages;
+  messages: {
+    role: 'user' | 'assistant' | 'system' | 'developer';
+    content: string;
+  }[];
   abortSignal: AbortSignal;
   sendEndingMarker?: boolean;
+  sendResponseId?: boolean;
+  previousResponseId?: string | null;
   endingEvents?: EndingEvent[];
 }): Promise<Response> {
-  const stream = await openAI.chat.completions.create({
+  const responseStream = openAI.responses.stream({
     model: 'gpt-4o',
-    stream: true,
-    messages,
+    store: true,
+    input: messages,
+    previous_response_id: previousResponseId,
   });
 
   return eventStream(abortSignal, (send, close) => {
     (async () => {
-      for await (const chunk of stream) {
-        const delta = chunk.choices?.[0]?.delta?.content;
-
-        if (delta) {
-          send({ data: delta });
+      for await (const event of responseStream) {
+        switch (event.type) {
+          case 'response.output_text.delta':
+            send({ data: event.delta });
+            break;
+          case 'response.completed':
+            if (sendResponseId) {
+              send({ event: 'response-id', data: event.response.id });
+            }
+            break;
         }
       }
 

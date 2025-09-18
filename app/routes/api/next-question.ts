@@ -1,6 +1,5 @@
-import { textPrompt, type EndingEvent } from '~/infra/openai';
+import { textPrompt, speechToText } from '~/infra/openai';
 import type { Route } from './+types/next-question';
-import { loadConversation } from '~/routes/api/conversation-utils';
 
 const THEMES = [
   'Valeurs fondamentales et vision de la vie',
@@ -13,48 +12,21 @@ const DEFAULT_TOTAL_QUESTIONS_TO_ASK = 6;
 
 export async function action({ request }: Route.LoaderArgs) {
   const formData = await request.formData();
-  const totalQuestionsToAsk = Number(
-    formData.get('totalQuestionsToAsk') ?? DEFAULT_TOTAL_QUESTIONS_TO_ASK,
-  );
-  const conversation = await loadConversation(formData);
+  const userAnswer = formData.get('userAnswer');
 
-  if (conversation.length > totalQuestionsToAsk * 2) {
-    throw Response.json(
-      {
-        message: 'The maximum questions to ask has been reached',
-      },
-      { status: 400 },
+  if (userAnswer === null) {
+    const totalQuestionsToAsk = Number(
+      formData.get('totalQuestionsToAsk') ?? DEFAULT_TOTAL_QUESTIONS_TO_ASK,
     );
-  } else if (totalQuestionsToAsk < THEMES.length) {
-    throw Response.json(
-      {
-        message: `"totalQuestionsToAsk" value must be ${THEMES.length} or higher in order to cover every mandatory themes.`,
-      },
-      { status: 400 },
-    );
-  }
 
-  const lastUserTextAnswer = conversation.length
-    ? conversation[conversation.length - 1].content
-    : undefined;
-
-  const endingEvents: EndingEvent[] = [];
-
-  if (lastUserTextAnswer) {
-    endingEvents.push({
-      event: 'last-user-text-answer',
-      data: lastUserTextAnswer,
-    });
-  }
-
-  return textPrompt({
-    endingEvents,
-    sendEndingMarker: false,
-    abortSignal: request.signal,
-    messages: [
-      {
-        role: 'system',
-        content: `
+    return textPrompt({
+      sendEndingMarker: false,
+      sendResponseId: true,
+      abortSignal: request.signal,
+      messages: [
+        {
+          role: 'system',
+          content: `
 Vous êtes un(e) expert(e) en relations amoureuses, doté(e) d'une grande empathie et d'une curiosité sincère. Votre mission est de mener une conversation fluide pour aider votre interlocuteur·rice à se révéler naturellement, comme lors d'un premier rendez-vous inoubliable.
 
 Règle d'Or : La Sécurité et le Respect Avant Tout
@@ -87,18 +59,40 @@ ${THEMES.map((theme) => `   - ${theme}`).join('\n')}
 - Soyez chaleureux·se, sincère et jamais robotique.
 - Ne soyez ni formel·le ni distant·e, parlez comme un·e bon·ne ami·e un peu curieux·se.
             `,
+        },
+        {
+          role: 'developer',
+          content: `Commence la conversation avec une première question liée à l'un des thèmes ci-dessus. 
+Sois fluide, spontané et engageant.`,
+        },
+      ],
+    });
+  }
+
+  const userAnswerText = await speechToText(userAnswer as File, 'fr');
+
+  return textPrompt({
+    previousResponseId: formData.get('lastResponseId') as string | null,
+    sendEndingMarker: false,
+    sendResponseId: true,
+    abortSignal: request.signal,
+    endingEvents: [
+      {
+        event: 'last-user-text-answer',
+        data: userAnswerText,
       },
-      ...conversation,
+    ],
+    messages: [
+      {
+        role: 'user',
+        content: userAnswerText,
+      },
       {
         role: 'developer',
-        content:
-          conversation.length !== 0
-            ? `Génère la **prochaine meilleure question** à poser. 
+        content: `Génère la **prochaine meilleure question** à poser. 
 - Elle doit s'appuyer sur ce qui a déjà été dit.
 - Elle doit permettre d'explorer un thème encore non abordé (parmi les ${THEMES.length}).
-- Si tous les thèmes ont été abordés, poursuis naturellement la discussion avec curiosité.`
-            : `Commence la conversation avec une première question liée à l'un des thèmes ci-dessus. 
-Sois fluide, spontané et engageant.`,
+- Si tous les thèmes ont été abordés, poursuis naturellement la discussion avec curiosité.`,
       },
     ],
   });

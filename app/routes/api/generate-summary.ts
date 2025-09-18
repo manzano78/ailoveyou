@@ -1,20 +1,21 @@
 import type { Route } from './+types/generate-summary';
-import { loadConversation } from '~/routes/api/conversation-utils';
 import { openAI } from '~/infra/openai/client';
+import { speechToText } from '~/infra/openai';
 
 export async function action({ request }: Route.ActionArgs) {
   const formData = await request.formData();
-  const conversation = await loadConversation(formData);
-  const formattedHistory = conversation.reduce((glob, { role, content }, i) => {
-    return `${glob}${glob && (role === 'assistant' ? '\n\nQ' : '\nA')}${i + 1}: ${content}`;
-  }, '');
-  const lastUserTextAnswer = conversation.length
-    ? conversation[conversation.length - 1].content
-    : undefined;
+  const userAnswer = formData.get('userAnswer') as File;
+  const lastResponseId = formData.get('lastResponseId') as string;
+  const lastUserTextAnswer = await speechToText(userAnswer, 'fr');
 
-  const response = await openAI.chat.completions.create({
+  const response = await openAI.responses.create({
     model: 'gpt-4o',
-    messages: [
+    previous_response_id: lastResponseId,
+    input: [
+      {
+        role: 'user',
+        content: lastUserTextAnswer,
+      },
       {
         role: 'system',
         content: `Vous êtes un expert senior en profilage psychologique et un modérateur de contenu pour une plateforme de rencontres. Votre responsabilité principale est de garantir la sécurité des utilisateurs et l'intégrité de la plateforme.
@@ -33,7 +34,7 @@ Votre tâche se déroule en deux parties :
       },
       {
         role: 'user',
-        content: `Voici l'historique de la conversation :\n\n${formattedHistory}.\n\nMaintenant, retournez un unique objet JSON avec la structure suivante. Ne répondez QU'AVEC le JSON.
+        content: `Grâce à tout l'historique de notre conversation, maintenant, retournez un unique objet JSON avec la structure suivante. Ne répondez QU'AVEC le JSON.
 
 {
   "moderation": {
@@ -58,9 +59,7 @@ Si 'is_safe_for_profile' est faux, les champs de l'objet 'profile' doivent être
     ],
   });
 
-  const jsonContent = JSON.parse(
-    response.choices[0].message.content!.slice(8, -4),
-  );
+  const jsonContent = JSON.parse(response.output_text.slice(8, -4));
 
   jsonContent.last_answer =
     lastUserTextAnswer && jsonContent.moderation?.is_safe_for_profile
