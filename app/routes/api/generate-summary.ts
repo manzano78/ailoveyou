@@ -55,12 +55,11 @@ const SUMMARY_JSON_SCHEMA = {
           maxItems: 10,
           items: { type: 'string', minLength: 1 },
         },
-        summary: { type: ['string', 'null'], maxLength: 450 },
+        summary: { type: ['string'], minLength: 0, maxLength: 450 },
 
         // Nouveau: 6 mots-clés + emoji
         keywords_with_emoji: {
           type: 'array',
-          minItems: 6,
           maxItems: 6,
           items: {
             type: 'object',
@@ -77,21 +76,21 @@ const SUMMARY_JSON_SCHEMA = {
         // Nouveau: 2 phrases max
         emotional_signature: {
           type: 'string',
-          minLength: 1,
+          minLength: 0,
           maxLength: 240,
         },
 
         // Nouveau: 2 phrases max
         communication_style: {
           type: 'string',
-          minLength: 1,
+          minLength: 0,
           maxLength: 240,
         },
 
         // Nouveau: 1–3 citations courtes
         quotes: {
           type: 'array',
-          minItems: 1,
+          minItems: 0,
           maxItems: 3,
           items: { type: 'string', minLength: 1, maxLength: 120 },
         },
@@ -109,6 +108,14 @@ export async function action({ request }: Route.ActionArgs) {
   const response = await openAI.responses.create({
     model: 'gpt-4o',
     previous_response_id: lastResponseId,
+    text: {
+      format: {
+        type: 'json_schema',
+        name: 'ProfileSchema',
+        strict: true,
+        schema: SUMMARY_JSON_SCHEMA,
+      },
+    },
     input: [
       {
         role: 'user',
@@ -152,7 +159,7 @@ export async function action({ request }: Route.ActionArgs) {
     "profile": {
       "core_values": string[],
       "top_interests": string[],
-      "summary": string | null,
+      "summary": string,
       "keywords_with_emoji": [{"keyword": string, "emoji": string}, ... 6 items],
       "emotional_signature": string,
       "communication_style": string,
@@ -160,10 +167,11 @@ export async function action({ request }: Route.ActionArgs) {
     }
   }
   Règles:
-  - Si "is_safe_for_profile" = false → "core_values": [], "top_interests": [], "summary": null, "keywords_with_emoji": [], "emotional_signature": "", "communication_style": "", "quotes": [].
+  - Si "is_safe_for_profile" = false → "core_values": [], "top_interests": [], "summary": "", "keywords_with_emoji": [], "emotional_signature": "", "communication_style": "", "quotes": [].
   - Langue: utilisez la langue dominante du texte fourni (ici: français).
-  - Normalisation: dédupliquez; "Sentence case"; supprimer emojis dans "core_values"/"top_interests"/"summary"; garder les emojis UNIQUEMENT dans "keywords_with_emoji".
+  - Normalisation: dédupliquez; "Sentence case"; 
   - Longueurs: summary ≤ 450 chars; emotional_signature ≤ 240 chars (MAX 2 phrases); communication_style ≤ 240 chars (MAX 2 phrases); quotes 1–3 éléments, chacun ≤ 120 chars.
+  - Contrôle final: SI is_safe_for_profile=false, vérifiez et corrigez que 'profile' soit intégralement vide comme ci-dessus.
   - Aucune méta-explication en dehors du JSON.`,
       },
 
@@ -189,9 +197,13 @@ export async function action({ request }: Route.ActionArgs) {
   1) Lire l'intégralité de la conversation.
   2) Identifier les violations; si au moins une sérieuse → is_safe_for_profile=false.
   3) Si sûr → extraire valeurs/intérêts explicitement présents; normaliser et dédupliquer.
-  4) Générer "summary" (≤ 450 chars), "emotional_signature" (≤ 2 phrases) et "communication_style" (≤ 2 phrases).
-  5) Construire 6 "keywords_with_emoji" cohérents, sans répétition.
-  6) Produire 1–3 "quotes" (authentiques, ≤ 120 chars), dérivées du contenu fourni.
+  4) Branche A — NON SÛR (is_safe_for_profile=false):
+     - Fixez: core_values=[], top_interests=[], summary="", keywords_with_emoji=[], emotional_signature="", communication_style="", quotes=[].
+     - Ne remplissez AUCUN élément de 'profile'.
+  5) Branche B — SÛR (is_safe_for_profile=true):
+     - Générer "summary" (≤ 450 chars), "emotional_signature" (≤ 2 phrases) et "communication_style" (≤ 2 phrases).
+     - Construire exactement 6 "keywords_with_emoji" cohérents, sans répétition.
+     - Produire 1–3 "quotes" (authentiques, ≤ 120 chars), dérivées du contenu fourni.
   7) Renvoyer le JSON unique, strictement conforme.`,
       },
 
@@ -245,7 +257,7 @@ export async function action({ request }: Route.ActionArgs) {
     "profile": {
       "core_values": [],
       "top_interests": [],
-      "summary": null,
+      "summary": "",
       "keywords_with_emoji": [],
       "emotional_signature": "",
       "communication_style": "",
@@ -257,13 +269,13 @@ export async function action({ request }: Route.ActionArgs) {
       // 8) Contenu utilisateur
       {
         role: 'user',
-        content: `Voici l'historique de la conversation (brut, sans altération):
-  Maintenant, retournez un UNIQUE objet JSON conforme. NE RÉPONDEZ QU'AVEC LE JSON.`,
+        content: `Basé sur l'ensemble de la conversation, retournez un UNIQUE objet JSON conforme au CONTRAT DE SORTIE.
+   NE RÉPONDEZ QU'AVEC LE JSON.`,
       },
     ],
   });
 
-  const jsonContent = JSON.parse(response.output_text.slice(8, -4));
+  const jsonContent = JSON.parse(response.output_text);
 
   jsonContent.last_answer =
     lastUserTextAnswer && jsonContent.moderation?.is_safe_for_profile
