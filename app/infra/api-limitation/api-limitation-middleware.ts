@@ -2,7 +2,7 @@ import type { MiddlewareFunction } from 'react-router';
 import { supabaseClient } from '~/infra/supabase';
 import { getApiUserIdHash } from '~/infra/authentication';
 
-const MAX_CALLS_PER_USER_AND_PER_DAY = 12;
+const MAX_CALLS_PER_USER_AND_PER_DAY = 14;
 
 function parseDay(dayString: string): Date {
   return new Date(`${dayString}T00:00:00Z`);
