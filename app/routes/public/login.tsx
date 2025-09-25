@@ -109,7 +109,7 @@ export default function LoginPage({ actionData }: Route.ComponentProps) {
           </div>
           <div className="mt-6 flex gap-2 items-center">
             <Button type="submit" disabled={isPending} className="w-full">
-              {isPending ? 'Signing in...' : 'Sign in'}
+              {isPending ? 'Signing in...' : 'Sign in!'}
             </Button>
             {actionData && (
               <div className="text-red-600">{actionData.errorMessage}</div>
