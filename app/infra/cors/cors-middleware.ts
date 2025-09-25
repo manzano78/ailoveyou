@@ -13,11 +13,30 @@ const isAllowedOrigin = (origin: string): boolean => {
   );
 };
 
+const getRequestOrigin = (request: Request): string | null => {
+  const origin = request.headers.get('Origin');
+  if (origin) {
+    return origin;
+  }
+
+  const referer = request.headers.get('Referer');
+
+  if (referer) {
+    try {
+      return new URL(referer).origin;
+    } catch {
+      return null;
+    }
+  }
+
+  return null;
+};
+
 export const corsMiddleware: MiddlewareFunction<Response> = async (
   { request },
   next,
 ) => {
-  const origin = request.headers.get('Origin');
+  const origin = getRequestOrigin(request);
 
   if (origin && isAllowedOrigin(origin)) {
     const response = await next();
