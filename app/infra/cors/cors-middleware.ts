@@ -32,28 +32,36 @@ const getRequestOrigin = (request: Request): string | null => {
   return null;
 };
 
+const addAppropriateHeaders = (headers: Headers): void => {
+  headers.set('Access-Control-Allow-Origin', origin);
+  headers.set('Access-Control-Allow-Credentials', 'true');
+  headers.set('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
+  headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  headers.append('Vary', 'Origin');
+  headers.append('Vary', 'Referer');
+};
+
 export const corsMiddleware: MiddlewareFunction<Response> = async (
   { request },
   next,
 ) => {
   const origin = getRequestOrigin(request);
 
-  if (origin && isAllowedOrigin(origin)) {
-    const response = await next();
-
-    response.headers.set('Access-Control-Allow-Origin', origin);
-    response.headers.set('Access-Control-Allow-Credentials', 'true');
-    response.headers.set(
-      'Access-Control-Allow-Methods',
-      'GET,POST,PUT,DELETE,OPTIONS',
-    );
-    response.headers.set(
-      'Access-Control-Allow-Headers',
-      'Content-Type, Authorization',
-    );
-    response.headers.append('Vary', 'Origin');
-    response.headers.append('Vary', 'Referer');
-
-    return response;
+  if (!origin || !isAllowedOrigin(origin)) {
+    throw Response.json({ errorMessage: 'Forbidden' }, { status: 403 });
   }
+
+  if (request.method.toUpperCase() === 'OPTIONS') {
+    const headers = new Headers();
+
+    addAppropriateHeaders(headers);
+
+    throw new Response(null, { status: 204, headers });
+  }
+
+  const response = await next();
+
+  addAppropriateHeaders(response.headers);
+
+  return response;
 };
