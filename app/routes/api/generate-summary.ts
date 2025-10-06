@@ -168,7 +168,7 @@ export async function action({ request }: Route.ActionArgs) {
   }
   Règles:
   - Si "is_safe_for_profile" = false → "core_values": [], "top_interests": [], "summary": "", "keywords_with_emoji": [], "emotional_signature": "", "communication_style": "", "quotes": [].
-  - Langue: utilisez la langue dominante du texte fourni (ici: français).
+  - Langue: utilisez UNIQUEMENT la langue dominante du texte fourni (ici: français).
   - Normalisation: dédupliquez; "Sentence case"; 
   - Longueurs: summary ≤ 450 chars; emotional_signature ≤ 240 chars (MAX 2 phrases); communication_style ≤ 240 chars (MAX 2 phrases); quotes 1–3 éléments, chacun ≤ 120 chars.
   - Contrôle final: SI is_safe_for_profile=false, vérifiez et corrigez que 'profile' soit intégralement vide comme ci-dessus.
@@ -179,15 +179,15 @@ export async function action({ request }: Route.ActionArgs) {
       {
         role: 'system',
         content: `EXTRACTION (déterministe):
-  - Utilisez UNIQUEMENT des informations explicitement confirmées par l'utilisateur.
-  - Si une info manque → [] ou null/chaîne vide selon le schéma; n'inférez pas.
-  - "core_values": valeurs/traits (ex.: "Loyauté", "Empathie", "Humour").
+  - Utilisez UNIQUEMENT des faits explicitement exprimés par l'utilisateur ("user:"). N’utilisez jamais le texte "assistant:" pour les citations.
+  - N’inférez pas d’informations. Si une donnée manque → [] ou "".
+  - "core_values" (valeurs) NE DOIVENT PAS apparaître dans "keywords_with_emoji".
   - "top_interests": hobbies/centres d'intérêt factuels (ex.: "Randonnée", "Cuisine italienne").
   - "summary": 2–5 phrases positives, chaleureuses, orientées relation; sans red flags.
   - "keywords_with_emoji": 6 paires {keyword, emoji} qui capturent l’essence de la personne (ex.: {"keyword":"Aventurier","emoji":"🧭"}). Un seul emoji par item recommandé.
-  - "emotional_signature": synthèse en ≤ 2 phrases sur le climat émotionnel dominant.
-  - "communication_style": ≤ 2 phrases décrivant la manière de communiquer (ex.: direct, empathique, posé).
-  - "quotes": 1–3 phrases courtes, plausibles et authentiques, reformulant des éléments déjà exprimés (pas de slogans génériques).`,
+  - "emotional_signature" = résumé émotionnel global (≤2 phrases) rédigé de façon neutre
+  - "communication_style" et "summary" = doivent être à la première personne.
+  - "quotes": 1–3 phrases courtes provenant STRICTEMENT du texte "user:" (pas de slogans)`,
       },
 
       // 5) Procédure
@@ -195,15 +195,16 @@ export async function action({ request }: Route.ActionArgs) {
         role: 'system',
         content: `PROCÉDURE:
   1) Lire l'intégralité de la conversation.
-  2) Identifier les violations; si au moins une sérieuse → is_safe_for_profile=false.
-  3) Si sûr → extraire valeurs/intérêts explicitement présents; normaliser et dédupliquer.
+  2) Modération: si violation crédible → is_safe_for_profile=false.
+  3) Si sûr → extraire uniquement depuis "user:"; normaliser (trim, casse), dédupliquer.
   4) Branche A — NON SÛR (is_safe_for_profile=false):
      - Fixez: core_values=[], top_interests=[], summary="", keywords_with_emoji=[], emotional_signature="", communication_style="", quotes=[].
      - Ne remplissez AUCUN élément de 'profile'.
   5) Branche B — SÛR (is_safe_for_profile=true):
-     - Générer "summary" (≤ 450 chars), "emotional_signature" (≤ 2 phrases) et "communication_style" (≤ 2 phrases).
-     - Construire exactement 6 "keywords_with_emoji" cohérents, sans répétition.
-     - Produire 1–3 "quotes" (authentiques, ≤ 120 chars), dérivées du contenu fourni.
+     - Construire "summary" (≤ 450 chars), "emotional_signature" (≤ 2 phrases) et "communication_style" (≤ 2 phrases).
+     - Construire EXACTEMENT 6 "keywords_with_emoji" sans doublon et sans recouper "core_values".
+     - Extraire 1–3 "quotes" issues STRICTEMENT de "user:". (authentiques, ≤ 120 chars), dérivées du contenu fourni.
+  6) Langue: utiliser la langue dominante des messages "user:".
   7) Renvoyer le JSON unique, strictement conforme.`,
       },
 
@@ -231,8 +232,8 @@ export async function action({ request }: Route.ActionArgs) {
         {"keyword":"Gourmand","emoji":"🍝"},
         {"keyword":"Curieux","emoji":"🧐"}
       ],
-      "emotional_signature": "Émotion stable et rassurante, favoriser l'écoute et la cohérence. Style de communication direct mais chaleureux.",
-      "communication_style": "Direct et chaleureux. Privilégie l'écoute active et l'honnêteté.",
+      "emotional_signature": "Présence calme et rassurante, énergie tournée vers l’écoute et la cohérence.",
+      "communication_style": "Je suis direct et chaleureux. Je privilégie l'écoute active et l'honnêteté.",
       "quotes": [
         "Je veux construire quelque chose de solide.",
         "Rien ne me ressource autant qu'un sentier en montagne.",
@@ -269,8 +270,35 @@ export async function action({ request }: Route.ActionArgs) {
       // 8) Contenu utilisateur
       {
         role: 'user',
-        content: `Basé sur l'ensemble de la conversation, retournez un UNIQUE objet JSON conforme au CONTRAT DE SORTIE.
-   NE RÉPONDEZ QU'AVEC LE JSON.`,
+        content: `
+  Basé sur l’ensemble de la conversation que tu viens d'avoir avec l'utilisateur, retourne un UNIQUE objet JSON conforme au CONTRAT DE SORTIE.
+  NE RENVOIE RIEN D’AUTRE QUE LE JSON. AUCUN MARKDOWN, AUCUN TEXTE LIBRE.
+
+  CONSIGNES D’UTILISATION DES SOURCES:
+  - Utilise les questions que tu as posées à l'utilisateur ET ses réponses pour la MODÉRATION.
+  - Utilise EXCLUSIVEMENT les réponses que t'a donné l'utilisateur pour :
+    • "quotes" (les citations doivent être des sous-chaînes textuelles du USER_ONLY),
+    • l’extraction de core_values / top_interests / summary / keywords_with_emoji / emotional_signature / communication_style.
+  - N’invente rien. Si une info manque → [] ou "" (selon le schéma).
+
+  CONTRAINTES DE SORTIE (rappel):
+  - Langue: français uniquement.
+  - keywords_with_emoji: EXACTEMENT 6 items. si is_safe_for_profile=true, sinon 0.
+  - emotional_signature: ≤2 phrases, IMPERSONNEL (interdits: « je suis », « j’suis »).
+  - communication_style et summary: à la PREMIÈRE personne (doivent contenir un pronom 1ʳᵉ pers).
+  - quotes: 1–3 extraits COURTS, présents textuellement dans USER_ONLY, ≤120 caractères chacun, pas de slogans.
+  - Si is_safe_for_profile=false → tous les champs de "profile" doivent être vides (listes vides / chaînes vides).
+
+  CHECKLIST AVANT RENVOI (à appliquer silencieusement) :
+  1) Si violation → is_safe_for_profile=false et vider entièrement "profile".
+  2) Vérifier: 6 keywords_with_emoji EXACTS (ni plus, ni moins).
+  3) Vérifier: aucune "core_values" n’apparaît dans keywords_with_emoji[].keyword.
+  4) Vérifier: emotional_signature ne contient pas « je suis » / « j’suis » et ≤2 phrases.
+  5) Vérifier: communication_style et summary contiennent un pronom de 1ʳᵉ personne et ≤2 phrases pour communication_style, ≤450 caractères pour summary.
+  6) Vérifier: chaque quote est une sous-chaîne exacte de USER_ONLY, ≤120 caractères, 1–3 items.
+  7) Sortie = JSON strict, sans commentaires, sans trailing commas, sans code fences.
+
+  RENVOIE MAINTENANT UN UNIQUE OBJET JSON STRICTEMENT CONFORME AU CONTRAT DE SORTIE. NE RENVOIE QUE LE JSON.`,
       },
     ],
   });
