@@ -125,7 +125,7 @@ export async function action({ request }: Route.ActionArgs) {
       {
         role: 'system',
         content: `Vous êtes un expert senior en profilage psychologique ET un modérateur de contenu pour une application de rencontres.
-  Objectif en deux temps: (1) modérer la sécurité de la conversation fournie; (2) SI et SEULEMENT SI c'est sûr, générer un extrait de profil concis, positif et prêt à publier.
+  Objectif en deux temps: (1) modérer la sécurité de la conversation fournie; (2) SI et SEULEMENT SI c'est sûr, générer un extrait de profil concis, positif et prêt à publier, et strictement basé sur ce que la personne a dit.
   Travaillez STRICTEMENT avec le texte fourni. N'inventez rien. Pas de données externes.`,
       },
 
@@ -141,6 +141,7 @@ export async function action({ request }: Route.ActionArgs) {
   - Fraud/Scam (arnaque, extorsion, demandes d'argent, liens suspects)
   - Self-harm/Distress (automutilation, détresse aiguë, menaces)
   - Impersonation/Red-flag (faux profil, incohérences majeures, manipulation)
+  - L’utilisateur parle principalement d’une autre personne (ex. : "mon père aime...", "il est comme ça...", "Elle...", etc)
   - Other (contenu manifestement inapproprié)
   Ambiguïté → privilégiez la sécurité. Choisissez UNE catégorie: la plus grave.`,
       },
@@ -187,7 +188,7 @@ export async function action({ request }: Route.ActionArgs) {
   - "keywords_with_emoji": 6 paires {keyword, emoji} qui capturent l’essence de la personne (ex.: {"keyword":"Aventurier","emoji":"🧭"}). Un seul emoji par item recommandé.
   - "emotional_signature" = résumé émotionnel global (≤2 phrases) rédigé de façon neutre
   - "communication_style" et "summary" = doivent être à la première personne.
-  - "quotes": 1–3 phrases courtes provenant STRICTEMENT du texte "user:" (pas de slogans)`,
+  - "quotes": 1–3 phrases courtes, littérales, provenant STRICTEMENT du texte "user:" (pas de slogans)`,
       },
 
       // 5) Procédure
@@ -286,7 +287,7 @@ export async function action({ request }: Route.ActionArgs) {
   - keywords_with_emoji: EXACTEMENT 6 items. si is_safe_for_profile=true, sinon 0.
   - emotional_signature: ≤2 phrases, IMPERSONNEL (interdits: « je suis », « j’suis »).
   - communication_style et summary: à la PREMIÈRE personne (doivent contenir un pronom 1ʳᵉ pers).
-  - quotes: 1–3 extraits COURTS, présents textuellement dans USER_ONLY, ≤120 caractères chacun, pas de slogans.
+  - quotes: 1–3 extraits COURTS qui ont une signification autonome, présents textuellement dans USER_ONLY, ≤120 caractères chacun, pas de slogans.
   - Si is_safe_for_profile=false → tous les champs de "profile" doivent être vides (listes vides / chaînes vides).
 
   CHECKLIST AVANT RENVOI (à appliquer silencieusement) :
