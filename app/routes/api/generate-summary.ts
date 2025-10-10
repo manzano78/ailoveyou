@@ -180,15 +180,21 @@ export async function action({ request }: Route.ActionArgs) {
       {
         role: 'system',
         content: `EXTRACTION (déterministe):
-  - Utilisez UNIQUEMENT des faits explicitement exprimés par l'utilisateur ("user:"). N’utilisez jamais le texte "assistant:" pour les citations.
-  - N’inférez pas d’informations. Si une donnée manque → [] ou "".
+  - Utilisez UNIQUEMENT des faits explicitement exprimés par l'utilisateur dans ses réponses. N'utilisez jamais le texte des questions de l'assistant pour les citations.
+  - N'inférez pas d'informations. Si une donnée manque → [] ou "".
   - "core_values" (valeurs) NE DOIVENT PAS apparaître dans "keywords_with_emoji".
   - "top_interests": hobbies/centres d'intérêt factuels (ex.: "Randonnée", "Cuisine italienne").
   - "summary": 2–5 phrases positives, chaleureuses, orientées relation; sans red flags.
-  - "keywords_with_emoji": 6 paires {keyword, emoji} qui capturent l’essence de la personne (ex.: {"keyword":"Aventurier","emoji":"🧭"}). Un seul emoji par item recommandé.
+  - "keywords_with_emoji": 6 paires {keyword, emoji} qui capturent l'essence de la personne (ex.: {"keyword":"Aventurier","emoji":"🧭"}). Un seul emoji par item recommandé.
   - "emotional_signature" = résumé émotionnel global (≤2 phrases) rédigé de façon neutre
   - "communication_style" et "summary" = doivent être à la première personne.
-  - "quotes": 1–3 phrases courtes, littérales, provenant STRICTEMENT du texte "user:" (pas de slogans)`,
+  - "quotes": RÈGLES STRICTES POUR LES CITATIONS:
+    * Extraire SEULEMENT des phrases complètes et significatives des réponses utilisateur
+    * Choisir des phrases qui révèlent la personnalité, les valeurs, ou la vision des relations
+    * Éviter: réponses courtes ("oui", "non"), détails factuels banals, phrases incomplètes
+    * Privilégier: déclarations sur les valeurs, philosophie de vie, approche des relations, traits de caractère
+    * Si aucune phrase ne répond à ces critères → quotes: []
+    * Maximum 120 caractères par citation, 1-3 citations au total`,
       },
 
       // 5) Procédure
@@ -204,7 +210,12 @@ export async function action({ request }: Route.ActionArgs) {
   5) Branche B — SÛR (is_safe_for_profile=true):
      - Construire "summary" (≤ 450 chars), "emotional_signature" (≤ 2 phrases) et "communication_style" (≤ 2 phrases).
      - Construire EXACTEMENT 6 "keywords_with_emoji" sans doublon et sans recouper "core_values".
-     - Extraire 1–3 "quotes" issues STRICTEMENT de "user:". (authentiques, ≤ 120 chars), dérivées du contenu fourni.
+     - QUOTES SPÉCIALES: Extraire 1–3 citations UNIQUEMENT si elles révèlent la personnalité, les valeurs ou l'approche relationnelle. Critères stricts:
+       * Doit être une phrase COMPLÈTE et LITTÉRALE des réponses utilisateur
+       * Doit révéler quelque chose d'important sur sa personnalité, ses valeurs, ou sa vision des relations
+       * Éviter les phrases banales, les réponses courtes, ou les détails factuels sans profondeur
+       * Préférer les phrases qui montrent sa philosophie de vie, ses priorités, ou son caractère
+       * Si aucune phrase ne répond à ces critères → quotes: []
   6) Langue: utiliser la langue dominante des messages "user:".
   7) Renvoyer le JSON unique, strictement conforme.`,
       },
@@ -236,8 +247,7 @@ export async function action({ request }: Route.ActionArgs) {
       "emotional_signature": "Présence calme et rassurante, énergie tournée vers l’écoute et la cohérence.",
       "communication_style": "Je suis direct et chaleureux. Je privilégie l'écoute active et l'honnêteté.",
       "quotes": [
-        "Je veux construire quelque chose de solide.",
-        "Rien ne me ressource autant qu'un sentier en montagne.",
+        "Je veux construire quelque chose de solide avec la bonne personne.",
         "Cuisiner pour quelqu'un, c'est ma façon de dire je tiens à toi."
       ]
     }
@@ -275,12 +285,19 @@ export async function action({ request }: Route.ActionArgs) {
   Basé sur l’ensemble de la conversation que tu viens d'avoir avec l'utilisateur, retourne un UNIQUE objet JSON conforme au CONTRAT DE SORTIE.
   NE RENVOIE RIEN D’AUTRE QUE LE JSON. AUCUN MARKDOWN, AUCUN TEXTE LIBRE.
 
-  CONSIGNES D’UTILISATION DES SOURCES:
+  CONSIGNES D'UTILISATION DES SOURCES:
   - Utilise les questions que tu as posées à l'utilisateur ET ses réponses pour la MODÉRATION.
   - Utilise EXCLUSIVEMENT les réponses que t'a donné l'utilisateur pour :
-    • "quotes" (les citations doivent être des sous-chaînes textuelles du USER_ONLY),
-    • l’extraction de core_values / top_interests / summary / keywords_with_emoji / emotional_signature / communication_style.
-  - N’invente rien. Si une info manque → [] ou "" (selon le schéma).
+    • "quotes" (les citations doivent être des phrases COMPLÈTES et LITTÉRALES des réponses utilisateur uniquement),
+    • l'extraction de core_values / top_interests / summary / keywords_with_emoji / emotional_signature / communication_style.
+  - N'invente rien. Si une info manque → [] ou "" (selon le schéma).
+  
+  RÈGLES SPÉCIALES POUR LES QUOTES:
+  - Ne jamais mélanger ou reformuler les propos de l'utilisateur
+  - Extraire uniquement des phrases qui ont du sens seules et révèlent quelque chose d'important
+  - Ignorer les réponses factuelles simples ("J'ai 25 ans", "Je vis à Paris")
+  - Privilégier les phrases sur les valeurs, la personnalité, l'approche des relations
+  - Si aucune phrase significative n'existe → quotes: []
 
   CONTRAINTES DE SORTIE (rappel):
   - Langue: français uniquement.
@@ -293,10 +310,14 @@ export async function action({ request }: Route.ActionArgs) {
   CHECKLIST AVANT RENVOI (à appliquer silencieusement) :
   1) Si violation → is_safe_for_profile=false et vider entièrement "profile".
   2) Vérifier: 6 keywords_with_emoji EXACTS (ni plus, ni moins).
-  3) Vérifier: aucune "core_values" n’apparaît dans keywords_with_emoji[].keyword.
-  4) Vérifier: emotional_signature ne contient pas « je suis » / « j’suis » et ≤2 phrases.
+  3) Vérifier: aucune "core_values" n'apparaît dans keywords_with_emoji[].keyword.
+  4) Vérifier: emotional_signature ne contient pas « je suis » / « j'suis » et ≤2 phrases.
   5) Vérifier: communication_style et summary contiennent un pronom de 1ʳᵉ personne et ≤2 phrases pour communication_style, ≤450 caractères pour summary.
-  6) Vérifier: chaque quote est une sous-chaîne exacte de USER_ONLY, ≤120 caractères, 1–3 items.
+  6) VÉRIFICATION QUOTES STRICTE:
+     - Chaque quote doit être une phrase COMPLÈTE et LITTÉRALE des réponses utilisateur
+     - Chaque quote doit révéler personnalité/valeurs/vision relationnelle (pas de faits banals)
+     - ≤120 caractères par quote, 0-3 quotes au total
+     - Si aucune phrase ne répond aux critères → quotes: []
   7) Sortie = JSON strict, sans commentaires, sans trailing commas, sans code fences.
 
   RENVOIE MAINTENANT UN UNIQUE OBJET JSON STRICTEMENT CONFORME AU CONTRAT DE SORTIE. NE RENVOIE QUE LE JSON.`,
