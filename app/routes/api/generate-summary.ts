@@ -306,10 +306,7 @@ export async function action({ request }: Route.ActionArgs) {
 
   const jsonContent = JSON.parse(response.output_text);
 
-  jsonContent.last_answer =
-    lastUserTextAnswer && jsonContent.moderation?.is_safe_for_profile
-      ? lastUserTextAnswer
-      : '';
+  jsonContent.last_answer = lastUserTextAnswer;
 
   return Response.json(jsonContent);
 }
