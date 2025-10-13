@@ -193,6 +193,8 @@ export async function action({ request }: Route.ActionArgs) {
     * Choisir des phrases qui révèlent la personnalité, les valeurs, ou la vision des relations
     * Éviter: réponses courtes ("oui", "non"), détails factuels banals, phrases incomplètes
     * Privilégier: déclarations sur les valeurs, philosophie de vie, approche des relations, traits de caractère
+    * CORRECTION GRAMMATICALE LÉGÈRE AUTORISÉE: Vous pouvez corriger les erreurs grammaticales mineures, fautes de frappe, ou améliorer la clarté SANS changer le sens original
+    * Préserver absolument l'authenticité et le sens des propos de l'utilisateur
     * Si aucune phrase ne répond à ces critères → quotes: []
     * Maximum 120 caractères par citation, 1-3 citations au total`,
       },
@@ -293,7 +295,8 @@ export async function action({ request }: Route.ActionArgs) {
   - N'invente rien. Si une info manque → [] ou "" (selon le schéma).
   
   RÈGLES SPÉCIALES POUR LES QUOTES:
-  - Ne jamais mélanger ou reformuler les propos de l'utilisateur
+  - Ne jamais mélanger ou reformuler le SENS des propos de l'utilisateur
+  - Correction grammaticale légère autorisée pour améliorer la lisibilité (fautes de frappe, grammaire) SANS changer le sens
   - Extraire uniquement des phrases qui ont du sens seules et révèlent quelque chose d'important
   - Ignorer les réponses factuelles simples ("J'ai 25 ans", "Je vis à Paris")
   - Privilégier les phrases sur les valeurs, la personnalité, l'approche des relations
@@ -314,7 +317,7 @@ export async function action({ request }: Route.ActionArgs) {
   4) Vérifier: emotional_signature ne contient pas « je suis » / « j'suis » et ≤2 phrases.
   5) Vérifier: communication_style et summary contiennent un pronom de 1ʳᵉ personne et ≤2 phrases pour communication_style, ≤450 caractères pour summary.
   6) VÉRIFICATION QUOTES STRICTE:
-     - Chaque quote doit être une phrase COMPLÈTE et LITTÉRALE des réponses utilisateur
+     - Chaque quote doit être une phrase COMPLÈTE et LITTÉRALE et doit préserver le SENS ORIGINAL des réponses utilisateur (correction grammaticale légère autorisée)
      - Chaque quote doit révéler personnalité/valeurs/vision relationnelle (pas de faits banals)
      - ≤120 caractères par quote, 0-3 quotes au total
      - Si aucune phrase ne répond aux critères → quotes: []
