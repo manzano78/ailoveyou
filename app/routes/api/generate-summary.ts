@@ -317,7 +317,7 @@ export async function action({ request }: Route.ActionArgs) {
   4) Vérifier: emotional_signature ne contient pas « je suis » / « j'suis » et ≤2 phrases.
   5) Vérifier: communication_style et summary contiennent un pronom de 1ʳᵉ personne et ≤2 phrases pour communication_style, ≤450 caractères pour summary.
   6) VÉRIFICATION QUOTES STRICTE:
-     - Chaque quote doit être une phrase COMPLÈTE et LITTÉRALE et doit préserver le SENS ORIGINAL des réponses utilisateur (correction grammaticale légère autorisée)
+     - Chaque quote doit être une phrase COMPLÈTE, LITTÉRALE, autonome et compréhensible seule  et doit préserver le SENS ORIGINAL des réponses utilisateur (correction grammaticale légère autorisée)
      - Chaque quote doit révéler personnalité/valeurs/vision relationnelle (pas de faits banals)
      - ≤120 caractères par quote, 0-3 quotes au total
      - Si aucune phrase ne répond aux critères → quotes: []
