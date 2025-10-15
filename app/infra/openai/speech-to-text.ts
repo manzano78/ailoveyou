@@ -8,15 +8,15 @@ import ffmpegInstaller from '@ffmpeg-installer/ffmpeg';
 // Tell fluent-ffmpeg where ffmpeg is
 ffmpeg.setFfmpegPath(ffmpegInstaller.path);
 
-async function convertAudioFile(inputFile: File): Promise<File> {
+async function convertAudioFile(inputFile: File) {
   const inputPath = join(tmpdir(), `input-${Date.now()}.tmp`);
-  const wavPath = join(tmpdir(), `normalized-${Date.now()}.wav`);
-  const outputPath = join(tmpdir(), `output-${Date.now()}.webm`);
+  const wavPath = join(tmpdir(), `output-${Date.now()}.wav`);
 
+  // Write input file to temp
   await writeFile(inputPath, Buffer.from(await inputFile.arrayBuffer()));
 
-  // 1️⃣ Decode + normalize input → WAV PCM16 mono 48kHz
-  await new Promise<void>((resolve, reject) => {
+  // Convert using ffmpeg
+  await new Promise((resolve, reject) => {
     ffmpeg(inputPath)
       .audioCodec('pcm_s16le') // PCM 16-bit
       .audioChannels(1) // mono
@@ -24,26 +24,14 @@ async function convertAudioFile(inputFile: File): Promise<File> {
       .outputOptions(['-vn'])
       .toFormat('wav')
       .save(wavPath)
-      .on('end', () => resolve())
+      .on('end', resolve)
       .on('error', reject);
   });
 
-  // 2️⃣ Encode WAV → WebM/Opus
-  await new Promise<void>((resolve, reject) => {
-    ffmpeg(wavPath)
-      .audioCodec('libopus')
-      .audioChannels(1)
-      .audioFrequency(48000)
-      .outputOptions(['-b:a 64k', '-vn'])
-      .toFormat('webm')
-      .save(outputPath)
-      .on('end', () => resolve())
-      .on('error', reject);
-  });
-
-  const data = await readFile(outputPath);
-  return new File([new Uint8Array(data)], 'converted.webm', {
-    type: 'audio/webm',
+  // Return WAV file
+  const data = await readFile(wavPath);
+  return new File([new Uint8Array(data)], 'converted.wav', {
+    type: 'audio/wav',
   });
 }
 
