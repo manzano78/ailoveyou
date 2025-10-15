@@ -1,39 +1,38 @@
 import { openAI } from '~/infra/openai/client';
-import { FFmpeg } from '@ffmpeg/ffmpeg';
-import { fetchFile } from '@ffmpeg/util';
+import ffmpeg from 'fluent-ffmpeg';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { writeFile, readFile } from 'node:fs/promises';
+import ffmpegInstaller from '@ffmpeg-installer/ffmpeg';
 
-/**
- * Converts an input audio File into a supported format (default: .webm with Opus codec).
- *
- * Works in Node.js and serverless environments (Cloudflare, Vercel, etc.)
- * using WebAssembly-based ffmpeg.
- *
- * @param inputFile - The original audio file (e.g., from request.formData()).
- * @returns A Promise that resolves to a new File in the converted format.
- */
-export async function convertAudioFile(inputFile: File): Promise<File> {
-  const ffmpeg = new FFmpeg();
-  await ffmpeg.load();
+// Tell fluent-ffmpeg where ffmpeg is
+ffmpeg.setFfmpegPath(ffmpegInstaller.path);
 
-  const inputName = `input.${inputFile.name.split('.').pop() || 'dat'}`;
-  const outputName = 'output.webm';
+export async function convertAudioFile(
+  inputFile: File,
+  outputExt: 'webm' | 'wav' | 'mp3' = 'webm',
+): Promise<File> {
+  // Create temporary paths in memory-like tmp dir
+  const inputPath = join(tmpdir(), `input-${Date.now()}.tmp`);
+  const outputPath = join(tmpdir(), `output-${Date.now()}.${outputExt}`);
 
-  // Write input file into FFmpeg’s virtual FS
-  await ffmpeg.writeFile(inputName, await fetchFile(inputFile));
+  // Write input file to temp file
+  await writeFile(inputPath, Buffer.from(await inputFile.arrayBuffer()));
 
-  // Convert audio — here: re-encode to Opus/WebM (fast + OpenAI-friendly)
-  await ffmpeg.exec(['-i', inputName, '-c:a', 'libopus', outputName]);
+  // Run ffmpeg conversion
+  await new Promise<void>((resolve, reject) => {
+    ffmpeg(inputPath)
+      .outputOptions(['-c:a libopus'])
+      .toFormat(outputExt)
+      .save(outputPath)
+      .on('end', () => resolve())
+      .on('error', reject);
+  });
 
-  // Read output from FFmpeg FS
-  const fileData = await ffmpeg.readFile(outputName);
-
-  // Convert FileData to Blob
-  const uint8 = new Uint8Array(fileData as Uint8Array);
-  const blob = new Blob([uint8], { type: 'audio/webm' });
-
-  // Return as File
-  return new File([blob], 'converted.webm', {
-    type: 'audio/webm',
+  // Read result and return as File
+  const data = await readFile(outputPath);
+  return new File([new Uint8Array(data)], `converted.${outputExt}`, {
+    type: `audio/${outputExt}`,
   });
 }
 
