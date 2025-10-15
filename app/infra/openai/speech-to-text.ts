@@ -22,7 +22,13 @@ export async function convertAudioFile(
   // Run ffmpeg conversion
   await new Promise<void>((resolve, reject) => {
     ffmpeg(inputPath)
-      .outputOptions(['-c:a libopus'])
+      .outputOptions([
+        '-c:a libopus', // codec
+        '-ar 48000', // sample rate
+        '-ac 1', // mono channel
+        '-b:a 64k', // bitrate (adjustable)
+        '-vn', // no video
+      ])
       .toFormat(outputExt)
       .save(outputPath)
       .on('end', () => resolve())
