@@ -8,19 +8,32 @@ import ffmpegInstaller from '@ffmpeg-installer/ffmpeg';
 // Tell fluent-ffmpeg where ffmpeg is
 ffmpeg.setFfmpegPath(ffmpegInstaller.path);
 
-async function convertAudioFileToWebM(inputFile: File): Promise<File> {
+async function convertAudioFile(inputFile: File): Promise<File> {
   const inputPath = join(tmpdir(), `input-${Date.now()}.tmp`);
+  const wavPath = join(tmpdir(), `normalized-${Date.now()}.wav`);
   const outputPath = join(tmpdir(), `output-${Date.now()}.webm`);
 
-  // 1️⃣ Write input file to temp
   await writeFile(inputPath, Buffer.from(await inputFile.arrayBuffer()));
 
-  // 2️⃣ Convert using ffmpeg
+  // 1️⃣ Decode + normalize input → WAV PCM16 mono 48kHz
   await new Promise<void>((resolve, reject) => {
     ffmpeg(inputPath)
-      .audioCodec('libopus')
+      .audioCodec('pcm_s16le') // PCM 16-bit
       .audioChannels(1) // mono
-      .audioFrequency(48000) // 48 kHz
+      .audioFrequency(48000) // 48kHz
+      .outputOptions(['-vn'])
+      .toFormat('wav')
+      .save(wavPath)
+      .on('end', () => resolve())
+      .on('error', reject);
+  });
+
+  // 2️⃣ Encode WAV → WebM/Opus
+  await new Promise<void>((resolve, reject) => {
+    ffmpeg(wavPath)
+      .audioCodec('libopus')
+      .audioChannels(1)
+      .audioFrequency(48000)
       .outputOptions(['-b:a 64k', '-vn'])
       .toFormat('webm')
       .save(outputPath)
@@ -28,7 +41,6 @@ async function convertAudioFileToWebM(inputFile: File): Promise<File> {
       .on('error', reject);
   });
 
-  // 3️⃣ Return WebM file
   const data = await readFile(outputPath);
   return new File([new Uint8Array(data)], 'converted.webm', {
     type: 'audio/webm',
@@ -40,7 +52,7 @@ export async function speechToText(
   language?: string,
 ): Promise<string> {
   const { text } = await openAI.audio.transcriptions.create({
-    file: await convertAudioFileToWebM(audioFile),
+    file: await convertAudioFile(audioFile),
     model: 'gpt-4o-transcribe',
     response_format: 'json', // default is JSON, can be 'text', 'srt', etc.
     language,
