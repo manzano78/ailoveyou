@@ -186,8 +186,9 @@ export async function action({ request }: Route.ActionArgs) {
   - "top_interests": hobbies/centres d'intérêt factuels (ex.: "Randonnée", "Cuisine italienne").
   - "summary": 2–5 phrases positives, chaleureuses, orientées relation; sans red flags.
   - "keywords_with_emoji": 6 paires {keyword, emoji} qui capturent l'essence de la personne (ex.: {"keyword":"Aventurier","emoji":"🧭"}). Un seul emoji par item recommandé.
-  - "emotional_signature" = résumé émotionnel global (≤2 phrases) rédigé de façon neutre
   - "communication_style" et "summary" = doivent être à la première personne.
+  - "emotional_signature" = SIGNATURE ÉMOTIONNELLE UNIQUE (≤2 phrases, neutre) : Capturez les NUANCES SPÉCIFIQUES de cette personne. Évitez les généralités vagues telles que : "énergie positive", "bienveillant", "authentique", "sincère". Utilisez uniquement ces mots s’ils sont explicitement reflétés dans le contenu (ex. : un ton particulièrement chaleureux ou une référence directe à l’empathie). Utilisez des détails concrets basés sur ses réponses (ex: "Calme réfléchi avec des éclats d'enthousiasme spontané", "Intensité douce mêlée d'une curiosité analytique")
+  - "communication_style" = STYLE PERSONNEL DISTINCTIF (≤2 phrases, 1ère personne) : Décrivez comment CETTE personne communique spécifiquement. Évitez les clichés ("honnête", "sincère"). Basez-vous sur ses mots, son rythme, ses expressions (ex: "Je prends le temps de réfléchir avant de parler, puis je vais droit au but", "J'aime poser des questions inattendues qui font réfléchir")
   - "quotes": RÈGLES STRICTES POUR LES CITATIONS:
     * Extraire SEULEMENT des phrases complètes et significatives des réponses utilisateur
     * Choisir des phrases qui révèlent la personnalité, les valeurs, ou la vision des relations
@@ -218,6 +219,11 @@ export async function action({ request }: Route.ActionArgs) {
        * Éviter les phrases banales, les réponses courtes, ou les détails factuels sans profondeur
        * Préférer les phrases qui montrent sa philosophie de vie, ses priorités, ou son caractère
        * Si aucune phrase ne répond à ces critères → quotes: []
+     - PERSONNALISATION OBLIGATOIRE pour emotional_signature et communication_style:
+       * Analysez les MOTS SPÉCIFIQUES, le RYTHME, et les EXPRESSIONS uniques de cette personne
+       * Identifiez ses NUANCES émotionnelles particulières (pas des généralités)
+       * Créez des descriptions qui ne pourraient s'appliquer qu'à CETTE personne
+       * Evitez les termes génériques: "positif", "bienveillant", "honnête", "sincère", "authentique"
   6) Langue: utiliser la langue dominante des messages "user:".
   7) Renvoyer le JSON unique, strictement conforme.`,
       },
@@ -246,8 +252,8 @@ export async function action({ request }: Route.ActionArgs) {
         {"keyword":"Gourmand","emoji":"🍝"},
         {"keyword":"Curieux","emoji":"🧐"}
       ],
-      "emotional_signature": "Présence calme et rassurante, énergie tournée vers l’écoute et la cohérence.",
-      "communication_style": "Je suis direct et chaleureux. Je privilégie l'écoute active et l'honnêteté.",
+      "emotional_signature": "Calme réfléchi qui s'anime avec passion quand il parle de ses projets culinaires.",
+      "communication_style": "Je prends le temps de choisir mes mots, puis je raconte avec des détails concrets qui font sourire.",
       "quotes": [
         "Je veux construire quelque chose de solide avec la bonne personne.",
         "Cuisiner pour quelqu'un, c'est ma façon de dire je tiens à toi."
@@ -305,8 +311,8 @@ export async function action({ request }: Route.ActionArgs) {
   CONTRAINTES DE SORTIE (rappel):
   - Langue: français uniquement.
   - keywords_with_emoji: EXACTEMENT 6 items. si is_safe_for_profile=true, sinon 0.
-  - emotional_signature: ≤2 phrases, IMPERSONNEL (interdits: « je suis », « j’suis »).
-  - communication_style et summary: à la PREMIÈRE personne (doivent contenir un pronom 1ʳᵉ pers).
+  - emotional_signature: ≤2 phrases, IMPERSONNEL (interdits: « je suis », « j'suis »). DOIT être UNIQUE et SPÉCIFIQUE à cette personne (Eviter les termes génériques: "énergie positive", "bienveillant", "authentique", "sincère").
+  - communication_style: à la PREMIÈRE personne, ≤2 phrases. DOIT décrire le style DISTINCTIF de cette personne (Eviter les termes génériques: "honnête", "direct", "à l'écoute"). Basé sur ses expressions et manière de s'exprimer réelles.
   - quotes: 1–3 extraits COURTS qui ont une signification autonome, présents textuellement dans USER_ONLY, ≤120 caractères chacun, pas de slogans.
   - Si is_safe_for_profile=false → tous les champs de "profile" doivent être vides (listes vides / chaînes vides).
 
